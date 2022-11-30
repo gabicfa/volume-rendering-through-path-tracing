@@ -43,7 +43,9 @@ include_directories(include $ENV{HOME}/NGL/include)
 target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp  
 			${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
 			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
-			${PROJECT_SOURCE_DIR}/include/NGLScene.h  
+			${PROJECT_SOURCE_DIR}/src/Tuple.cpp
+            ${PROJECT_SOURCE_DIR}/include/NGLScene.h  
+            ${PROJECT_SOURCE_DIR}/include/Tuple.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
@@ -53,3 +55,16 @@ target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
 #    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
 #    $<TARGET_FILE_DIR:${TargetName}>/shaders
 #)
+
+# Add testing stuff
+find_package(GTest CONFIG REQUIRED)
+include(GoogleTest)
+enable_testing()
+add_executable(RayTracerTests)
+include_directories(include)
+target_sources(RayTracerTests PRIVATE tests/TupleTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Tuple.cpp
+    ${PROJECT_SOURCE_DIR}/include/Tuple.h
+)
+target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
+gtest_discover_tests(RayTracerTests)
