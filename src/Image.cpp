@@ -19,7 +19,8 @@ Image::Image(size_t _numPixels)
 void Image::createPixel(Pixel &io_p)
 {
     io_p.position.set(0.0f,0.0f,0.0f);
-    io_p.colour=ngl::Random::getRandomColour3();
+    // io_p.colour=ngl::Random::getRandomColour3();
+    io_p.colour.set(1.0f,0.0f,0.0f);
 }
 
 void Image::update()
@@ -35,7 +36,6 @@ void Image::render() const
     m_vao->setData(ngl::SimpleVAO::VertexData(m_pixels.size()*sizeof(Pixel), m_pixels[0].position.m_x));
     m_vao->setVertexAttributePointer(0,3,GL_FLOAT,sizeof(Pixel),0);
     m_vao->setVertexAttributePointer(1,3,GL_FLOAT,sizeof(Pixel),3);
-    m_vao->setVertexAttributePointer(2,1,GL_FLOAT,sizeof(Pixel),9);
     m_vao->setNumIndices(m_pixels.size());
     m_vao->draw();
     m_vao->unbind();
