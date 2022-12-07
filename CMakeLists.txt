@@ -68,3 +68,9 @@ target_sources(RayTracerTests PRIVATE tests/PixelTests.cpp
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)
+
+add_custom_target(${TargetName}CopyShaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+    $<TARGET_FILE_DIR:${TargetName}>/shaders
+)

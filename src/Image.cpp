@@ -19,19 +19,17 @@ Image::Image(size_t _numPixels)
 void Image::createPixel(Pixel &io_p)
 {
     io_p.position.set(0.0f,0.0f,0.0f);
-    // io_p.colour=ngl::Random::getRandomColour3();
-    io_p.position.set(1.0f,0.0f,0.0f);
-    std::cout<<"colour X: " << io_p.colour.m_x << "\n";
+    io_p.colour=ngl::Random::getRandomColour3();
 }
 
 void Image::update()
 {
-    std::cout<<"update\n";
+    // std::cout<<"update\n";
 }
 
 void Image::render() const
 {
-    std::cout<<"render\n";
+    // std::cout<<"render\n";
     glPointSize(20);
     m_vao->bind();
     m_vao->setData(ngl::SimpleVAO::VertexData(m_pixels.size()*sizeof(Pixel), m_pixels[0].position.m_x));
