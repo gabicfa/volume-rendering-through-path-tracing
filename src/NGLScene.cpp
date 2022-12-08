@@ -4,6 +4,7 @@
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/VAOPrimitives.h>
+#include <ngl/ShaderLib.h>
 #include <iostream>
 
 NGLScene::NGLScene()
@@ -26,18 +27,34 @@ void NGLScene::resizeGL(int _w , int _h)
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
+const std::string_view PixelShader="PixelShader";
 
 void NGLScene::initializeGL()
 {
   // we must call that first before any other GL commands to load and link the
   // gl commands from the lib, if that is not done program will crash
   ngl::NGLInit::initialize();
-  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);			   // Grey Background
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);			   // Grey Background
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
+  m_canvas = std::make_unique<Canvas>(1);
 
+  ngl::ShaderLib::use(ngl::nglColourShader);
+  // MVP is the model view project uiform
+  // Colour 4floats
+
+  ngl::ShaderLib::loadShader(PixelShader, "shaders/PixelVertex.glsl","shaders/PixelFragment.glsl");
+  ngl::ShaderLib::use(PixelShader);
+  
+  startTimer(10);
+}
+
+void NGLScene::timerEvent(QTimerEvent *_event)
+{
+  m_canvas->update();
+  update();
 }
 
 
@@ -47,7 +64,7 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-
+  m_canvas->render();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -69,6 +86,5 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   default : break;
   }
   // finally update the GLWindow and re-draw
-
     update();
 }
