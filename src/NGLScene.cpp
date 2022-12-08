@@ -27,14 +27,14 @@ void NGLScene::resizeGL(int _w , int _h)
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
-const std::string_view PixelShader="PixelShader";
+constexpr auto PixelShader="PixelShader";
 
 void NGLScene::initializeGL()
 {
   // we must call that first before any other GL commands to load and link the
   // gl commands from the lib, if that is not done program will crash
   ngl::NGLInit::initialize();
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);			   // Grey Background
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
@@ -45,15 +45,19 @@ void NGLScene::initializeGL()
   // MVP is the model view project uiform
   // Colour 4floats
 
+  m_view = ngl::lookAt({10,10,10},{0,0,0},{0,1,0});
+  m_project = ngl::perspective(45.0f, 1.0f,0.01f,50.0f);
+  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
+
   ngl::ShaderLib::loadShader(PixelShader, "shaders/PixelVertex.glsl","shaders/PixelFragment.glsl");
   ngl::ShaderLib::use(PixelShader);
+  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
   
   startTimer(10);
 }
 
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
-  m_canvas->update();
   update();
 }
 

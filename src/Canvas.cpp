@@ -16,8 +16,8 @@ Canvas::Canvas(size_t _numPixels)
     m_pixels.resize(_numPixels);
     for(auto &p : m_pixels)
     {
-        auto position = ngl::Vec3(0.0f, 0.0f, 0.0f);
-        auto colour = ngl::Vec3(1.0f, 0.0f, 0.0f);
+        auto position = ngl::Vec3(5.0f, 0.0f, 0.0f);
+        auto colour = ngl::Vec3(1.0f, 0.0f, 1.0f);
         writePixel(p, position, colour);
     }
     m_vao=ngl::VAOFactory::createVAO(ngl::simpleVAO, GL_POINTS);

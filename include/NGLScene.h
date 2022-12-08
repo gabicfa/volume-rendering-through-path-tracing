@@ -1,6 +1,7 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
 #include <ngl/Vec3.h>
+#include <ngl/Mat4.h>
 #include "WindowParams.h"
 #include "Canvas.h"
 
@@ -82,6 +83,8 @@ private:
     /// position for our model
     ngl::Vec3 m_modelPos;
     std::unique_ptr<Canvas> m_canvas;
+    ngl::Mat4 m_view;
+    ngl::Mat4 m_project;
 };
 
 
