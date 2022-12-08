@@ -39,7 +39,7 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
-  m_image = std::make_unique<Image>(1);
+  m_canvas = std::make_unique<Canvas>(1);
 
   ngl::ShaderLib::use(ngl::nglColourShader);
   // MVP is the model view project uiform
@@ -53,7 +53,7 @@ void NGLScene::initializeGL()
 
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
-  m_image->update();
+  m_canvas->update();
   update();
 }
 
@@ -64,7 +64,7 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-  m_image->render();
+  m_canvas->render();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 #define NGLSCENE_H_
 #include <ngl/Vec3.h>
 #include "WindowParams.h"
-#include "Image.h"
+#include "Canvas.h"
 
 // this must be included after NGL includes else we get a clash with gl libs
 #include <QOpenGLWindow>
@@ -81,7 +81,7 @@ private:
     WinParams m_win;
     /// position for our model
     ngl::Vec3 m_modelPos;
-    std::unique_ptr<Image> m_image;
+    std::unique_ptr<Canvas> m_canvas;
 };
 
 

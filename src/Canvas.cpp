@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "Canvas.h"
 #include <ngl/Random.h>
 #include <iostream>
 #include <fstream>
@@ -6,29 +6,50 @@
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleVAO.h>
 
-Image::Image(size_t _numPixels)
+Canvas::Canvas()
+{
+    m_vao=ngl::VAOFactory::createVAO(ngl::simpleVAO, GL_POINTS);
+}
+
+Canvas::Canvas(size_t _numPixels)
 {
     m_pixels.resize(_numPixels);
     for(auto &p : m_pixels)
     {
-        createPixel(p);
+        auto position = ngl::Vec3(0.0f, 0.0f, 0.0f);
+        auto colour = ngl::Vec3(1.0f, 0.0f, 0.0f);
+        writePixel(p, position, colour);
     }
     m_vao=ngl::VAOFactory::createVAO(ngl::simpleVAO, GL_POINTS);
 }
 
-void Image::createPixel(Pixel &io_p)
+void Canvas::createPixel(ngl::Vec3 _position, ngl::Vec3 _colour)
 {
-    io_p.position.set(0.0f,0.0f,0.0f);
-    // io_p.colour=ngl::Random::getRandomColour3();
-    io_p.colour.set(1.0f,0.0f,0.0f);
+    Pixel p;
+    p.position = _position;
+    p.colour = _colour;
+    m_pixels.push_back(p);
 }
 
-void Image::update()
+void Canvas::writePixel(Pixel &io_p, ngl::Vec3 _position, ngl::Vec3 _colour)
+{
+    io_p.position = _position;
+    // io_p.colour=ngl::Random::getRandomColour3();
+    io_p.colour = _colour;
+}
+
+
+std::vector<Pixel> Canvas::getPixels() const
+{
+    return m_pixels;
+}
+
+void Canvas::update()
 {
     // std::cout<<"update\n";
 }
 
-void Image::render() const
+void Canvas::render() const
 {
     // std::cout<<"render\n";
     glPointSize(20);
@@ -39,5 +60,4 @@ void Image::render() const
     m_vao->setNumIndices(m_pixels.size());
     m_vao->draw();
     m_vao->unbind();
-
 }
