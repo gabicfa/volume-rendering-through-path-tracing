@@ -6,7 +6,7 @@ I will develop a Ray tracer with the ability to ray-trace primitives such as sph
 
 ## Class Design
 
-https://app.diagrams.net/
+![diagram](/image/diagram.png)
 
 ## References
 
