@@ -7,9 +7,11 @@
 #include <ngl/ShaderLib.h>
 #include <iostream>
 
+constexpr size_t TextureWidth=1024;
+constexpr size_t TextureHeight=720;
+
 NGLScene::NGLScene()
 {
-  // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
   setTitle("Ray Tracer NGL");
 }
 
@@ -17,17 +19,17 @@ NGLScene::NGLScene()
 NGLScene::~NGLScene()
 {
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
+  glDeleteTextures(1, &m_textureID);
 }
-
-
 
 void NGLScene::resizeGL(int _w , int _h)
 {
+  m_project = ngl::perspective(45.0f, static_cast<float>(_w) / _h, 0.05f, 350.0f);
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
-constexpr auto PixelShader="PixelShader";
+constexpr auto TextureShader="TextureShader";
 
 void NGLScene::initializeGL()
 {
@@ -39,20 +41,30 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
-  m_canvas = std::make_unique<Canvas>(1);
+  ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
 
-  ngl::ShaderLib::use(ngl::nglColourShader);
   // MVP is the model view project uiform
   // Colour 4floats
 
   m_view = ngl::lookAt({10,10,10},{0,0,0},{0,1,0});
   m_project = ngl::perspective(45.0f, 1.0f,0.01f,50.0f);
-  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
-
-  ngl::ShaderLib::loadShader(PixelShader, "shaders/PixelVertex.glsl","shaders/PixelFragment.glsl");
-  ngl::ShaderLib::use(PixelShader);
-  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
   
+  // Need a vertex array to call draw arrays
+  // this will have no buffers
+  glGenVertexArrays(1,&m_vao);
+  // Now generate a texture
+  glGenTextures(1, &m_textureID);
+  // Generate our buffer for the texture data
+  
+  Canvas canvas(500, 500);
+  auto colour = ngl::Vec3(1.0f, 1.0f, 1.0f);
+  canvas.setPixel(250, 250, colour);
+  
+  m_buffer=canvas.getPixels();
+  canvas.save("ImagePlayground.jpg");
+  clearBuffer();
+  updateTextureBuffer();
+
   startTimer(10);
 }
 
@@ -68,7 +80,14 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-  m_canvas->render();
+  // m_canvas->render();
+  // grab an instance of the shader manager
+  ngl::ShaderLib::use(TextureShader);
+  // Draw screen Tri with bound Texture
+  glBindVertexArray(m_vao);
+  glBindTexture(GL_TEXTURE_2D,m_textureID);
+  glDrawArrays(GL_TRIANGLES,0,3);
+  glBindVertexArray(0);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

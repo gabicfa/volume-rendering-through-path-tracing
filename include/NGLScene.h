@@ -22,6 +22,7 @@
 
 class NGLScene : public QOpenGLWindow
 {
+  Q_OBJECT
   public:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief ctor for our NGL drawing class
@@ -70,7 +71,6 @@ private:
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
     void mouseReleaseEvent ( QMouseEvent *_event ) override;
-
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse wheel is moved
     /// inherited from QObject and overridden here.
@@ -78,13 +78,21 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
     void timerEvent(QTimerEvent *_event) override;
+    
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
+
     /// position for our model
-    ngl::Vec3 m_modelPos;
-    std::unique_ptr<Canvas> m_canvas;
     ngl::Mat4 m_view;
     ngl::Mat4 m_project;
+    void clearBuffer();
+    void updateTextureBuffer();
+    GLuint m_vao=0;
+    GLuint m_textureID;
+    std::unique_ptr<ngl::Vec3 []>m_buffer;
+
+    ngl::Vec3 m_modelPos;
+    std::unique_ptr<Canvas> m_canvas;
 };
 
 

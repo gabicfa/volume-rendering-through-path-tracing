@@ -64,8 +64,8 @@ enable_testing()
 add_executable(RayTracerTests)
 include_directories(include)
 target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
-    ${PROJECT_SOURCE_DIR}/include/Canvas.h
+    # ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
+    # ${PROJECT_SOURCE_DIR}/include/Canvas.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)
