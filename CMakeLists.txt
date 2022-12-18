@@ -45,17 +45,17 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
 			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
-            ${PROJECT_SOURCE_DIR}/include/Pixel.h  
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
 
-#add_custom_target(${TargetName}CopyShaders ALL
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory
-#    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
-#    $<TARGET_FILE_DIR:${TargetName}>/shaders
-#)
+add_custom_target(${TargetName}CopyShaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+    ${PROJECT_BINARY_DIR}/shaders
+)
+ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyShaders)
 
 # Add testing stuff
 find_package(GTest CONFIG REQUIRED)
@@ -64,14 +64,8 @@ enable_testing()
 add_executable(RayTracerTests)
 include_directories(include)
 target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
-    # ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
-    # ${PROJECT_SOURCE_DIR}/include/Canvas.h
+    ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Canvas.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)
-
-add_custom_target(${TargetName}CopyShaders ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
-    $<TARGET_FILE_DIR:${TargetName}>/shaders
-)

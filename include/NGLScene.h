@@ -81,16 +81,6 @@ private:
     
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
-
-    /// position for our model
-    ngl::Mat4 m_view;
-    ngl::Mat4 m_project;
-    void clearBuffer();
-    void updateTextureBuffer();
-    GLuint m_vao=0;
-    GLuint m_textureID;
-    std::unique_ptr<ngl::Vec3 []>m_buffer;
-
     ngl::Vec3 m_modelPos;
     std::unique_ptr<Canvas> m_canvas;
 };
