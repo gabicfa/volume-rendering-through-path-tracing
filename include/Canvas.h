@@ -13,13 +13,10 @@ class Canvas
         size_t height() const;
         ngl::Vec3 getPixel(size_t _x, size_t _y) const;
         void setPixel(size_t _x, size_t _y, ngl::Vec3 _colour) const;
-        void update();
-        void render() const;
+        const ngl::Vec3 * getPixelsBuffer() const;
     private:
         size_t m_width=0;
         size_t m_height=0;
-        GLuint m_vao=0;
-        GLuint m_textureID;
         std::unique_ptr<ngl::Vec3 []> m_pixels; 
 };
 

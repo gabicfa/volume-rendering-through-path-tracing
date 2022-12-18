@@ -5,12 +5,13 @@
 #include <ngl/NGLInit.h>
 #include <ngl/ShaderLib.h>
 #include <iostream>
+#include <ngl/Random.h>
 
 // constexpr size_t TextureWidth=1024;
 // constexpr size_t TextureHeight=720;
 
-constexpr size_t TextureWidth=100;
-constexpr size_t TextureHeight=100;
+constexpr size_t TextureWidth=80;
+constexpr size_t TextureHeight=40;
 
 NGLScene::NGLScene()
 {
@@ -42,17 +43,18 @@ void NGLScene::initializeGL()
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
   ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
-
+  glGenTextures(1, &m_textureID);
+  glGenVertexArrays(1,&m_vao);
   // Generate our buffer for the texture data
   m_canvas = std::make_unique<Canvas>(TextureWidth, TextureHeight);
-  m_canvas->setPixel(50,50,ngl::Vec3(0.0f,0.0f,1.0f));
-  m_canvas->update();
-
+  updateTextureBuffer();
   startTimer(10);
 }
 
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
+  m_canvas->setPixel(40,20,ngl::Random::getRandomColour3());
+  updateTextureBuffer();
   update();
 }
 
@@ -63,8 +65,17 @@ void NGLScene::paintGL()
   glViewport(0,0,m_win.width,m_win.height);
   // grab an instance of the shader manager
   ngl::ShaderLib::use(TextureShader);
-  // Draw ray trace
-  m_canvas->render();
+  glBindVertexArray(m_vao);
+  glBindTexture(GL_TEXTURE_2D,m_textureID);
+  glDrawArrays(GL_TRIANGLES,0,3);
+  glBindVertexArray(0);
+}
+
+void NGLScene::updateTextureBuffer()
+{
+  glBindTexture(GL_TEXTURE_2D, m_textureID);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TextureWidth, TextureHeight, 0, GL_RGB, GL_FLOAT, m_canvas->getPixelsBuffer());
+  glGenerateMipmap(GL_TEXTURE_2D); //  Allocate the mipmaps
 }
 
 //----------------------------------------------------------------------------------------------------------------------

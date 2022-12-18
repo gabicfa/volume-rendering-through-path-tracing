@@ -78,11 +78,14 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
     void timerEvent(QTimerEvent *_event) override;
+    void updateTextureBuffer();
     
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
     ngl::Vec3 m_modelPos;
     std::unique_ptr<Canvas> m_canvas;
+    GLuint m_vao=0;
+    GLuint m_textureID;
 };
 
 

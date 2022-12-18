@@ -4,3 +4,4 @@ Makefile
 *~
 .nfs*
 *.log
+settings.json
