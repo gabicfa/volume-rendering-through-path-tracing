@@ -3,23 +3,25 @@
 
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
-#include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
 #include <iostream>
 
+// constexpr size_t TextureWidth=1024;
+// constexpr size_t TextureHeight=720;
+
+constexpr size_t TextureWidth=100;
+constexpr size_t TextureHeight=100;
+
 NGLScene::NGLScene()
 {
-  // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
   setTitle("Ray Tracer NGL");
 }
 
 
 NGLScene::~NGLScene()
 {
-  std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
+  std::cout<<"Shutting down NGL\n";
 }
-
-
 
 void NGLScene::resizeGL(int _w , int _h)
 {
@@ -27,7 +29,7 @@ void NGLScene::resizeGL(int _w , int _h)
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
-constexpr auto PixelShader="PixelShader";
+constexpr auto TextureShader="TextureShader";
 
 void NGLScene::initializeGL()
 {
@@ -39,20 +41,13 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
-  m_canvas = std::make_unique<Canvas>(1);
+  ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
 
-  ngl::ShaderLib::use(ngl::nglColourShader);
-  // MVP is the model view project uiform
-  // Colour 4floats
+  // Generate our buffer for the texture data
+  m_canvas = std::make_unique<Canvas>(TextureWidth, TextureHeight);
+  m_canvas->setPixel(50,50,ngl::Vec3(0.0f,0.0f,1.0f));
+  m_canvas->update();
 
-  m_view = ngl::lookAt({10,10,10},{0,0,0},{0,1,0});
-  m_project = ngl::perspective(45.0f, 1.0f,0.01f,50.0f);
-  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
-
-  ngl::ShaderLib::loadShader(PixelShader, "shaders/PixelVertex.glsl","shaders/PixelFragment.glsl");
-  ngl::ShaderLib::use(PixelShader);
-  ngl::ShaderLib::setUniform("MVP", m_project * m_view);
-  
   startTimer(10);
 }
 
@@ -61,13 +56,14 @@ void NGLScene::timerEvent(QTimerEvent *_event)
   update();
 }
 
-
-
 void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
+  // grab an instance of the shader manager
+  ngl::ShaderLib::use(TextureShader);
+  // Draw ray trace
   m_canvas->render();
 }
 

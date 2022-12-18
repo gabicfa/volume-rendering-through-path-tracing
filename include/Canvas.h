@@ -2,24 +2,25 @@
 #define CANVAS_H_
 
 #include <vector>
-
-#include <ngl/AbstractVAO.h>
+#include <ngl/Vec3.h>
 #include <memory>
-#include "Pixel.h"
 
 class Canvas
 {
     public:
-        Canvas();
-        Canvas(size_t _numPixels);
+        Canvas(size_t _w, size_t _h);
+        size_t width() const;
+        size_t height() const;
+        ngl::Vec3 getPixel(size_t _x, size_t _y) const;
+        void setPixel(size_t _x, size_t _y, ngl::Vec3 _colour) const;
         void update();
         void render() const;
-        void createPixel(ngl::Vec3 _position, ngl::Vec3 _colour);
-        std::vector<Pixel> getPixels() const;
     private:
-        void writePixel(Pixel &io_p, ngl::Vec3 _position, ngl::Vec3 _colour);
-        std::vector<Pixel> m_pixels;
-        std::unique_ptr<ngl::AbstractVAO> m_vao;
+        size_t m_width=0;
+        size_t m_height=0;
+        GLuint m_vao=0;
+        GLuint m_textureID;
+        std::unique_ptr<ngl::Vec3 []> m_pixels; 
 };
 
 #endif
