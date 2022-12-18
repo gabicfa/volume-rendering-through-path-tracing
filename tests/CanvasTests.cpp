@@ -8,11 +8,11 @@ TEST(Canvas, createCanvas)
     auto c = Canvas(width, height);
     ASSERT_EQ(c.width(), width);
     ASSERT_EQ(c.height(), height);
-    for(size_t i=0; i<height; ++i)
+    for(size_t i=0; i<width; ++i)
     {
-        for(size_t j=0; j<width; ++j)
+        for(size_t j=0; j<height; ++j)
         {
-             ASSERT_EQ(c.getPixel(i,j),ngl::Vec3(0.0f, 0.0f, 0.0f));
+            ASSERT_EQ(c.getPixel(i,j),ngl::Vec3(0.0f, 0.0f, 0.0f));
         }
     }
 }
