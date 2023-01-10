@@ -12,7 +12,7 @@ class Sphere
         Sphere(int _id);
         std::vector<Intersection> intersect(Ray _r);
         int id() const;
-        
+        bool operator==(const Sphere& other) const;
     private:
         int m_id;
 };

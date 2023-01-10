@@ -5,6 +5,11 @@ Sphere::Sphere(int _id)
     m_id = _id;
 }
 
+bool Sphere::operator==(const Sphere& other) const 
+{
+    return m_id == other.id();
+}
+
 std::vector<Intersection> Sphere::intersect(Ray _r)
 {
     std::vector<Intersection> intersection;
