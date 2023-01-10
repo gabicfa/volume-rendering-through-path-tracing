@@ -43,9 +43,15 @@ include_directories(include $ENV{HOME}/NGL/include)
 target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp  
 			${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
             ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
+            ${PROJECT_SOURCE_DIR}/src/Ray.cpp 
+            ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
+            ${PROJECT_SOURCE_DIR}/src/Intersection.cpp 
 			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
+            ${PROJECT_SOURCE_DIR}/include/Ray.h 
+            ${PROJECT_SOURCE_DIR}/include/Sphere.h 
+            ${PROJECT_SOURCE_DIR}/include/Intersection.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
@@ -66,6 +72,15 @@ include_directories(include)
 target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
     ${PROJECT_SOURCE_DIR}/include/Canvas.h
+    tests/RayTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Ray.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Ray.h
+    tests/SphereTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Sphere.h
+    tests/IntersectionTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Intersection.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Intersection.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)
