@@ -12,6 +12,9 @@ bool Sphere::operator==(const Sphere& other) const
 
 std::vector<Intersection> Sphere::intersect(Ray _r)
 {
+    
+    Ray _r2 = _r.transform(_r, m_transform)
+
     std::vector<Intersection> intersection;
 
     auto sphereToArray = _r.origin() - ngl::Vec3(0.0f, 0.0f, 0.0f);
@@ -31,6 +34,17 @@ std::vector<Intersection> Sphere::intersect(Ray _r)
         intersection.push_back(i2);
     }
     return intersection;
+}
+
+ngl::Mat4 Sphere::transform() const
+{
+    return m_transform;
+}
+
+void Sphere::setTransform(ngl::Mat4 _tMatrix)
+{
+    auto newTransform = _tMatrix * m_transform;
+    m_transform = newTransform;
 }
 
 int Sphere::id() const
