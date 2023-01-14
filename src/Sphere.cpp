@@ -51,3 +51,18 @@ int Sphere::id() const
 {
     return m_id;
 }
+
+// object_point ← inverse(sphere.transform) * world_point 
+// object_normal ← object_point - point(0, 0, 0)
+// world_normal ← transpose(inverse(sphere.transform)) * object_normal 
+// world_normal.w ← 0
+// return normalize(world_normal)
+
+ngl::Vec4 Sphere::normalAt(ngl::Vec4 _worldPoint)
+{
+    auto objPoint = m_transform.inverse() * _worldPoint;
+    auto objNormal = objPoint - ngl::Vec4(0.0f,0.0f,0.0f);
+    auto worldNormal = (m_transform.inverse()).transpose() * objNormal;
+    worldNormal.m_w = 0.0f;
+    return worldNormal.normalize();
+}

@@ -16,6 +16,7 @@ class Sphere
         bool operator==(const Sphere& other) const;
         ngl::Mat4 transform() const;
         void setTransform(ngl::Mat4 _tMatrix);
+        ngl::Vec4 normalAt(ngl::Vec4 _worldPoint);
     private:
         int m_id;
         ngl::Mat4 m_transform = ngl::Mat4();
