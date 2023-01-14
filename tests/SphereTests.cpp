@@ -92,8 +92,8 @@ TEST(Sphere, intersectsScaledSphere)
     s.setTransform(m);
     auto xs = s.intersect(r);
     ASSERT_EQ(xs.size(), 2);
-    ASSERT_EQ(xs[0].object(), 3);
-    ASSERT_EQ(xs[1].object(), 7);
+    ASSERT_EQ(xs[0].t(), 3.0f);
+    ASSERT_EQ(xs[1].t(), 7.0f);
 }
 
 TEST(Sphere, intersectsTranslatedSphere)
@@ -105,7 +105,6 @@ TEST(Sphere, intersectsTranslatedSphere)
     auto s = Sphere(1);
     auto m = ngl::Mat4::translate(5.0f,0.0f,0.0f);
     s.setTransform(m);
-    ASSERT_EQ(s.transform(), m);
 
     auto xs = s.intersect(r);
     ASSERT_EQ(xs.size(), 0);

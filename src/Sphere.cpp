@@ -13,13 +13,13 @@ bool Sphere::operator==(const Sphere& other) const
 std::vector<Intersection> Sphere::intersect(Ray _r)
 {
     
-    Ray _r2 = _r.transform(_r, m_transform)
+    Ray _r2 = _r.transform(m_transform.inverse());
 
     std::vector<Intersection> intersection;
 
-    auto sphereToArray = _r.origin() - ngl::Vec3(0.0f, 0.0f, 0.0f);
-    auto a = _r.direction().dot(_r.direction());
-    auto b = 2 * (_r.direction().dot(sphereToArray));
+    auto sphereToArray = _r2.origin() - ngl::Vec3(0.0f, 0.0f, 0.0f);
+    auto a = _r2.direction().dot(_r2.direction());
+    auto b = 2 * (_r2.direction().dot(sphereToArray));
     auto c = sphereToArray.dot(sphereToArray) - 1;
 
     auto discriminant = pow(b, 2) - 4 * a * c;

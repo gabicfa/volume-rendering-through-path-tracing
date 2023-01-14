@@ -15,6 +15,7 @@ class Intersection
         float t() const;
         int object() const;
         bool operator==(const Intersection& other) const;
+        bool operator!=(const Intersection& other) const;
         static std::vector<Intersection> intersections(std::vector<Intersection> intersections);
         static Intersection hit(std::vector<Intersection> intersections);
     private:

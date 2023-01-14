@@ -10,8 +10,8 @@
 // constexpr size_t TextureWidth=1024;
 // constexpr size_t TextureHeight=720;
 
-constexpr size_t TextureWidth=80;
-constexpr size_t TextureHeight=40;
+constexpr size_t TextureWidth=720;
+constexpr size_t TextureHeight=720;
 
 NGLScene::NGLScene()
 {
@@ -47,13 +47,13 @@ void NGLScene::initializeGL()
   glGenVertexArrays(1,&m_vao);
   // Generate our buffer for the texture data
   m_canvas = std::make_unique<Canvas>(TextureWidth, TextureHeight);
+  m_canvas->drawScene();
   updateTextureBuffer();
   startTimer(10);
 }
 
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
-  m_canvas->setPixel(40,20,ngl::Random::getRandomColour3());
   updateTextureBuffer();
   update();
 }

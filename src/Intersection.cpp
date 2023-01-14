@@ -11,6 +11,11 @@ bool Intersection::operator==(const Intersection& other) const
     return m_t == other.t() && m_object == other.object();
 }
 
+bool Intersection::operator!=(const Intersection& other) const 
+{
+    return m_t != other.t() || m_object != other.object();
+}
+
 float Intersection::t() const
 {
     return m_t;
