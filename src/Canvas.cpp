@@ -54,10 +54,15 @@ void Canvas::drawScene()
     auto pixelSizeY = wallSizeY / m_height;
     auto halfY = wallSizeY/2;
 
-    auto color = ngl::Vec3(1.0f,0.0f,0.0f);
     auto shape = Sphere(1);
-    auto m = ngl::Mat4::scale(0.5f,1.0f,1.0f);
-    shape.setTransform(m);
+    auto m = Material();
+    m.color(ngl::Vec3(1.0f,0.2f,1.0f));
+    shape.material(m);
+
+    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f,10.0f,-10.0f));
+    
+    // auto transform = ngl::Mat4::scale(0.5f,1.0f,1.0f);
+    // shape.setTransform(transform);
 
     for (auto y=0; y<m_width-1; y++)
     {
@@ -73,6 +78,10 @@ void Canvas::drawScene()
             Intersection empty = Intersection();
             if (i != empty)
             {
+                auto point = r.position(i.t());
+                auto normal = i.object().normalAt(point);
+                auto eye = r.direction();
+                auto color = i.object().material().lighting(light, point, eye, normal);
                 setPixel(x, y, color);
             }
         }

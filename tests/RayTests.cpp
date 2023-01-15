@@ -22,7 +22,7 @@ TEST(Ray, raysPosition)
     ASSERT_EQ(r.position(2.5), ngl::Vec4(4.5f,3.0f,4.0f));
 }
 
-TEST(Ray, translateRay)
+TEST(Ray, translatingRay)
 {
     auto origin = ngl::Vec4(1.0f,2.0f,3.0f);
     auto direction = ngl::Vec4(0.0f,1.0f,0.0f);

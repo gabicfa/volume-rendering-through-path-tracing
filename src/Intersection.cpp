@@ -1,6 +1,13 @@
 #include "Intersection.h"
+#include "Sphere.h"
 
-Intersection::Intersection(float _t, int _object)
+Intersection::Intersection()
+{
+    m_t = 0;
+    m_object = new Sphere();
+}
+
+Intersection::Intersection(float _t, Sphere *_object)
 {
     m_t = _t;
     m_object = _object;
@@ -8,12 +15,12 @@ Intersection::Intersection(float _t, int _object)
 
 bool Intersection::operator==(const Intersection& other) const 
 {
-    return m_t == other.t() && m_object == other.object();
+    return m_t == other.t() && *m_object == other.object();
 }
 
 bool Intersection::operator!=(const Intersection& other) const 
 {
-    return m_t != other.t() || m_object != other.object();
+    return m_t != other.t() || *m_object != other.object();
 }
 
 float Intersection::t() const
@@ -21,10 +28,9 @@ float Intersection::t() const
     return m_t;
 }
 
-
-int Intersection::object() const
+Sphere& Intersection::object() const
 {
-    return m_object;
+    return *m_object;
 }
 
 std::vector<Intersection> Intersection::intersections(std::vector<Intersection> intersections )
