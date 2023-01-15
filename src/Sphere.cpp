@@ -1,13 +1,25 @@
 #include "Sphere.h"
-#include "Intersection.h"
+
+Sphere::Sphere()
+{
+    m_id = 0;
+    m_transform = ngl::Mat4();
+    m_material = Material();
+}
+
 Sphere::Sphere(int _id)
 {
     m_id = _id;
 }
 
-bool Sphere::operator==(const Sphere& other) const 
+bool Sphere::operator==(const Sphere& other) const
 {
-    return m_id == other.id();
+    return m_id == other.m_id;
+}
+
+bool Sphere::operator!=(const Sphere& other) const
+{
+    return m_id != other.m_id;
 }
 
 std::vector<Intersection> Sphere::intersect(Ray _r)
@@ -27,10 +39,10 @@ std::vector<Intersection> Sphere::intersect(Ray _r)
     if (discriminant >= 0)
     {
         float t1 = (-b - std::sqrt(discriminant)) / (2 *a);
-        auto i1 = Intersection(t1, this->id());
+        auto i1 = Intersection(t1, this);
         intersection.push_back(i1);
         float t2 = (-b + std::sqrt(discriminant)) / (2 *a);
-        auto i2 = Intersection(t2, this->id());
+        auto i2 = Intersection(t2, this);
         intersection.push_back(i2);
     }
     return intersection;
@@ -52,11 +64,15 @@ int Sphere::id() const
     return m_id;
 }
 
-// object_point ← inverse(sphere.transform) * world_point 
-// object_normal ← object_point - point(0, 0, 0)
-// world_normal ← transpose(inverse(sphere.transform)) * object_normal 
-// world_normal.w ← 0
-// return normalize(world_normal)
+Material Sphere::material() const
+{
+    return m_material;
+}
+
+void Sphere::material(Material _m)
+{
+    m_material = _m;
+}
 
 ngl::Vec4 Sphere::normalAt(ngl::Vec4 _worldPoint)
 {

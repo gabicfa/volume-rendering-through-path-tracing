@@ -7,20 +7,22 @@
 #include <iostream>
 #include <vector>
 
+class Sphere;
+
 class Intersection
 {
     public:
-        Intersection() = default;
-        Intersection(float _t, int _object);
+        Intersection();
+        Intersection(float _t, Sphere *_object);
         float t() const;
-        int object() const;
+        Sphere &object() const;
         bool operator==(const Intersection& other) const;
         bool operator!=(const Intersection& other) const;
         static std::vector<Intersection> intersections(std::vector<Intersection> intersections);
         static Intersection hit(std::vector<Intersection> intersections);
     private:
-        float m_t;
-        int m_object;
+        float m_t = 0;
+        Sphere *m_object;
 };
 
 #endif
