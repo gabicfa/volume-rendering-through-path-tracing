@@ -78,7 +78,7 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
     else
     {
         diffuse = effectiveColor * m_diffuse * lightDotNormal;
-        auto reflect = (-light).toVec3().reflect(_normal.toVec3());
+        auto reflect = light.toVec3().reflect(_normal.toVec3());
         auto reflactDotEye = ngl::Vec4(reflect).dot(_eye);
         if (reflactDotEye <= 0)
         {

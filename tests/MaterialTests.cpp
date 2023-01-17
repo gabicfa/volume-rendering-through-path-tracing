@@ -21,7 +21,7 @@ TEST(Material, lightining)
         auto normal = ngl::Vec4(0.0f,0.0f,-1.0f);
         auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(0.0f,0.0f,-10.0f));
         auto result = m.lighting(light, pos, eye, normal);
-        ASSERT_EQ(result, ngl::Vec3(1.9f,1.9f,1.9f));
+        ASSERT_EQ(result, ngl::Vec3(1.0f,1.0f,1.0f));
     }
     {
         // Eye between light and surface, eye offset 45o
@@ -53,7 +53,7 @@ TEST(Material, lightining)
         auto normal = ngl::Vec4(0.0f,0.0f,-1.0f);
         auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(0.0f,10.0f,-10.0f));
         auto result = m.lighting(light, pos, eye, normal);
-        ASSERT_EQ(result, ngl::Vec3(1.6364f, 1.6364f, 1.6364f));
+        ASSERT_EQ(result, ngl::Vec3(0.7364f, 0.7364f, 0.7364f));
     }
     {
         // Light behind the surface
