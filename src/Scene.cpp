@@ -6,7 +6,7 @@ Scene::Scene(bool _default)
 {
     if(_default) 
     {
-        auto lPoint = ngl::Vec4(-10.0f, 10.0f, -10.0f);
+        auto lPoint = ngl::Vec4(-10.0f, 10.0f, 10.0f);
         auto lIntensity = ngl::Vec3(1.0f,1.0f,1.0f);
         auto l = Light(lIntensity,lPoint);
         m_light = l;
@@ -17,6 +17,7 @@ Scene::Scene(bool _default)
         m.color(mColor);
         m.diffuse(0.7);
         m.specular(0.2);
+        s1.material(m);
         m_objects.push_back(s1);
 
         auto s2 = Sphere(2);
@@ -64,7 +65,8 @@ std::vector<Intersection> Scene::intersectScene(Ray _r)
 
 ngl::Vec3 Scene::shadeHit(Computation _c)
 {
-    return _c.object->material().lighting(this->light(), _c.point, _c.eye, _c.normal);
+    auto m =  _c.object->material();
+    return m.lighting(this->light(), _c.point, _c.eye, _c.normal);
 }
 
 ngl::Vec3 Scene::colorAt(Ray _r)

@@ -52,7 +52,7 @@ std::vector<Intersection> Sphere::intersect(Ray _r)
     return intersection;
 }
 
-ngl::Mat4 Sphere::transform() const
+ngl::Mat4 Sphere::transform()
 {
     return m_transform;
 }
@@ -68,7 +68,7 @@ int Sphere::id() const
     return m_id;
 }
 
-Material Sphere::material() const
+Material Sphere::material()
 {
     return m_material;
 }

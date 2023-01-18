@@ -57,14 +57,14 @@ void NGLScene::initializeGL()
   // auto floor = Sphere(1);
   // floor.setTransform(ngl::Mat4::scale(10.0f,0.1f,-10.0f));
   // auto mat1 = Material();
-  // mat1.color(ngl::Vec3(1.0f,0.9f,0.9f));
+  // mat1.color(ngl::Vec3(1.0f,0.0f,0.0f));
   // mat1.specular(0.0f);
   
   // floor.material(mat1);
   // scene.addObject(floor);
 
   auto middle = Sphere(2);
-  middle.setTransform(ngl::Mat4::translate(-0.5, 1, 0.5));
+  middle.setTransform(ngl::Mat4::translate(-0.5, 1, -0.5));
   auto mat2 = Material();
   mat2.color(ngl::Vec3(0.1f,1.0f,0.5f));
   mat2.diffuse(0.7f);
@@ -73,11 +73,11 @@ void NGLScene::initializeGL()
   middle.material(mat2);
   scene.addObject(middle);
 
-  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(10.0f,10.0f,10.0f));
+  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(1.0f, -1.0f, 10.0f));
   scene.light(light);
   
   auto camera = Camera(TextureWidth, TextureHeight, M_PI/3);
-  auto t = Transformations::viewTransform(ngl::Vec4(0.0f,1.5f, -5.0f),
+  auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.5f, -5.0f),
                                           ngl::Vec4(0.0f, 1.0f, 0.0f),
                                           ngl::Vec4(0.0f, 1.0f, 0.0f));
   camera.transform(t);

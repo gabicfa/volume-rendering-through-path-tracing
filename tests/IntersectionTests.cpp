@@ -73,22 +73,22 @@ TEST(Intersection, hitLowestNonNeg)
 
 TEST(Intersection, preCompStateOfIntersection)
 {
-    auto r = Ray(ngl::Vec4(0.0f,0.0f,-5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto r = Ray(ngl::Vec4(0.0f,0.0f,5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
     auto s = Sphere(1);
     auto i = Intersection(4.0f, &s);
 
     auto comp = i.prepareComputations(r);
 
     ASSERT_EQ(comp.t, i.t());
-    ASSERT_EQ(comp.point, ngl::Vec4(0.0f,0.0f,-1.0f));
-    ASSERT_EQ(comp.eye, ngl::Vec4(0.0f,0.0f,-1.0f));
-    ASSERT_EQ(comp.normal, ngl::Vec4(0.0f,0.0f,-1.0f));
+    ASSERT_EQ(comp.point, ngl::Vec4(0.0f,0.0f,1.0f));
+    ASSERT_EQ(comp.eye, ngl::Vec4(0.0f,0.0f,1.0f));
+    ASSERT_EQ(comp.normal, ngl::Vec4(0.0f,0.0f,1.0f));
 
 }
 
 TEST(Intersection, hitWhenIntersectionOutside)
 {
-    auto r = Ray(ngl::Vec4(0.0f,0.0f,-5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto r = Ray(ngl::Vec4(0.0f,0.0f,5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
     auto s = Sphere(1);
     auto i = Intersection(4.0f, &s);
 
@@ -99,15 +99,15 @@ TEST(Intersection, hitWhenIntersectionOutside)
 
 TEST(Intersection, hitWhenIntersectionInside)
 {
-    auto r = Ray(ngl::Vec4(0.0f,0.0f,0.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto r = Ray(ngl::Vec4(0.0f,0.0f,0.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
     auto s = Sphere(1);
     auto i = Intersection(1.0f, &s);
 
     auto comp = i.prepareComputations(r);
 
-    ASSERT_EQ(comp.point, ngl::Vec4(0.0f,0.0f,1.0f));
-    ASSERT_EQ(comp.eye, ngl::Vec4(0.0f,0.0f,-1.0f));
+    ASSERT_EQ(comp.point, ngl::Vec4(0.0f,0.0f,-1.0f));
+    ASSERT_EQ(comp.eye, ngl::Vec4(0.0f,0.0f,1.0f));
     ASSERT_EQ(comp.inside, true);
-    ASSERT_EQ(comp.normal, ngl::Vec4(0.0f,0.0f,-1.0f));
+    ASSERT_EQ(comp.normal, ngl::Vec4(0.0f,0.0f,1.0f));
 
 }

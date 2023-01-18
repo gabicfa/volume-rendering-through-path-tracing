@@ -62,8 +62,8 @@ Ray Camera::rayForPixel(double px, double py)
     auto worldX = m_halfWidth - xoffset;
     auto worldY = m_halfHeight - yoffset;
 
-    auto pixel = m_transformation.inverse() * ngl::Vec3(worldX, worldY, -1);
-    auto origin = m_transformation.inverse() * ngl::Vec3(0.0f,0.0f,0.0f);
+    auto pixel = m_transformation.inverse() * ngl::Vec4(worldX, worldY, 1);
+    auto origin = m_transformation.inverse() * ngl::Vec4(0.0f,0.0f,0.0f);
     auto direction = (pixel - origin).normalize();
 
     return Ray(origin, direction);
