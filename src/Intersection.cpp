@@ -54,3 +54,24 @@ Intersection Intersection::hit(std::vector<Intersection> intersections)
     }
     return Intersection();
 }
+
+Computation Intersection::prepareComputations(Ray _r)
+{
+    Computation comp;
+    comp.t = this->m_t;
+    comp.object = this->m_object;
+    comp.point = _r.position(comp.t);
+    comp.eye = -(_r.direction());
+    comp.normal = comp.object->normalAt(comp.point);
+
+    if(comp.normal.dot(comp.eye) < 0)
+    {
+        comp.inside = true;
+        comp.normal = -comp.normal;
+    }
+    else 
+    {
+        comp.inside = false;
+    }
+    return comp;
+}

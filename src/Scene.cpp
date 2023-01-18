@@ -31,9 +31,19 @@ std::vector<Sphere> Scene::objects()
     return m_objects;
 }
 
-Light Scene::light()
+Light Scene::light() const
 {
     return m_light;
+}
+
+void Scene::light(Light _l)
+{
+    m_light = _l;
+}
+
+void Scene::addObject(Sphere s)
+{
+    m_objects.push_back(s);
 }
 
 std::vector<Intersection> Scene::intersectScene(Ray _r)
@@ -50,4 +60,27 @@ std::vector<Intersection> Scene::intersectScene(Ray _r)
         return a.t() < b.t();
     });
     return intersections;
+}
+
+ngl::Vec3 Scene::shadeHit(Computation _c)
+{
+    return _c.object->material().lighting(this->light(), _c.point, _c.eye, _c.normal);
+}
+
+ngl::Vec3 Scene::colorAt(Ray _r)
+{
+    auto intersections = this->intersectScene(_r);
+    auto xs = Intersection::intersections(intersections);
+    auto i = Intersection::hit(xs);
+
+    Intersection empty = Intersection();
+    if (i == empty)
+    {
+        return ngl::Vec3(0.0f, 0.0f, 0.0f);
+    }
+    else
+    {
+        auto c = i.prepareComputations(_r);
+        return shadeHit(c);
+    }
 }

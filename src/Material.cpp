@@ -67,7 +67,7 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
     auto effectiveColor = m_color * _l.intensity();
     auto light = (_l.position() - _pos).normalize();
     ngl::Vec3 ambient = effectiveColor * m_ambient;
-    auto lightDotNormal = light.dot(_normal);
+    auto lightDotNormal = -light.dot(_normal);
     ngl::Vec3 diffuse;
     ngl::Vec3 specular;
     if (lightDotNormal < 0.0f) 

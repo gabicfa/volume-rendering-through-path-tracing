@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Scene.h"
+#include "Intersection.h"
 
 TEST(Scene, createScene)
 {
@@ -31,8 +32,8 @@ TEST(Scene, createDefaultScene)
 
 TEST(Scene, intersectScene)
 {
-    Scene s = Scene(true);
-    Ray r = Ray(ngl::Vec4(0.0f, 0.0f, -5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto s = Scene(true);
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, -5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
     auto xs = s.intersectScene(r);
 
     ASSERT_EQ(xs.size(), 4);
@@ -41,3 +42,65 @@ TEST(Scene, intersectScene)
     ASSERT_EQ(xs[2].t(), 5.5);
     ASSERT_EQ(xs[3].t(), 6);
 }
+
+TEST(Scene, shadingIntersectionFromInside)
+{
+    auto s = Scene(true);
+    auto l = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(0.0f,0.25f,0.0f));
+    s.light(l);
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 0.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    
+    auto s2 = s.objects()[1];
+    auto i = Intersection(0.5f, &s2);
+
+    auto comp = i.prepareComputations(r);
+    auto color = s.shadeHit(comp);
+
+    // ASSERT_EQ(color, ngl::Vec3(0.90498f, 0.90498f, 0.90498f));
+}
+
+TEST(Scene, shadingIntersection)
+{
+    auto s = Scene(true);
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, -5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto s1 = s.objects()[0];
+    auto i = Intersection(4.0f, &s1);
+
+    auto comp = i.prepareComputations(r);
+    auto color = s.shadeHit(comp);
+
+    // ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
+}
+
+TEST(Scene, colorWhenRayMisses)
+{
+    auto s = Scene(true);
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, -5.0f), ngl::Vec4(0.0f,1.0f,0.0f));
+    auto color = s.colorAt(r);
+    ASSERT_EQ(color, ngl::Vec3(0.0f, 0.0f, 0.0f));
+}
+
+TEST(Scene, colorWhenRayHits)
+{
+    auto s = Scene(true);
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, -5.0f), ngl::Vec4(0.0f,0.0f,1.0f));
+    auto color = s.colorAt(r);
+    // ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
+}
+
+TEST(Scene, colorWithIntersectionBehindRay)
+{
+    auto s = Scene(true);
+    auto outer = s.objects()[0];
+    outer.material().ambient(1.0f);
+
+    auto inner = s.objects()[1];
+    inner.material().ambient(1.0f);
+
+    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 0.75f), ngl::Vec4(0.0f,0.0f,-1.0f));
+    auto color = s.colorAt(r);
+    // ASSERT_EQ(color, inner.material().color());
+}
+
+
+

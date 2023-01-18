@@ -7,11 +7,16 @@
 #include <iostream>
 #include <ngl/Random.h>
 
+#include "Scene.h"
+#include "Sphere.h"
+#include "Camera.h"
+#include "Light.h"
+
 // constexpr size_t TextureWidth=1024;
 // constexpr size_t TextureHeight=720;
 
-constexpr size_t TextureWidth=720;
-constexpr size_t TextureHeight=720;
+constexpr size_t TextureWidth = 720;
+constexpr size_t TextureHeight = 360;
 
 NGLScene::NGLScene()
 {
@@ -46,8 +51,38 @@ void NGLScene::initializeGL()
   glGenTextures(1, &m_textureID);
   glGenVertexArrays(1,&m_vao);
   // Generate our buffer for the texture data
-  m_canvas = std::make_unique<Canvas>(TextureWidth, TextureHeight);
-  m_canvas->drawScene();
+
+  auto scene = Scene();
+
+  // auto floor = Sphere(1);
+  // floor.setTransform(ngl::Mat4::scale(10.0f,0.1f,-10.0f));
+  // auto mat1 = Material();
+  // mat1.color(ngl::Vec3(1.0f,0.9f,0.9f));
+  // mat1.specular(0.0f);
+  
+  // floor.material(mat1);
+  // scene.addObject(floor);
+
+  auto middle = Sphere(2);
+  middle.setTransform(ngl::Mat4::translate(-0.5, 1, 0.5));
+  auto mat2 = Material();
+  mat2.color(ngl::Vec3(0.1f,1.0f,0.5f));
+  mat2.diffuse(0.7f);
+  mat2.specular(0.3f);
+  
+  middle.material(mat2);
+  scene.addObject(middle);
+
+  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(10.0f,10.0f,10.0f));
+  scene.light(light);
+  
+  auto camera = Camera(TextureWidth, TextureHeight, M_PI/3);
+  auto t = Transformations::viewTransform(ngl::Vec4(0.0f,1.5f, -5.0f),
+                                          ngl::Vec4(0.0f, 1.0f, 0.0f),
+                                          ngl::Vec4(0.0f, 1.0f, 0.0f));
+  camera.transform(t);
+  
+  m_canvas = std::make_unique<Canvas>(camera.render(scene));
   updateTextureBuffer();
   startTimer(10);
 }
