@@ -90,5 +90,6 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
             specular = _l.intensity() * m_specular * factor;
         }
     }
+    
     return ambient + diffuse + specular;
 }

@@ -17,10 +17,10 @@ class Sphere
         int id() const;
         bool operator==(const Sphere& other) const;
         bool operator!=(const Sphere& other) const;
-        ngl::Mat4 transform() const;
+        ngl::Mat4 transform();
         void setTransform(ngl::Mat4 _tMatrix);
         ngl::Vec4 normalAt(ngl::Vec4 _worldPoint);
-        Material material() const;
+        Material material();
         void material(Material _m);
     private:
         int m_id = 0;

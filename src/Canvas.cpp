@@ -42,7 +42,7 @@ const ngl::Vec3 * Canvas::getPixelsBuffer() const
 
 void Canvas::drawScene()
 {
-    auto origin = ngl::Vec4(0.0f,0.0f,-5.0f);
+    auto origin = ngl::Vec4(0.0f,0.0f,5.0f);
     auto wallZ = 5.0f;
 
     auto wallSizeX = 7.0f;
@@ -59,10 +59,10 @@ void Canvas::drawScene()
     m.color(ngl::Vec3(1.0f,0.2f,1.0f));
     shape.material(m);
 
-    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f,10.0f,-10.0f));
+    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, 10.0f));
     
-    // auto transform = ngl::Mat4::scale(0.5f,1.0f,1.0f);
-    // shape.setTransform(transform);
+    auto transform = ngl::Mat4::scale(1.0f,0.5f,1.0f);
+    shape.setTransform(transform);
 
     for (auto y=0; y<m_width-1; y++)
     {
@@ -71,8 +71,8 @@ void Canvas::drawScene()
         {
             auto worldX = -halfX + pixelSizeX * x;
             auto position = ngl::Vec4(worldX, worldY, wallZ);
-            auto direction = position - origin;
-            auto r = Ray(origin, direction.normalize());
+            auto direction = (position - origin).normalize();
+            auto r = Ray(origin, direction);
             auto xs = shape.intersect(r);
             auto i = Intersection::hit(xs);
             Intersection empty = Intersection();

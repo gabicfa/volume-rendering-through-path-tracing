@@ -14,12 +14,16 @@ Sphere::Sphere(int _id)
 
 bool Sphere::operator==(const Sphere& other) const
 {
-    return m_id == other.m_id;
+    return m_id == other.m_id &&
+    m_transform == other.m_transform &&
+    m_material == other.m_material;
 }
 
 bool Sphere::operator!=(const Sphere& other) const
 {
-    return m_id != other.m_id;
+    return m_id != other.m_id ||
+    !(m_transform == other.m_transform) ||
+    !(m_material == other.m_material);
 }
 
 std::vector<Intersection> Sphere::intersect(Ray _r)
@@ -48,7 +52,7 @@ std::vector<Intersection> Sphere::intersect(Ray _r)
     return intersection;
 }
 
-ngl::Mat4 Sphere::transform() const
+ngl::Mat4 Sphere::transform()
 {
     return m_transform;
 }
@@ -64,7 +68,7 @@ int Sphere::id() const
     return m_id;
 }
 
-Material Sphere::material() const
+Material Sphere::material()
 {
     return m_material;
 }
