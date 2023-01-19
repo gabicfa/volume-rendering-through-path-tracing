@@ -36,7 +36,7 @@ TEST(Camera, rayThroughCenterCanvas)
     auto c = Camera(201,101,M_PI/2);
     auto r = c.rayForPixel(100,50);
     ASSERT_EQ(r.origin(), ngl::Vec4(0.0f,0.0f,0.0f));
-    ASSERT_EQ(r.direction(), ngl::Vec4(0.0f,0.0f,1.0f));
+    ASSERT_EQ(r.direction(), ngl::Vec4(0.0f,0.0f,-1.0f));
 }
 
 TEST(Camera, rayThroughCornerCanvas)
@@ -44,7 +44,7 @@ TEST(Camera, rayThroughCornerCanvas)
     auto c = Camera(201,101,M_PI/2);
     auto r = c.rayForPixel(0,0);
     ASSERT_EQ(r.origin(), ngl::Vec4(0.0f,0.0f,0.0f));
-    ASSERT_EQ(r.direction(), ngl::Vec4(0.66519f, 0.33259f, 0.66851f));
+    ASSERT_EQ(r.direction(), ngl::Vec4(0.66519f, 0.33259f, -0.66851f));
 }
 
 TEST(Camera, rayCameraTransformed)
@@ -54,7 +54,7 @@ TEST(Camera, rayCameraTransformed)
     c.transform(matTrans);
     auto r = c.rayForPixel(100,50);
     ASSERT_EQ(r.origin(), ngl::Vec4(0.0f,2.0f,5.0f));
-    ASSERT_EQ(r.direction(), ngl::Vec4(std::sqrt(2)/2, 0.0f, std::sqrt(2)/2));
+    ASSERT_EQ(r.direction(), ngl::Vec4(-std::sqrt(2)/2, 0.0f, -std::sqrt(2)/2));
 }
 
 // TEST(Camera, renderingSceneWithCamera)

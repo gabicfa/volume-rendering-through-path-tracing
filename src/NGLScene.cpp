@@ -54,17 +54,22 @@ void NGLScene::initializeGL()
 
   auto scene = Scene();
 
-  // auto floor = Sphere(1);
-  // floor.setTransform(ngl::Mat4::scale(10.0f,0.1f,-10.0f));
-  // auto mat1 = Material();
-  // mat1.color(ngl::Vec3(1.0f,0.0f,0.0f));
-  // mat1.specular(0.0f);
+  auto floor = Sphere(1);
+  floor.setTransform(ngl::Mat4::scale(10.0f,0.01f,10.0f));
+  auto mat1 = Material();
+  mat1.color(ngl::Vec3(1.0f, 0.9f, 0.9f));
+  mat1.specular(0.0f);
   
-  // floor.material(mat1);
-  // scene.addObject(floor);
+  floor.material(mat1);
+  scene.addObject(floor);
 
-  auto middle = Sphere(2);
-  middle.setTransform(ngl::Mat4::translate(-0.5, 1, -0.5));
+  auto wall = Sphere(2);
+  wall.setTransform(ngl::Mat4::translate(0.0f, 0.0f, 8.0f) * ngl::Mat4::scale(10.0f,10.0f,0.1f));
+  wall.material(mat1);
+  scene.addObject(wall);
+
+  auto middle = Sphere(3);
+  middle.setTransform(ngl::Mat4::translate(-0.5f, 1.0f, 0.5f));
   auto mat2 = Material();
   mat2.color(ngl::Vec3(0.1f,1.0f,0.5f));
   mat2.diffuse(0.7f);
@@ -73,13 +78,33 @@ void NGLScene::initializeGL()
   middle.material(mat2);
   scene.addObject(middle);
 
-  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(1.0f, -1.0f, 10.0f));
+  auto right = Sphere(4);
+  right.setTransform(ngl::Mat4::translate(1.5f, 0.5f, -0.5f) * ngl::Mat4::scale(0.5f,0.5f,0.5f));
+  auto mat3 = Material();
+  mat3.color(ngl::Vec3(0.5f,1.0f,0.1f));
+  mat3.diffuse(0.7f);
+  mat3.specular(0.3f);
+  
+  right.material(mat3);
+  scene.addObject(right);
+
+  auto left = Sphere(6);
+  left.setTransform(ngl::Mat4::translate(-1.5f, 0.33f, -0.75f) * ngl::Mat4::scale(0.33f, 0.33f, 0.33f));
+  auto mat4 = Material();
+  mat4.color(ngl::Vec3(1.0f, 0.8f, 0.1f));
+  mat4.diffuse(0.7f);
+  mat4.specular(0.3f);
+  
+  left.material(mat4);
+  scene.addObject(left);
+
+  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
   scene.light(light);
   
   auto camera = Camera(TextureWidth, TextureHeight, M_PI/3);
-  auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.5f, -5.0f),
+  auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -5.0f),
                                           ngl::Vec4(0.0f, 1.0f, 0.0f),
-                                          ngl::Vec4(0.0f, 1.0f, 0.0f));
+                                          ngl::Vec4(0.0f, -1.0f, 0.0f));
   camera.transform(t);
   
   m_canvas = std::make_unique<Canvas>(camera.render(scene));
