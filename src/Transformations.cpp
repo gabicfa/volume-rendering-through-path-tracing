@@ -7,8 +7,8 @@ ngl::Mat4 Transformations::viewTransform(ngl::Vec4 from, ngl::Vec4 to, ngl::Vec4
 {
     auto forward = (to - from).normalize();
     auto upn = up.normalize();
-    auto left = (forward.cross(upn) * -1);
-    auto trueUp = (left.cross(forward) * -1);
+    auto left = upn.cross(forward);
+    auto trueUp = forward.cross(left);
 
     auto orientation = ngl::Mat4(left.m_x, left.m_y, left.m_z, 0,
                                  trueUp.m_x, trueUp.m_y, trueUp.m_z, 0,
