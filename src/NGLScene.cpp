@@ -114,8 +114,6 @@ void NGLScene::initializeGL()
 
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
-  updateTextureBuffer();
-  update();
 }
 
 void NGLScene::paintGL()
@@ -148,11 +146,6 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   {
   // escape key to quite
   case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
-  case Qt::Key_Space :
-      m_win.spinXFace=0;
-      m_win.spinYFace=0;
-      m_modelPos.set(ngl::Vec3::zero());
-
   break;
   default : break;
   }
