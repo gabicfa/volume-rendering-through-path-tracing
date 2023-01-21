@@ -104,8 +104,7 @@ TEST(Scene, colorWithIntersectionBehindRay)
 
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, -0.75f), ngl::Vec4(0.0f,0.0f,1.0f));
     auto color = s.colorAt(r);
-    auto innerColor = inner.material().color();
-    // ASSERT_EQ(color, innerColor);
+    ASSERT_EQ(color, ngl::Vec3(0.1f, 0.1f, 0.1f));
 }
 
 

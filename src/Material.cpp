@@ -62,6 +62,9 @@ bool Material::operator==(const Material& other) const
     m_shininess == other.shininess();
 }
 
+/// @brief light on material
+/// Modified from :
+/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
 ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4 _normal)
 {
     auto effectiveColor = m_color * _l.intensity();
@@ -93,3 +96,4 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
     
     return ambient + diffuse + specular;
 }
+/// end of Citation

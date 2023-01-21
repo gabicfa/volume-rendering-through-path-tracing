@@ -26,6 +26,9 @@ bool Sphere::operator!=(const Sphere& other) const
     !(m_material == other.m_material);
 }
 
+/// @brief ray intersecting sphere
+/// Modified from :
+/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
 std::vector<Intersection> Sphere::intersect(Ray _r)
 {
     
@@ -78,6 +81,9 @@ void Sphere::material(Material _m)
     m_material = _m;
 }
 
+/// @brief normal vector at a point
+/// Modified from :
+/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
 ngl::Vec4 Sphere::normalAt(ngl::Vec4 _worldPoint)
 {
     auto objPoint = m_transform.inverse() * _worldPoint;
@@ -86,3 +92,4 @@ ngl::Vec4 Sphere::normalAt(ngl::Vec4 _worldPoint)
     worldNormal.m_w = 0.0f;
     return worldNormal.normalize();
 }
+/// end of Citation

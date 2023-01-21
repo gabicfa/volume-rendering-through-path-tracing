@@ -54,6 +54,10 @@ double Camera::pixelSize() const
     return m_pixelSize;
 }
 
+
+/// @brief Constructing rays at cameras pixels
+/// Modified from :
+/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
 Ray Camera::rayForPixel(double px, double py)
 {
     auto xoffset = (px + 0.5) * m_pixelSize;
@@ -68,6 +72,7 @@ Ray Camera::rayForPixel(double px, double py)
 
     return Ray(origin, direction);
 }
+/// end of Citation
 
 void Camera::transform(ngl::Mat4 _t)
 {

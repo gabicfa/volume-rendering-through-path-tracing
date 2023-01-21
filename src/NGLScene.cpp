@@ -79,9 +79,9 @@ void NGLScene::initializeGL()
   scene.addObject(middle);
 
   auto right = Sphere(4);
-  right.setTransform(ngl::Mat4::translate(1.5f, 0.5f, -0.5f) * ngl::Mat4::scale(0.5f,0.5f,0.5f));
+  right.setTransform(ngl::Mat4::translate(1.5f, 0.5f, -0.5f) * ngl::Mat4::scale(0.5f,0.25f,0.5f));
   auto mat3 = Material();
-  mat3.color(ngl::Vec3(0.5f,1.0f,0.1f));
+  mat3.color(ngl::Vec3(1.0f,0.0f,1.0f));
   mat3.diffuse(0.7f);
   mat3.specular(0.3f);
   

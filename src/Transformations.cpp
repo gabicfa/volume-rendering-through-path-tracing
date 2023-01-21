@@ -1,5 +1,8 @@
 #include "Transformations.h"
 
+/// @brief builds camera transformation matrix
+/// Modified from :
+/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
 ngl::Mat4 Transformations::viewTransform(ngl::Vec4 from, ngl::Vec4 to, ngl::Vec4 up)
 {
     auto forward = (to - from).normalize();
