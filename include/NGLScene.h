@@ -4,6 +4,8 @@
 #include <ngl/Mat4.h>
 #include "WindowParams.h"
 #include "Canvas.h"
+#include "Scene.h"
+#include "Camera.h"
 
 // this must be included after NGL includes else we get a clash with gl libs
 #include <QOpenGLWindow>
@@ -79,7 +81,7 @@ private:
     void wheelEvent( QWheelEvent *_event) override;
     void timerEvent(QTimerEvent *_event) override;
     void updateTextureBuffer();
-    
+    void readFile(Scene &s, Camera &c);
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
     ngl::Vec3 m_modelPos;
