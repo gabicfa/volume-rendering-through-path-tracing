@@ -57,7 +57,7 @@ double Camera::pixelSize() const
 
 /// @brief Constructing rays at cameras pixels
 /// Modified from :
-/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
+/// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 Ray Camera::rayForPixel(double px, double py)
 {
     auto xoffset = (px + 0.5) * m_pixelSize;

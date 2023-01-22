@@ -64,15 +64,24 @@ bool Material::operator==(const Material& other) const
 
 /// @brief light on material
 /// Modified from :
-/// Jamis Buck (2019). The Ray Tracer Challenge The Pragmatic Bookshelf. Raleigh, North Carolina:The Pragmatic Bookshelf 
+/// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4 _normal)
 {
+    // combine the surface color with the light's color/intensity
     auto effectiveColor = m_color * _l.intensity();
+
+    // find the direction to the light source
     auto light = (_l.position() - _pos).normalize();
+
+    // compute the ambient contribution
     ngl::Vec3 ambient = effectiveColor * m_ambient;
     auto lightDotNormal = light.dot(_normal);
     ngl::Vec3 diffuse;
     ngl::Vec3 specular;
+
+    // lightDotNormal represents the cosine of the angle between the 
+    // light vector and the normal vector. A negative number means the 
+    // light is on the other side of the surface.
     if (lightDotNormal < 0.0f) 
     {
         diffuse = ngl::Vec3(0.0f,0.0f,0.0f);
@@ -80,7 +89,12 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
     }
     else
     {
+        // compute the diffuse contribution
         diffuse = effectiveColor * m_diffuse * lightDotNormal;
+        
+        // reflactDotEye represents the cosine of the angle between the
+        // reflection vector and the eye vector. A negative number means the 
+        // light reflects away from the eye.
         auto reflect = (-light).toVec3().reflect(_normal.toVec3());
         auto reflactDotEye = ngl::Vec4(reflect).dot(_eye);
         if (reflactDotEye <= 0)
@@ -89,11 +103,13 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
         }
         else
         {
+            // compute the specular contribution
             auto factor = pow(reflactDotEye, m_shininess);
             specular = _l.intensity() * m_specular * factor;
         }
     }
     
+    // Add the three contributions together to get the final shading
     return ambient + diffuse + specular;
 }
 /// end of Citation
