@@ -73,7 +73,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   auto to = cam.get_child("to");
   auto up = cam.get_child("up");
   auto t = Transformations::viewTransform(ngl::Vec4(from.get<float>("x"),from.get<float>("y"),from.get<float>("z")),
-                                          ngl::Vec4(to.get<float>("x"),-to.get<float>("y"),to.get<float>("z")),
+                                          ngl::Vec4(-to.get<float>("x"),-to.get<float>("y"),to.get<float>("z")),
                                           ngl::Vec4(up.get<float>("x"),-up.get<float>("y"),up.get<float>("z")));
   c.fieldOfView(fov);
   c.transform(t);
