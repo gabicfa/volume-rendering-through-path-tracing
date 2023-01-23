@@ -44,8 +44,8 @@ void defaultScene(Scene &s, Camera &c)
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(-0.5f, 1.0f, -4.0f),
-                                        ngl::Vec4(0.0f, 1.0f, 0.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -3.0f),
+                                        ngl::Vec4(0.0f, 2.0f, 0.0f),
                                         ngl::Vec4(0.0f, -1.0f, 0.0f));
     c.transform(t);
 }

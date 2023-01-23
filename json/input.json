@@ -1,5 +1,5 @@
 {
-    "defaultScene": false,
+    "defaultScene": true,
     "light" : 
     {
         "intensity": {
