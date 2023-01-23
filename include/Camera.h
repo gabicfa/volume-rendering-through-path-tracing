@@ -14,6 +14,7 @@ class Camera
         size_t hsize() const;
         size_t vsize() const;
         double fieldOfView() const;
+        void fieldOfView(double _fov);
         void transform(ngl::Mat4 _t);
         ngl::Mat4 transform() const;
         double pixelSize() const;

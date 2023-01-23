@@ -1,19 +1,20 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
+#include <fstream>
 
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/ShaderLib.h>
 #include <iostream>
+#include <cmath>
 #include <ngl/Random.h>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "Scene.h"
 #include "Sphere.h"
 #include "Camera.h"
 #include "Light.h"
-
-// constexpr size_t TextureWidth=1024;
-// constexpr size_t TextureHeight=720;
 
 constexpr size_t TextureWidth = 720;
 constexpr size_t TextureHeight = 360;
@@ -22,7 +23,6 @@ NGLScene::NGLScene()
 {
   setTitle("Ray Tracer NGL");
 }
-
 
 NGLScene::~NGLScene()
 {
@@ -36,6 +36,103 @@ void NGLScene::resizeGL(int _w , int _h)
 }
 
 constexpr auto TextureShader="TextureShader";
+
+void defaultScene(Scene &s, Camera &c)
+{
+    s = Scene(true);
+    
+    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
+    s.light(light);
+    
+    auto t = Transformations::viewTransform(ngl::Vec4(-0.5f, 1.0f, -4.0f),
+                                        ngl::Vec4(0.0f, 1.0f, 0.0f),
+                                        ngl::Vec4(0.0f, -1.0f, 0.0f));
+    c.transform(t);
+}
+
+void readFileAndCreateScene(Scene &s, Camera &c)
+{
+  boost::property_tree::ptree pt;
+  boost::property_tree::read_json("../json/input.json", pt);
+
+  // Light attributes
+  auto l = pt.get_child("light");
+  auto li = l.get_child("intensity");
+  auto intensityVector = ngl::Vec3(li.get<float>("r"),li.get<float>("g"),li.get<float>("b"));
+  auto lp = l.get_child("position");
+  auto positionVector = ngl::Vec4(lp.get<float>("x"),lp.get<float>("y"),lp.get<float>("z"));
+
+  auto light = Light(intensityVector, positionVector);
+  s.light(light);
+
+
+  // Camera attributes
+  auto cam = pt.get_child("camera");
+  auto fov = cam.get<double>("fieldOfView") * M_PI / 180.0;
+  auto from = cam.get_child("from");
+  auto to = cam.get_child("to");
+  auto up = cam.get_child("up");
+  auto t = Transformations::viewTransform(ngl::Vec4(from.get<float>("x"),from.get<float>("y"),from.get<float>("z")),
+                                          ngl::Vec4(to.get<float>("x"),-to.get<float>("y"),to.get<float>("z")),
+                                          ngl::Vec4(up.get<float>("x"),-up.get<float>("y"),up.get<float>("z")));
+  c.fieldOfView(fov);
+  c.transform(t);
+
+  //Sphere attributes
+  auto spheres = pt.get_child("spheres");
+  auto id = 0;
+  for (auto& sphere : spheres) 
+  {
+    auto obj = Sphere(id);
+    auto t = ngl::Mat4();
+    if(sphere.second.count("translate"))
+    {
+      auto translate = sphere.second.get_child("translate");
+      t = t * ngl::Mat4::translate(translate.get<float>("x"),translate.get<float>("y"),translate.get<float>("z"));
+    }
+    if(sphere.second.count("scale"))
+    {
+      auto scale = sphere.second.get_child("scale");
+      t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
+    }
+
+    // Material attributes
+    if(sphere.second.count("material"))
+    {
+      auto mat = sphere.second.get_child("material");
+      auto material = Material();
+
+      if(mat.count("specular"))
+      {
+        material.specular(mat.get<float>("specular"));
+      }
+
+      if(mat.count("diffuse"))
+      {
+        material.diffuse(mat.get<float>("diffuse"));
+      }
+
+      if(mat.count("ambient"))
+      {
+        material.ambient(mat.get<float>("ambient"));
+      }
+
+      if(mat.count("shininess"))
+      {
+        material.shininess(mat.get<float>("shininess"));
+      }
+
+      if(mat.count("color"))
+      {
+        auto color = mat.get_child("color");
+        material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
+      }
+      obj.material(material);
+    }
+    obj.setTransform(t);
+    s.addObject(obj);
+  }
+}
 
 void NGLScene::initializeGL()
 {
@@ -53,60 +150,29 @@ void NGLScene::initializeGL()
   // Generate our buffer for the texture data
 
   auto scene = Scene();
-
-  auto floor = Sphere(1);
-  floor.setTransform(ngl::Mat4::scale(10.0f,0.01f,10.0f));
-  auto mat1 = Material();
-  mat1.color(ngl::Vec3(1.0f, 0.9f, 0.9f));
-  mat1.specular(0.0f);
+  auto camera = Camera(TextureWidth, TextureHeight, M_PI/2);
   
-  floor.material(mat1);
-  scene.addObject(floor);
+  std::ifstream infile;
+  infile.open("../json/input.json");
+  if(infile.is_open())
+  {
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json("../json/input.json", pt);
+    if(pt.get<bool>("defaultScene"))
+    {
+      defaultScene(scene, camera);
+    }
+    else
+    {
+      readFileAndCreateScene(scene, camera);
+    }
+    infile.close();
+  }
+  else
+  {
+    defaultScene(scene, camera);
+  }
 
-  auto wall = Sphere(2);
-  wall.setTransform(ngl::Mat4::translate(0.0f, 0.0f, 8.0f) * ngl::Mat4::scale(10.0f,10.0f,0.1f));
-  wall.material(mat1);
-  scene.addObject(wall);
-
-  auto middle = Sphere(3);
-  middle.setTransform(ngl::Mat4::translate(-0.5f, 1.0f, 0.5f));
-  auto mat2 = Material();
-  mat2.color(ngl::Vec3(0.1f,1.0f,0.5f));
-  mat2.diffuse(0.7f);
-  mat2.specular(0.3f);
-  
-  middle.material(mat2);
-  scene.addObject(middle);
-
-  auto right = Sphere(4);
-  right.setTransform(ngl::Mat4::translate(1.5f, 0.5f, -0.5f) * ngl::Mat4::scale(0.5f,0.25f,0.5f));
-  auto mat3 = Material();
-  mat3.color(ngl::Vec3(1.0f,0.0f,1.0f));
-  mat3.diffuse(0.7f);
-  mat3.specular(0.3f);
-  
-  right.material(mat3);
-  scene.addObject(right);
-
-  auto left = Sphere(6);
-  left.setTransform(ngl::Mat4::translate(-1.5f, 0.33f, -0.75f) * ngl::Mat4::scale(0.33f, 0.33f, 0.33f));
-  auto mat4 = Material();
-  mat4.color(ngl::Vec3(1.0f, 0.8f, 0.1f));
-  mat4.diffuse(0.7f);
-  mat4.specular(0.3f);
-  
-  left.material(mat4);
-  scene.addObject(left);
-
-  auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
-  scene.light(light);
-  
-  auto camera = Camera(TextureWidth, TextureHeight, M_PI/3);
-  auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -5.0f),
-                                          ngl::Vec4(0.0f, 1.0f, 0.0f),
-                                          ngl::Vec4(0.0f, -1.0f, 0.0f));
-  camera.transform(t);
-  
   m_canvas = std::make_unique<Canvas>(camera.render(scene));
   updateTextureBuffer();
   startTimer(10);
@@ -115,6 +181,8 @@ void NGLScene::initializeGL()
 void NGLScene::timerEvent(QTimerEvent *_event)
 {
 }
+
+
 
 void NGLScene::paintGL()
 {

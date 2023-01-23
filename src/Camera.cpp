@@ -2,21 +2,7 @@
 
 Camera::Camera(size_t _h, size_t _v, double _fov) : m_hsize{_h}, m_vsize{_v}, m_fieldOfView{_fov}
 {
-    auto halfView = tan(m_fieldOfView/2);
-    auto aspect = static_cast<float>(m_hsize) / static_cast<float>(m_vsize);
-
-    if(aspect >= 1)
-    {
-        m_halfWidth = halfView;
-        m_halfHeight = halfView / aspect;
-    }
-    else
-    {
-        m_halfWidth = halfView * aspect;
-        m_halfHeight = halfView;
-    }
-
-    m_pixelSize = (m_halfWidth * 2) / m_hsize;
+    this->fieldOfView(m_fieldOfView);
 }
 
 size_t Camera::hsize() const
@@ -32,6 +18,26 @@ size_t Camera::vsize() const
 double Camera::fieldOfView() const
 {
     return m_fieldOfView;
+}
+
+void Camera::fieldOfView(double _fov)
+{
+    m_fieldOfView = _fov;
+    auto halfView = tan(m_fieldOfView/2);
+    auto aspect = static_cast<float>(m_hsize) / static_cast<float>(m_vsize);
+
+    if(aspect >= 1)
+    {
+        m_halfWidth = halfView;
+        m_halfHeight = halfView / aspect;
+    }
+    else
+    {
+        m_halfWidth = halfView * aspect;
+        m_halfHeight = halfView;
+    }
+
+    m_pixelSize = (m_halfWidth * 2) / m_hsize;
 }
 
 double Camera::halfWidth() const

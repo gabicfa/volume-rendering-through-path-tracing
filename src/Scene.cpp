@@ -12,6 +12,8 @@ Scene::Scene(bool _default)
         m_light = l;
 
         auto s1 = Sphere(1);
+        auto transform1 = ngl::Mat4::translate(-2.0f,1.0f,-0.5f);
+        s1.setTransform(transform1);
         auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
         auto m = Material();
         m.color(mColor);
@@ -21,8 +23,8 @@ Scene::Scene(bool _default)
         m_objects.push_back(s1);
 
         auto s2 = Sphere(2);
-        auto transform = ngl::Mat4::scale(0.5f,0.5f,0.5f);
-        s2.setTransform(transform);
+        auto transform2 = ngl::Mat4::scale(0.5f,0.5f,0.5f);
+        s2.setTransform(transform2);
         m_objects.push_back(s2);
     }
 }
