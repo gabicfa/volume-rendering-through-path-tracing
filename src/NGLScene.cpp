@@ -55,6 +55,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   boost::property_tree::ptree pt;
   boost::property_tree::read_json("../json/input.json", pt);
 
+  // Light attributes
   auto l = pt.get_child("light");
   auto li = l.get_child("intensity");
   auto intensityVector = ngl::Vec3(li.get<float>("r"),li.get<float>("g"),li.get<float>("b"));
@@ -64,6 +65,8 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   auto light = Light(intensityVector, positionVector);
   s.light(light);
 
+
+  // Camera attributes
   auto cam = pt.get_child("camera");
   auto fov = cam.get<double>("fieldOfView") * M_PI / 180.0;
   auto from = cam.get_child("from");
@@ -75,6 +78,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   c.fieldOfView(fov);
   c.transform(t);
 
+  //Sphere attributes
   auto spheres = pt.get_child("spheres");
   auto id = 0;
   for (auto& sphere : spheres) 
@@ -91,6 +95,8 @@ void readFileAndCreateScene(Scene &s, Camera &c)
       auto scale = sphere.second.get_child("scale");
       t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
     }
+
+    // Material attributes
     if(sphere.second.count("material"))
     {
       auto mat = sphere.second.get_child("material");
