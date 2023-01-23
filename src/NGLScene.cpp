@@ -37,56 +37,23 @@ void NGLScene::resizeGL(int _w , int _h)
 
 constexpr auto TextureShader="TextureShader";
 
-void NGLScene::initializeGL()
+void defaultScene(Scene &s, Camera &c)
 {
-  // we must call that first before any other GL commands to load and link the
-  // gl commands from the lib, if that is not done program will crash
-  ngl::NGLInit::initialize();
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  // enable depth testing for drawing
-  glEnable(GL_DEPTH_TEST);
-  // enable multisampling for smoother drawing
-  glEnable(GL_MULTISAMPLE);
-  ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
-  glGenTextures(1, &m_textureID);
-  glGenVertexArrays(1,&m_vao);
-  // Generate our buffer for the texture data
-
-  auto scene = Scene();
-  auto camera = Camera(TextureWidth, TextureHeight, M_PI/2);
-  
-  std::ifstream infile;
-  infile.open("input.json");
-  if(infile.is_open())
-  {
-    readFile(scene, camera);
-  }
-  else
-  {
-    scene = Scene(true);
+    s = Scene(true);
     
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
-    scene.light(light);
+    s.light(light);
     
     auto t = Transformations::viewTransform(ngl::Vec4(-0.5f, 1.0f, -4.0f),
                                         ngl::Vec4(0.0f, 1.0f, 0.0f),
                                         ngl::Vec4(0.0f, -1.0f, 0.0f));
-    camera.transform(t);
-  }
-
-  m_canvas = std::make_unique<Canvas>(camera.render(scene));
-  updateTextureBuffer();
-  startTimer(10);
+    c.transform(t);
 }
 
-void NGLScene::timerEvent(QTimerEvent *_event)
-{
-}
-
-void NGLScene::readFile(Scene &s, Camera &c)
+void readFileAndCreateScene(Scene &s, Camera &c)
 {
   boost::property_tree::ptree pt;
-  boost::property_tree::read_json("input.json", pt);
+  boost::property_tree::read_json("../json/input.json", pt);
 
   auto l = pt.get_child("light");
   auto li = l.get_child("intensity");
@@ -108,50 +75,108 @@ void NGLScene::readFile(Scene &s, Camera &c)
   c.fieldOfView(fov);
   c.transform(t);
 
-  auto floor = Sphere(1);
-  floor.setTransform(ngl::Mat4::scale(10.0f,0.01f,10.0f));
-  auto mat1 = Material();
-  mat1.color(ngl::Vec3(1.0f, 0.9f, 0.9f));
-  mat1.specular(0.0f);
-  
-  floor.material(mat1);
-  s.addObject(floor);
+  auto spheres = pt.get_child("spheres");
+  auto id = 0;
+  for (auto& sphere : spheres) 
+  {
+    auto obj = Sphere(id);
+    auto t = ngl::Mat4();
+    if(sphere.second.count("translate"))
+    {
+      auto translate = sphere.second.get_child("translate");
+      t = t * ngl::Mat4::translate(translate.get<float>("x"),translate.get<float>("y"),translate.get<float>("z"));
+    }
+    if(sphere.second.count("scale"))
+    {
+      auto scale = sphere.second.get_child("scale");
+      t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
+    }
+    if(sphere.second.count("material"))
+    {
+      auto mat = sphere.second.get_child("material");
+      auto material = Material();
 
-  auto wall = Sphere(2);
-  wall.setTransform(ngl::Mat4::translate(0.0f, 0.0f, 8.0f) * ngl::Mat4::scale(10.0f,10.0f,0.1f));
-  wall.material(mat1);
-  s.addObject(wall);
+      if(mat.count("specular"))
+      {
+        material.specular(mat.get<float>("specular"));
+      }
 
-  auto middle = Sphere(3);
-  middle.setTransform(ngl::Mat4::translate(-0.5f, 1.0f, 0.5f));
-  auto mat2 = Material();
-  mat2.color(ngl::Vec3(0.1f,1.0f,0.5f));
-  mat2.diffuse(0.7f);
-  mat2.specular(0.3f);
-  
-  middle.material(mat2);
-  s.addObject(middle);
+      if(mat.count("diffuse"))
+      {
+        material.diffuse(mat.get<float>("diffuse"));
+      }
 
-  auto right = Sphere(4);
-  right.setTransform(ngl::Mat4::translate(1.5f, 0.5f, -0.5f) * ngl::Mat4::scale(0.5f,0.25f,0.5f));
-  auto mat3 = Material();
-  mat3.color(ngl::Vec3(1.0f,0.0f,1.0f));
-  mat3.diffuse(0.7f);
-  mat3.specular(0.3f);
-  
-  right.material(mat3);
-  s.addObject(right);
+      if(mat.count("ambient"))
+      {
+        material.ambient(mat.get<float>("ambient"));
+      }
 
-  auto left = Sphere(6);
-  left.setTransform(ngl::Mat4::translate(-1.5f, 0.33f, -0.75f) * ngl::Mat4::scale(0.33f, 0.33f, 0.33f));
-  auto mat4 = Material();
-  mat4.color(ngl::Vec3(1.0f, 0.8f, 0.1f));
-  mat4.diffuse(0.7f);
-  mat4.specular(0.3f);
-  
-  left.material(mat4);
-  s.addObject(left);
+      if(mat.count("shininess"))
+      {
+        material.shininess(mat.get<float>("shininess"));
+      }
+
+      if(mat.count("color"))
+      {
+        auto color = mat.get_child("color");
+        material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
+      }
+      obj.material(material);
+    }
+    obj.setTransform(t);
+    s.addObject(obj);
+  }
 }
+
+void NGLScene::initializeGL()
+{
+  // we must call that first before any other GL commands to load and link the
+  // gl commands from the lib, if that is not done program will crash
+  ngl::NGLInit::initialize();
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  // enable depth testing for drawing
+  glEnable(GL_DEPTH_TEST);
+  // enable multisampling for smoother drawing
+  glEnable(GL_MULTISAMPLE);
+  ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
+  glGenTextures(1, &m_textureID);
+  glGenVertexArrays(1,&m_vao);
+  // Generate our buffer for the texture data
+
+  auto scene = Scene();
+  auto camera = Camera(TextureWidth, TextureHeight, M_PI/2);
+  
+  std::ifstream infile;
+  infile.open("../json/input.json");
+  if(infile.is_open())
+  {
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json("../json/input.json", pt);
+    if(pt.get<bool>("defaultScene"))
+    {
+      defaultScene(scene, camera);
+    }
+    else
+    {
+      readFileAndCreateScene(scene, camera);
+    }
+    infile.close();
+  }
+  else
+  {
+    defaultScene(scene, camera);
+  }
+
+  m_canvas = std::make_unique<Canvas>(camera.render(scene));
+  updateTextureBuffer();
+  startTimer(10);
+}
+
+void NGLScene::timerEvent(QTimerEvent *_event)
+{
+}
+
+
 
 void NGLScene::paintGL()
 {

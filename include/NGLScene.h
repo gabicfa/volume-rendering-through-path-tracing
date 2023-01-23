@@ -81,7 +81,6 @@ private:
     void wheelEvent( QWheelEvent *_event) override;
     void timerEvent(QTimerEvent *_event) override;
     void updateTextureBuffer();
-    void readFile(Scene &s, Camera &c);
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
     ngl::Vec3 m_modelPos;
