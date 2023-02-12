@@ -125,7 +125,7 @@ The scene is built based on the parameters of the `json/input.json` file.
 }]
 ```
 
-## Feature Implementation
+## Future Implementation
 
 I would like to add different primitives to the scene, not only spheres. In the future, I plan to implement planes, cubes, cylinders, cones, and meshes.
 
