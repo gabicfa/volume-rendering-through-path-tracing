@@ -1,8 +1,8 @@
-# Gabriela Almeida Assigment
+# Ray Tracer - ASE Assigment
 
-## Overall Idea - Ray Tracing
+## Overall Idea
 
-I developed a Ray Tracing program with the ability to ray-trace spheres. The program uses a simple JSON file to describe the material properties, light, and objects in the scene. The ray-traced image is shown using a OpenGL frame buffer.
+I developed a Ray Tracer program with the ability to ray-trace spheres. The program uses a simple JSON file to describe the material properties, light, and objects in the scene. The ray-traced image is shown using a OpenGL frame buffer.
 
 ## Class Design
 
