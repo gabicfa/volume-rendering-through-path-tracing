@@ -1,13 +1,13 @@
 #include "Intersection.h"
-#include "Sphere.h"
+#include "Shape.h"
 
 Intersection::Intersection()
 {
     m_t = 0;
-    m_object = std::make_shared<Sphere>();
+    m_object = nullptr;
 }
 
-Intersection::Intersection(float _t, std::shared_ptr<Sphere> _object)
+Intersection::Intersection(float _t, std::shared_ptr<Shape> _object)
 {
     m_t = _t;
     m_object = _object;
@@ -15,7 +15,7 @@ Intersection::Intersection(float _t, std::shared_ptr<Sphere> _object)
 
 bool Intersection::operator==(const Intersection& other) const
 {
-    return m_t == other.m_t && *m_object == *(other.m_object);
+    return m_t == other.m_t && m_object == other.m_object;
 }
 
 bool Intersection::operator!=(const Intersection& other) const
@@ -29,7 +29,7 @@ float Intersection::t() const
     return m_t;
 }
 
-std::shared_ptr<Sphere> Intersection::object() const
+std::shared_ptr<Shape> Intersection::object() const
 {
     return m_object;
 }
@@ -61,7 +61,7 @@ Computation Intersection::prepareComputations(Ray _r)
 {
     Computation comp;
     comp.t = this->m_t;
-    comp.object = std::make_shared<Sphere>(*m_object); // Assign a new shared_ptr
+    comp.object = m_object;
     comp.point = _r.position(comp.t);
     comp.eye = -(_r.direction());
     comp.normal = comp.object->normalAt(comp.point);

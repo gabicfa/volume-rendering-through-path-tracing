@@ -17,7 +17,7 @@ Scene::Scene(bool _default)
         m.color(mColor);
         m.diffuse(0.7);
         m.specular(0.2);
-        s1.material(m);
+        s1.setMaterial(m);
         m_objects.push_back(s1);
 
         auto s2 = Sphere(2);

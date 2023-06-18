@@ -178,6 +178,6 @@ TEST(Sphere, assignMaterial)
     auto s = Sphere(1);
     auto m = Material();
     m.ambient(1.0f);
-    s.material(m);
+    s.setMaterial(m);
     ASSERT_EQ(s.material(), m);
 }

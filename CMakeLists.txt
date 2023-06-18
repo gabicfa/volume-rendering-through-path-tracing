@@ -51,7 +51,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Scene.cpp
             ${PROJECT_SOURCE_DIR}/src/Transformations.cpp
             ${PROJECT_SOURCE_DIR}/src/Camera.cpp
-			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
+			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -63,6 +63,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Computation.h
             ${PROJECT_SOURCE_DIR}/include/Transformations.h
             ${PROJECT_SOURCE_DIR}/include/Camera.h
+            ${PROJECT_SOURCE_DIR}/include/Shape.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)

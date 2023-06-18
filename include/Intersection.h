@@ -2,21 +2,20 @@
 #define INTERSECTION_H_
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "Ray.h"
-#include <iostream>
-#include <vector>
 #include "Computation.h"
 
-class Sphere;
+class Shape;
 
 class Intersection
 {
     public:
         Intersection();
-        Intersection(float _t, std::shared_ptr<Sphere> _object);
+        Intersection(float _t, std::shared_ptr<Shape> _object);
         float t() const;
-        std::shared_ptr<Sphere> object() const;
+        std::shared_ptr<Shape> object() const;
         bool operator==(const Intersection& other) const;
         bool operator!=(const Intersection& other) const;
         static std::vector<Intersection> intersections(std::vector<Intersection> intersections);
@@ -24,7 +23,7 @@ class Intersection
         Computation prepareComputations(Ray _r);
     private:
         float m_t = 0;
-        std::shared_ptr<Sphere> m_object;
+        std::shared_ptr<Shape> m_object;
 };
 
 #endif

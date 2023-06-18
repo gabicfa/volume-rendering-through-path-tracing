@@ -21,7 +21,7 @@ TEST(Scene, createDefaultScene)
     m.color(mColor);
     m.diffuse(0.7);
     m.specular(0.2);
-    s1.material(m);
+    s1.setMaterial(m);
 
     auto s2 = Sphere(2);
     auto transform = ngl::Mat4::scale(0.5f,0.5f,0.5f);
@@ -100,12 +100,12 @@ TEST(Scene, colorWithIntersectionBehindRay)
     auto outer = s.objects()[0];
     auto m1 = outer.material();
     m1.ambient(1.0f);
-    outer.material(m1);
+    outer.setMaterial(m1);
 
     auto inner = s.objects()[1];
     auto m2 = inner.material();
     m2.ambient(1.0f);
-    inner.material(m2);
+    inner.setMaterial(m2);
 
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, -0.75f), ngl::Vec4(0.0f,0.0f,1.0f));
     auto color = s.colorAt(r);

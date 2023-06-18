@@ -127,7 +127,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
         auto color = mat.get_child("color");
         material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
       }
-      obj.material(material);
+      obj.setMaterial(material);
     }
     obj.setTransform(t);
     s.addObject(obj);
