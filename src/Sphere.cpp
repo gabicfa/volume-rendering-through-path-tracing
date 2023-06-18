@@ -31,7 +31,6 @@ bool Sphere::operator!=(const Sphere& other) const
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 std::vector<Intersection> Sphere::intersect(Ray _r)
 {
-    
     Ray _r2 = _r.transform(m_transform.inverse());
 
     std::vector<Intersection> intersection;
@@ -45,15 +44,16 @@ std::vector<Intersection> Sphere::intersect(Ray _r)
 
     if (discriminant >= 0)
     {
-        float t1 = (-b - std::sqrt(discriminant)) / (2 *a);
-        auto i1 = Intersection(t1, this);
+        float t1 = (-b - std::sqrt(discriminant)) / (2 * a);
+        auto i1 = Intersection(t1, std::make_shared<Sphere>(*this));
         intersection.push_back(i1);
-        float t2 = (-b + std::sqrt(discriminant)) / (2 *a);
-        auto i2 = Intersection(t2, this);
+        float t2 = (-b + std::sqrt(discriminant)) / (2 * a);
+        auto i2 = Intersection(t2, std::make_shared<Sphere>(*this));
         intersection.push_back(i2);
     }
     return intersection;
 }
+
 
 ngl::Mat4 Sphere::transform()
 {

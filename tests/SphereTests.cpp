@@ -61,8 +61,8 @@ TEST(Sphere, intersectsSetObj)
     auto s = Sphere(1);
     auto xs = s.intersect(r);
     ASSERT_EQ(xs.size(), 2);
-    ASSERT_EQ(xs[0].object(), 1);
-    ASSERT_EQ(xs[1].object(), 1);
+    ASSERT_EQ(xs[0].object()->id(), 1);
+    ASSERT_EQ(xs[1].object()->id(), 1);
 }
 
 TEST(Sphere, defaultTransformation)

@@ -12,7 +12,7 @@ class Computation
     public:
         Computation() = default;
         float t;
-        Sphere *object;
+        std::shared_ptr<Sphere> object;
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;

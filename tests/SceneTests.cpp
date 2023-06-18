@@ -48,8 +48,8 @@ TEST(Scene, shadingIntersection)
 {
     auto s = Scene(true);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto s1 = s.objects()[0];
-    auto i = Intersection(4.0f, &s1);
+    auto s1 = std::make_shared<Sphere>(s.objects()[0]);
+    auto i = Intersection(4.0f, s1);
 
     auto comp = i.prepareComputations(r);
     auto color = s.shadeHit(comp);
@@ -64,8 +64,8 @@ TEST(Scene, shadingIntersectionFromInside)
     s.light(l);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 0.0f), ngl::Vec4(0.0f,0.0f,1.0f));
     
-    auto s2 = s.objects()[1];
-    auto i = Intersection(0.5f, &s2);
+    auto s2 = std::make_shared<Sphere>(s.objects()[1]);
+    auto i = Intersection(0.5f, s2);
 
     auto comp = i.prepareComputations(r);
     auto color = s.shadeHit(comp);
@@ -78,7 +78,12 @@ TEST(Scene, colorWhenRayMisses)
     auto s = Scene(true);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,1.0f,0.0f));
     auto color = s.colorAt(r);
-    ASSERT_EQ(color, ngl::Vec3(0.0f, 0.0f, 0.0f));
+
+    auto d = r.direction()/r.direction().length();
+    auto t = 0.5 * (d.m_y + 1.0);
+    auto c = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
+
+    ASSERT_EQ(color, c);
 }
 
 TEST(Scene, colorWhenRayHits)

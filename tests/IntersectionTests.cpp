@@ -6,17 +6,17 @@
 
 TEST(Intersection, createIntersection)
 {
-    auto s = Sphere(1);
-    auto i = Intersection(3.5f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i = Intersection(3.5f, s);
     ASSERT_EQ(i.t(), 3.5f);
-    ASSERT_EQ(i.object(), 1);
+    ASSERT_EQ(i.object()->id(), 1);
 }
 
 TEST(Intersection, aggregatingIntersections)
 {
-    auto s = Sphere(1);
-    auto i1 = Intersection(1.0f, &s);
-    auto i2 = Intersection(2.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i1 = Intersection(1.0f, s);
+    auto i2 = Intersection(2.0f, s);
     std::vector<Intersection> all_intersections = {i1, i2};
     auto xs = Intersection::intersections(all_intersections);
     ASSERT_EQ(xs.size(), 2);
@@ -26,9 +26,9 @@ TEST(Intersection, aggregatingIntersections)
 
 TEST(Intersection, hitAllIntersectionsPositiveT)
 {
-    auto s = Sphere(1);
-    auto i1 = Intersection(1.0f, &s);
-    auto i2 = Intersection(2.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i1 = Intersection(1.0f, s);
+    auto i2 = Intersection(2.0f, s);
     std::vector<Intersection> all_intersections = {i2, i1};
     auto xs = Intersection::intersections(all_intersections);
     auto i = Intersection::hit(xs);
@@ -37,9 +37,9 @@ TEST(Intersection, hitAllIntersectionsPositiveT)
 
 TEST(Intersection, hitIntersectionsSomeNegT)
 {
-    auto s = Sphere(1);
-    auto i1 = Intersection(-1.0f, &s);
-    auto i2 = Intersection(1.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i1 = Intersection(-1.0f, s);
+    auto i2 = Intersection(1.0f, s);
     std::vector<Intersection> all_intersections = {i2, i1};
     auto xs = Intersection::intersections(all_intersections);
     auto i = Intersection::hit(xs);
@@ -48,9 +48,9 @@ TEST(Intersection, hitIntersectionsSomeNegT)
 
 TEST(Intersection, hitIntersectionsNegT)
 {
-    auto s = Sphere(1);
-    auto i1 = Intersection(-2.0f, &s);
-    auto i2 = Intersection(-1.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i1 = Intersection(-2.0f, s);
+    auto i2 = Intersection(-1.0f, s);
     std::vector<Intersection> all_intersections = {i2, i1};
     auto xs = Intersection::intersections(all_intersections);
     auto i = Intersection::hit(xs);
@@ -60,11 +60,11 @@ TEST(Intersection, hitIntersectionsNegT)
 
 TEST(Intersection, hitLowestNonNeg)
 {
-    auto s = Sphere(1);
-    auto i1 = Intersection(5.0f, &s);
-    auto i2 = Intersection(7.0f, &s);
-    auto i3 = Intersection(-3.0f, &s);
-    auto i4 = Intersection(2.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i1 = Intersection(5.0f, s);
+    auto i2 = Intersection(7.0f, s);
+    auto i3 = Intersection(-3.0f, s);
+    auto i4 = Intersection(2.0f, s);
     std::vector<Intersection> all_intersections = {i1, i2, i3, i4};
     auto xs = Intersection::intersections(all_intersections);
     auto i = Intersection::hit(xs);
@@ -74,8 +74,8 @@ TEST(Intersection, hitLowestNonNeg)
 TEST(Intersection, preCompStateOfIntersection)
 {
     auto r = Ray(ngl::Vec4(0.0f,0.0f,5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto s = Sphere(1);
-    auto i = Intersection(4.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i = Intersection(4.0f, s);
 
     auto comp = i.prepareComputations(r);
 
@@ -89,8 +89,8 @@ TEST(Intersection, preCompStateOfIntersection)
 TEST(Intersection, hitWhenIntersectionOutside)
 {
     auto r = Ray(ngl::Vec4(0.0f,0.0f,5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto s = Sphere(1);
-    auto i = Intersection(4.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i = Intersection(4.0f, s);
 
     auto comp = i.prepareComputations(r);
 
@@ -100,8 +100,8 @@ TEST(Intersection, hitWhenIntersectionOutside)
 TEST(Intersection, hitWhenIntersectionInside)
 {
     auto r = Ray(ngl::Vec4(0.0f,0.0f,0.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto s = Sphere(1);
-    auto i = Intersection(1.0f, &s);
+    auto s = std::make_shared<Sphere>(1);
+    auto i = Intersection(1.0f, s);
 
     auto comp = i.prepareComputations(r);
 

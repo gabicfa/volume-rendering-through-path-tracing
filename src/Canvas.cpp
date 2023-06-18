@@ -79,9 +79,9 @@ void Canvas::drawScene()
             if (i != empty)
             {
                 auto point = r.position(i.t());
-                auto normal = i.object().normalAt(point);
+                auto normal = i.object()->normalAt(point);
                 auto eye = r.direction();
-                auto color = i.object().material().lighting(light, point, eye, normal);
+                auto color = i.object()->material().lighting(light, point, eye, normal);
                 setPixel(x, y, color);
             }
         }

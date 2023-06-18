@@ -78,7 +78,10 @@ ngl::Vec3 Scene::colorAt(Ray _r)
     Intersection empty = Intersection();
     if (i == empty)
     {
-        return ngl::Vec3(0.0f, 0.0f, 0.0f);
+        auto d = _r.direction()/_r.direction().length();
+        auto t = 0.5 * (d.m_y + 1.0);
+        auto color = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
+        return color;
     }
     else
     {
