@@ -8,7 +8,6 @@ class TestShape : public Shape
 public:
     TestShape();
 
-    int id() const override;
     std::vector<Intersection> intersect(Ray _r) override;
     bool operator==(const Shape& other) const override;
     bool operator!=(const Shape& other) const override;

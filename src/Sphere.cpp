@@ -2,24 +2,18 @@
 
 Sphere::Sphere()
 {
-    m_id = 0;
 }
 
 Sphere::Sphere(int _id)
 {
-    m_id = _id;
-}
-
-int Sphere::id() const
-{
-    return m_id;
+    id(_id);
 }
 
 bool Sphere::operator==(const Shape& other) const
 {
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
     {
-        return m_id == sphere->m_id &&
+        return id() == sphere->id() &&
                transform() == sphere->transform() &&
                material() == sphere->material();
     }
@@ -30,7 +24,7 @@ bool Sphere::operator!=(const Shape& other) const
 {
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
     {
-        return m_id != sphere->m_id ||
+        return id() != sphere->id() ||
            !(transform() == sphere->transform()) ||
            !(material() == sphere->material());
     }

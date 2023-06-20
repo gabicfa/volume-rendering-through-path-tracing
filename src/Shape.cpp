@@ -1,5 +1,20 @@
 #include "Shape.h"
 
+Shape::Shape()
+{
+    m_id = 0;
+}
+
+int Shape::id() const 
+{
+    return m_id;
+}
+
+void Shape::id(const int _id)
+{
+    m_id = _id;
+}
+
 std::shared_ptr<Shape> Shape::parent() const
 {
     return m_parent.lock();

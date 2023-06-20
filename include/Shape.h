@@ -13,7 +13,9 @@ class Shape : public std::enable_shared_from_this<Shape>
 {
     public:
         virtual ~Shape() = default;
-        virtual int id() const = 0;
+        Shape();
+        int id() const;
+        void id(const int _id);
         ngl::Mat4 transform() const;
         void setTransform(const ngl::Mat4& _tMatrix);
         Material material() const;
@@ -33,6 +35,7 @@ class Shape : public std::enable_shared_from_this<Shape>
         ngl::Vec4 normalToWorld(const ngl::Vec4& normal) const;
 
     private:
+        int m_id = 0;
         std::weak_ptr<Shape> m_parent;
         ngl::Mat4 m_transform = ngl::Mat4();
         Material m_material = Material();

@@ -8,7 +8,7 @@ bool Group::operator==(const Shape& other) const
 {
     if (const Group* group = dynamic_cast<const Group*>(&other))
     {
-        return m_id == group->m_id && transform() == group->transform();
+        return id() == group->id() && transform() == group->transform();
     }
     return false;
 }
@@ -42,11 +42,6 @@ std::vector<Intersection> Group::localIntersect(Ray _r)
     return intersections;
 
     return intersections;
-}
-
-int Group::id() const
-{
-    return m_id;
 }
 
 ngl::Vec4 Group::localNormalAt(ngl::Vec4 _localPoint)

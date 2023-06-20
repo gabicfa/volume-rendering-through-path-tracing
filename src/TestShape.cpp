@@ -4,11 +4,6 @@ TestShape::TestShape()
 {
 }
 
-int TestShape::id() const
-{
-    return 0;
-}
-
 std::vector<Intersection> TestShape::intersect(Ray _r)
 {
     return std::vector<Intersection>();
