@@ -73,8 +73,7 @@ ngl::Mat4 Sphere::transform() const
 
 void Sphere::setTransform(const ngl::Mat4& _tMatrix)
 {
-    auto newTransform = _tMatrix * m_transform;
-    m_transform = newTransform;
+    m_transform =  m_transform * _tMatrix;
 }
 
 int Sphere::id() const

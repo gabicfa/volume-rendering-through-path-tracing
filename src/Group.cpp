@@ -6,12 +6,16 @@ Group::Group()
 
 bool Group::operator==(const Shape& other) const
 {
-    return true;
+    if (const Group* group = dynamic_cast<const Group*>(&other))
+    {
+        return m_id == group->m_id && m_transform == group->m_transform;
+    }
+    return false;
 }
 
 bool Group::operator!=(const Shape& other) const
 {
-    return false;
+    return !(*this == other);
 }
 
 std::vector<Intersection> Group::intersect(Ray _r)
@@ -47,8 +51,7 @@ ngl::Mat4 Group::transform() const
 
 void Group::setTransform(const ngl::Mat4& _tMatrix)
 {
-    auto newTransform = _tMatrix * m_transform;
-    m_transform = newTransform;
+    m_transform =  m_transform * _tMatrix;
 }
 
 int Group::id() const

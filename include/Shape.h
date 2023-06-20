@@ -27,6 +27,8 @@ class Shape : public std::enable_shared_from_this<Shape>
 
         std::shared_ptr<Shape> parent() const;
         void setParent(std::shared_ptr<Shape> shape);
+
+        ngl::Vec4 worldToObject(const ngl::Vec4& point) const;
     
     private:
         std::weak_ptr<Shape> m_parent;
