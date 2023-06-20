@@ -22,8 +22,22 @@ std::vector<Intersection> Group::intersect(Ray _r)
 
 std::vector<Intersection> Group::localIntersect(Ray _r)
 {
-    std::vector<Intersection> intersection;
-    return intersection;
+    std::vector<Intersection> intersections;
+
+    // Iterate over each child shape and collect their intersections with the ray
+    for (const auto& shape : m_children)
+    {
+        auto childIntersections = shape->intersect(_r);
+        intersections.insert(intersections.end(), childIntersections.begin(), childIntersections.end());
+    }
+
+    std::sort(intersections.begin(), intersections.end(), [](const Intersection &a, const Intersection &b) 
+    {
+        return a.t() < b.t();
+    });
+    return intersections;
+
+    return intersections;
 }
 
 ngl::Mat4 Group::transform() const

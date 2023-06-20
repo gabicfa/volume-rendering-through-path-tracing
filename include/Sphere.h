@@ -3,12 +3,8 @@
 
 #include <vector>
 #include <ngl/Mat4.h>
-class Shape;
 #include "Shape.h"
 #include "Ray.h"
-
-class Intersection;
-#include "Intersection.h"
 
 class Sphere : public Shape
 {

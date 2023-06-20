@@ -1,5 +1,4 @@
 #include "Shape.h"
-#include "Group.h"
 
 std::shared_ptr<Shape> Shape::parent() const
 {

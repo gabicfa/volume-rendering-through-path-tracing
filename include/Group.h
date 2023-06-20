@@ -3,11 +3,9 @@
 
 #include <vector>
 #include <ngl/Mat4.h>
-class Shape;
+
 #include "Shape.h"
 #include "Ray.h"
-
-class Intersection;
 #include "Intersection.h"
 
 class Group : public Shape
@@ -25,11 +23,11 @@ class Group : public Shape
         std::vector<Intersection> intersect(Ray _r) override;
         void addChild(std::shared_ptr<Shape> shape);
         const std::vector<std::shared_ptr<Shape>>& getChildren() const;
+        std::vector<Intersection> localIntersect(Ray _r);
     private:
         int m_id = 0;
         ngl::Mat4 m_transform = ngl::Mat4();
         Material m_material = Material();
-        std::vector<Intersection> localIntersect(Ray _r);
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint);
         std::vector<std::shared_ptr<Shape>> m_children;
 };

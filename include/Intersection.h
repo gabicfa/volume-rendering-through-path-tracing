@@ -6,8 +6,7 @@
 
 #include "Ray.h"
 #include "Computation.h"
-
-class Shape;
+#include "Shape.h"
 
 class Intersection
 {
