@@ -52,6 +52,9 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Transformations.cpp
             ${PROJECT_SOURCE_DIR}/src/Camera.cpp
 			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp
+            ${PROJECT_SOURCE_DIR}/src/Group.cpp
+            ${PROJECT_SOURCE_DIR}/src/TestShape.cpp
+            ${PROJECT_SOURCE_DIR}/src/Shape.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -64,6 +67,8 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Transformations.h
             ${PROJECT_SOURCE_DIR}/include/Camera.h
             ${PROJECT_SOURCE_DIR}/include/Shape.h
+            ${PROJECT_SOURCE_DIR}/include/Group.h
+            ${PROJECT_SOURCE_DIR}/include/TestShape.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
@@ -108,6 +113,14 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/CameraTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Camera.cpp 
     ${PROJECT_SOURCE_DIR}/include/Camera.h
+    tests/GroupTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Group.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Group.h
+    ${PROJECT_SOURCE_DIR}/include/TestShape.h
+    ${PROJECT_SOURCE_DIR}/src/TestShape.cpp 
+    tests/ShapeTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Shape.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Shape.h 
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)

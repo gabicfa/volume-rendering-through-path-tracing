@@ -9,7 +9,9 @@
 class Intersection;
 #include "Intersection.h"
 
-class Shape
+class Group;
+
+class Shape : public std::enable_shared_from_this<Shape>
 {
     public:
         virtual ~Shape() = default;
@@ -24,6 +26,12 @@ class Shape
 
         virtual std::vector<Intersection> intersect(Ray _r) = 0;
         virtual ngl::Vec4 normalAt(ngl::Vec4 _worldPoint) = 0;
+
+        std::shared_ptr<Shape> parent() const;
+        void setParent(std::shared_ptr<Shape> shape);
+    
+    private:
+        std::weak_ptr<Shape> m_parent;
 };
 
 #endif
