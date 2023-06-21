@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include<ngl/Vec3.h>
 #include<ngl/Vec4.h>
+#include "Triangle.h"
 
 Scene::Scene(bool _default)
 {
@@ -11,23 +12,24 @@ Scene::Scene(bool _default)
         auto l = Light(lIntensity,lPoint);
         m_light = l;
 
-        auto s1 = Sphere(1);
+        auto t1 = std::make_shared<Triangle>(ngl::Vec4(0, 1, 0), ngl::Vec4(-1, 0, 0), ngl::Vec4(1, 0, 0));
+
         auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
         auto m = Material();
         m.color(mColor);
         m.diffuse(0.7);
         m.specular(0.2);
-        s1.setMaterial(m);
-        m_objects.push_back(s1);
+        t1->setMaterial(m);
+        m_objects.push_back(t1);
 
-        auto s2 = Sphere(2);
+        auto s2 = std::make_shared<Sphere>(2);
         auto transform = ngl::Mat4::scale(0.5f,0.5f,0.5f);
-        s2.setTransform(transform);
-        m_objects.push_back(s2);
+        s2->setTransform(transform);
+        // m_objects.push_back(s2);
     }
 }
 
-std::vector<Sphere> Scene::objects()
+std::vector<std::shared_ptr<Shape>>& Scene::objects()
 {
     return m_objects;
 }
@@ -42,7 +44,7 @@ void Scene::light(Light _l)
     m_light = _l;
 }
 
-void Scene::addObject(Sphere s)
+void Scene::addObject(std::shared_ptr<Shape> s)
 {
     m_objects.push_back(s);
 }
@@ -50,9 +52,9 @@ void Scene::addObject(Sphere s)
 std::vector<Intersection> Scene::intersectScene(Ray _r)
 {
     std::vector<Intersection> intersections;
-    for (Sphere &o : m_objects) 
+    for (const auto& o : m_objects)
     {
-        auto inter = o.intersect(_r);
+        auto inter = o->intersect(_r);
         for(auto &i: inter)
             intersections.push_back(i);
     }

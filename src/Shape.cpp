@@ -15,6 +15,12 @@ void Shape::id(const int _id)
     m_id = _id;
 }
 
+std::vector<Intersection> Shape::intersect(Ray _r)
+{
+    auto local_ray = _r.transform(transform().inverse());
+    return localIntersect(local_ray);
+}
+
 std::shared_ptr<Shape> Shape::parent() const
 {
     return m_parent.lock();

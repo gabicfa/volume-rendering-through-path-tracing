@@ -44,8 +44,8 @@ void defaultScene(Scene &s, Camera &c)
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -3.0f),
-                                        ngl::Vec4(0.0f, 2.0f, 0.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.5f, -3.0f),
+                                        ngl::Vec4(0.0f, 0.5f, 0.0f),
                                         ngl::Vec4(0.0f, -1.0f, 0.0f));
     c.transform(t);
 }
@@ -83,7 +83,8 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   auto id = 0;
   for (auto& sphere : spheres) 
   {
-    auto obj = Sphere(id);
+    auto obj = std::make_shared<Sphere>(1);
+
     auto t = ngl::Mat4();
     if(sphere.second.count("translate"))
     {
@@ -127,9 +128,9 @@ void readFileAndCreateScene(Scene &s, Camera &c)
         auto color = mat.get_child("color");
         material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
       }
-      obj.setMaterial(material);
+      obj->setMaterial(material);
     }
-    obj.setTransform(t);
+    obj->setTransform(t);
     s.addObject(obj);
   }
 }

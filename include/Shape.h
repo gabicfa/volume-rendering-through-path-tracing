@@ -24,9 +24,10 @@ class Shape : public std::enable_shared_from_this<Shape>
         virtual bool operator==(const Shape& other) const = 0;
         virtual bool operator!=(const Shape& other) const = 0;
 
-        virtual std::vector<Intersection> intersect(Ray _r) = 0;
+        std::vector<Intersection> intersect(Ray _r);
         ngl::Vec4 normalAt(ngl::Vec4 _worldPoint);
         virtual ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) = 0;
+        virtual std::vector<Intersection> localIntersect(Ray _r) = 0;
 
         std::shared_ptr<Shape> parent() const;
         void setParent(std::shared_ptr<Shape> shape);

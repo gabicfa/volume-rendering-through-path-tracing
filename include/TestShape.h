@@ -8,10 +8,11 @@ class TestShape : public Shape
 public:
     TestShape();
 
-    std::vector<Intersection> intersect(Ray _r) override;
     bool operator==(const Shape& other) const override;
     bool operator!=(const Shape& other) const override;
     ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
+    std::vector<Intersection> localIntersect(Ray _r) override;        
+
 };
 
 #endif

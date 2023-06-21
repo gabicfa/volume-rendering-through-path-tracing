@@ -14,10 +14,9 @@ class Group : public Shape
         Group();
         bool operator==(const Shape& other) const override;
         bool operator!=(const Shape& other) const override;
-        std::vector<Intersection> intersect(Ray _r) override;
         void addChild(std::shared_ptr<Shape> shape);
         const std::vector<std::shared_ptr<Shape>>& getChildren() const;
-        std::vector<Intersection> localIntersect(Ray _r);
+        std::vector<Intersection> localIntersect(Ray _r) override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
     private:
         std::vector<std::shared_ptr<Shape>> m_children;

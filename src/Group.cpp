@@ -18,12 +18,6 @@ bool Group::operator!=(const Shape& other) const
     return !(*this == other);
 }
 
-std::vector<Intersection> Group::intersect(Ray _r)
-{
-    auto local_ray = _r.transform(transform().inverse());
-    return localIntersect(local_ray);
-}
-
 std::vector<Intersection> Group::localIntersect(Ray _r)
 {
     std::vector<Intersection> intersections;

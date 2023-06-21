@@ -31,12 +31,6 @@ bool Sphere::operator!=(const Shape& other) const
     return false;
 }
 
-std::vector<Intersection> Sphere::intersect(Ray _r)
-{
-    auto local_ray = _r.transform(transform().inverse());
-    return localIntersect(local_ray);
-}
-
 /// @brief ray intersecting sphere
 /// Modified from :
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 

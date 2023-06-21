@@ -13,10 +13,8 @@ class Sphere : public Shape
         Sphere(int _id);
         bool operator==(const Shape& other) const override;
         bool operator!=(const Shape& other) const override;
-        std::vector<Intersection> intersect(Ray _r) override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
-    private:
-        std::vector<Intersection> localIntersect(Ray _r);
+        std::vector<Intersection> localIntersect(Ray _r) override;        
 };
 
 #endif

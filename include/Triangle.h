@@ -17,8 +17,9 @@ public:
 
     bool operator==(const Shape& other) const override;
     bool operator!=(const Shape& other) const override;
-    std::vector<Intersection> intersect(Ray _r) override;
     ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
+    std::vector<Intersection> localIntersect(Ray _r) override;        
+
 
 private:
     ngl::Vec4 m_p1;
