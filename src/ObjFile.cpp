@@ -13,31 +13,6 @@ ObjFile::ObjFile(std::string_view _fname)
     parseObjFile(_fname);
 }
 
-// void ObjFile::parseObjFile(std::string_view _fname)
-// {
-//     ngl::Obj obj;
-//     obj.load(_fname);
-//     m_vertices = obj.getVertexList();
-//     auto faceList = obj.getFaceList();
-//     for (auto face : faceList)
-//     {
-//         if (face.m_vert.size() > 3)
-//         {
-//             auto triangles = fanTriangulation(face.m_vert);
-//             for (auto t : triangles)
-//             {
-//                 m_defaultGroup->addChild(t);
-//             }
-//         }
-//         else 
-//         {
-//             auto t = std::make_shared<Triangle>(m_vertices[face.m_vert[0]], m_vertices[face.m_vert[1]], m_vertices[face.m_vert[2]]);
-//             m_defaultGroup->addChild(t);
-//         }
-        
-//     }
-// }
-
 void ObjFile::parseObjFile(std::string_view _fname)
 {
     ngl::Obj obj;
