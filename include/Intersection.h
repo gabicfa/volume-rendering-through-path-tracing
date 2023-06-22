@@ -15,10 +15,10 @@ class Intersection
         Intersection(float _t, std::shared_ptr<Shape> _object);
         float t() const;
         std::shared_ptr<Shape> object() const;
-        bool operator==(const Intersection& other) const;
-        bool operator!=(const Intersection& other) const;
-        static std::vector<Intersection> intersections(std::vector<Intersection> intersections);
-        static Intersection hit(std::vector<Intersection> intersections);
+        bool operator==(const Intersection& _other) const;
+        bool operator!=(const Intersection& _other) const;
+        static std::vector<Intersection> intersections(std::vector<Intersection> _intersections);
+        static Intersection hit(std::vector<Intersection> _intersections);
         Computation prepareComputations(Ray _r);
     private:
         float m_t = 0;

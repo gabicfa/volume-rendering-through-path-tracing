@@ -20,7 +20,7 @@ class Camera
         double pixelSize() const;
         double halfWidth() const;
         double halfHeight() const;
-        Ray rayForPixel(double px, double py);
+        Ray rayForPixel(double _px, double _py);
         Canvas render(Scene &s);
     private:
         size_t m_hsize;

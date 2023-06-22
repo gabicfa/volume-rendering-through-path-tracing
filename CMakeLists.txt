@@ -56,6 +56,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/TestShape.cpp
             ${PROJECT_SOURCE_DIR}/src/Shape.cpp
             ${PROJECT_SOURCE_DIR}/src/Triangle.cpp
+            ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -71,6 +72,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Group.h
             ${PROJECT_SOURCE_DIR}/include/TestShape.h
             ${PROJECT_SOURCE_DIR}/include/Triangle.h
+            ${PROJECT_SOURCE_DIR}/include/ObjFile.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
@@ -81,6 +83,13 @@ add_custom_target(${TargetName}CopyShaders ALL
     ${PROJECT_BINARY_DIR}/shaders
 )
 ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyShaders)
+
+add_custom_target(${TargetName}CopyFilesFolder ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/files
+    ${CMAKE_BINARY_DIR}/files
+)
+ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyFilesFolder)
 
 # Add testing stuff
 find_package(GTest CONFIG REQUIRED)
@@ -126,6 +135,9 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/TriangleTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Triangle.cpp 
     ${PROJECT_SOURCE_DIR}/include/Triangle.h 
+    tests/ObjFileTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp 
+    ${PROJECT_SOURCE_DIR}/include/ObjFile.h 
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
 gtest_discover_tests(RayTracerTests)

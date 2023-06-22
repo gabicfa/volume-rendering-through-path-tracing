@@ -12,9 +12,9 @@ class Group : public Shape
 {
     public:
         Group();
-        bool operator==(const Shape& other) const override;
-        bool operator!=(const Shape& other) const override;
-        void addChild(std::shared_ptr<Shape> shape);
+        bool operator==(const Shape& _other) const override;
+        bool operator!=(const Shape& _other) const override;
+        void addChild(std::shared_ptr<Shape> _shape);
         const std::vector<std::shared_ptr<Shape>>& getChildren() const;
         std::vector<Intersection> localIntersect(Ray _r) override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;

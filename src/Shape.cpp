@@ -26,9 +26,9 @@ std::shared_ptr<Shape> Shape::parent() const
     return m_parent.lock();
 }
 
-void Shape::setParent(std::shared_ptr<Shape> parent)
+void Shape::setParent(std::shared_ptr<Shape> _parent)
 {
-    m_parent = parent;
+    m_parent = _parent;
 }
 
 ngl::Mat4 Shape::transform() const
@@ -61,9 +61,9 @@ ngl::Vec4 Shape::worldToObject(const ngl::Vec4& _point) const
     return transform().inverse() * point;
 }
 
-ngl::Vec4 Shape::normalToWorld(const ngl::Vec4& normal) const
+ngl::Vec4 Shape::normalToWorld(const ngl::Vec4& _normal) const
 {
-    ngl::Vec4 transformedNormal = transform().inverse().transpose() * normal;
+    ngl::Vec4 transformedNormal = transform().inverse().transpose() * _normal;
     transformedNormal.m_w = 0.0f;
     transformedNormal.normalize();
 
@@ -77,8 +77,8 @@ ngl::Vec4 Shape::normalToWorld(const ngl::Vec4& normal) const
 
 ngl::Vec4 Shape::normalAt(ngl::Vec4 _worldPoint) 
 {
-    ngl::Vec4 local_point = worldToObject(_worldPoint);
-    ngl::Vec4 local_normal = localNormalAt(local_point);
-    ngl::Vec4 world_normal = normalToWorld(local_normal);
-    return world_normal;
+    ngl::Vec4 localPoint = worldToObject(_worldPoint);
+    ngl::Vec4 localNormal = localNormalAt(localPoint);
+    ngl::Vec4 worldNormal = normalToWorld(localNormal);
+    return worldNormal;
 }

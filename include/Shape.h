@@ -21,8 +21,8 @@ class Shape : public std::enable_shared_from_this<Shape>
         Material material() const;
         void setMaterial(const Material& _m);
 
-        virtual bool operator==(const Shape& other) const = 0;
-        virtual bool operator!=(const Shape& other) const = 0;
+        virtual bool operator==(const Shape& _other) const = 0;
+        virtual bool operator!=(const Shape& _other) const = 0;
 
         std::vector<Intersection> intersect(Ray _r);
         ngl::Vec4 normalAt(ngl::Vec4 _worldPoint);
@@ -32,8 +32,8 @@ class Shape : public std::enable_shared_from_this<Shape>
         std::shared_ptr<Shape> parent() const;
         void setParent(std::shared_ptr<Shape> shape);
 
-        ngl::Vec4 worldToObject(const ngl::Vec4& point) const;
-        ngl::Vec4 normalToWorld(const ngl::Vec4& normal) const;
+        ngl::Vec4 worldToObject(const ngl::Vec4& _point) const;
+        ngl::Vec4 normalToWorld(const ngl::Vec4& _normal) const;
 
     private:
         int m_id = 0;

@@ -13,14 +13,14 @@ Intersection::Intersection(float _t, std::shared_ptr<Shape> _object)
     m_object = _object;
 }
 
-bool Intersection::operator==(const Intersection& other) const
+bool Intersection::operator==(const Intersection& _other) const
 {
-    return m_t == other.m_t && m_object == other.m_object;
+    return m_t == _other.m_t && m_object == _other.m_object;
 }
 
-bool Intersection::operator!=(const Intersection& other) const
+bool Intersection::operator!=(const Intersection& _other) const
 {
-    return !(*this == other);
+    return !(*this == _other);
 }
 
 
@@ -34,22 +34,22 @@ std::shared_ptr<Shape> Intersection::object() const
     return m_object;
 }
 
-std::vector<Intersection> Intersection::intersections(std::vector<Intersection> intersections )
+std::vector<Intersection> Intersection::intersections(std::vector<Intersection> _intersections )
 {
-    std::sort(intersections.begin(), intersections.end(), [](const Intersection &a, const Intersection &b) 
+    std::sort(_intersections.begin(), _intersections.end(), [](const Intersection &a, const Intersection &b) 
     {
         return a.t() < b.t();
     });
-    return intersections;
+    return _intersections;
 }
 
-Intersection Intersection::hit(std::vector<Intersection> intersections)
+Intersection Intersection::hit(std::vector<Intersection> _intersections)
 {
-    auto it = std::find_if(intersections.begin(), intersections.end(), [](const Intersection& i) {
+    auto it = std::find_if(_intersections.begin(), _intersections.end(), [](const Intersection& i) {
         return i.t() >= 0;
     });
 
-    if (it != intersections.end())
+    if (it != _intersections.end())
     {
         return *it;
     }
