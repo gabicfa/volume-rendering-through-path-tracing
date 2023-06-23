@@ -57,15 +57,15 @@ TEST(Camera, rayCameraTransformed)
     ASSERT_EQ(r.direction(), ngl::Vec4(-std::sqrt(2)/2, 0.0f, -std::sqrt(2)/2));
 }
 
-// TEST(Camera, renderingSceneWithCamera)
-// {
-//     auto scene = Scene(true);
-//     auto c = Camera(11,11,M_PI/2);
-//     auto from = ngl::Vec4(0.0f,0.0f,5.0f);
-//     auto to = ngl::Vec4(0.0f,0.0f,0.0f);
-//     auto up = ngl::Vec4(0.0f,1.0f,0.0f);
-//     auto matTrans = Transformations::viewTransform(from, to, up);
-//     c.transform(matTrans);
-//     auto img = c.render(scene);
-//     ASSERT_EQ(img.getPixel(5,5), ngl::Vec3(0.38066f, 0.47583f, -0.2855f));
-// }
+TEST(Camera, renderingSceneWithCamera)
+{
+    auto scene = Scene(true);
+    auto c = Camera(11,11,M_PI/2);
+    auto from = ngl::Vec4(0.0f,0.0f,5.0f);
+    auto to = ngl::Vec4(0.0f,0.0f,0.0f);
+    auto up = ngl::Vec4(0.0f,1.0f,0.0f);
+    c.transform(Transformations::viewTransform(from, to, up));
+    auto img = c.render(scene);
+    auto p = img.getPixel(5,5);
+    ASSERT_EQ(img.getPixel(5,5), ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
+}

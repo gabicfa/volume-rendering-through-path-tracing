@@ -66,3 +66,17 @@ std::vector<ngl::Vec3> ObjFile::vertices() const
 {
     return m_vertices;
 }
+
+std::vector<std::shared_ptr<Triangle>> ObjFile::sceneObjects()
+{
+    auto children = m_defaultGroup->getChildren();
+    std::cout << "NUMBER OF TRIANGLES: " << children.size() << "\n";
+    for (auto child : children)
+    {
+        auto t = std::dynamic_pointer_cast<Triangle>(child);
+        m_objects.push_back(t);
+    }
+    std::cout << "ADDED ALL TRIANGLES" << "\n";
+    std::cout << "NUMBER OF TRIANGLES IN m_objects: " << m_objects.size() << "\n";
+    return m_objects;
+}

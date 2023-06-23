@@ -84,27 +84,27 @@ ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4
     // light is on the other side of the surface.
     if (lightDotNormal < 0.0f) 
     {
-        diffuse = ngl::Vec3(0.0f,0.0f,0.0f);
-        specular = ngl::Vec3(0.0f,0.0f,0.0f);
+        diffuse = ngl::Vec3(0.0f, 0.0f, 0.0f);
+        specular = ngl::Vec3(0.0f, 0.0f, 0.0f);
     }
     else
     {
         // compute the diffuse contribution
         diffuse = effectiveColor * m_diffuse * lightDotNormal;
         
-        // reflactDotEye represents the cosine of the angle between the
+        // reflectDotEye represents the cosine of the angle between the
         // reflection vector and the eye vector. A negative number means the 
         // light reflects away from the eye.
         auto reflect = (-light).toVec3().reflect(_normal.toVec3());
-        auto reflactDotEye = ngl::Vec4(reflect).dot(_eye);
-        if (reflactDotEye <= 0)
+        auto reflectDotEye = ngl::Vec4(reflect).dot(_eye);
+        if (reflectDotEye <= 0.0f)
         {
-            specular = ngl::Vec3(0.0f,0.0f,0.0f);
+            specular = ngl::Vec3(0.0f, 0.0f, 0.0f);
         }
         else
         {
             // compute the specular contribution
-            auto factor = pow(reflactDotEye, m_shininess);
+            auto factor = pow(reflectDotEye, m_shininess);
             specular = _l.intensity() * m_specular * factor;
         }
     }

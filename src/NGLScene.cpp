@@ -15,6 +15,7 @@
 #include "Sphere.h"
 #include "Camera.h"
 #include "Light.h"
+#include "ObjFile.h"
 
 constexpr size_t TextureWidth = 720;
 constexpr size_t TextureHeight = 360;
@@ -39,15 +40,16 @@ constexpr auto TextureShader="TextureShader";
 
 void defaultScene(Scene &s, Camera &c)
 {
-    s = Scene(true);
+    s = Scene(true, 1);
     
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, -0.5f, -20.0f),
-                                        ngl::Vec4(0.0f, -0.5f, 0.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -5.0f),
+                                        ngl::Vec4(0.0f, 1.0f, 0.0f),
                                         ngl::Vec4(0.0f, -1.0f, 0.0f));
     c.transform(t);
+    c.fieldOfView(60 * M_PI / 180);
 }
 
 void readFileAndCreateScene(Scene &s, Camera &c)
@@ -73,11 +75,19 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   auto to = cam.get_child("to");
   auto up = cam.get_child("up");
   auto t = Transformations::viewTransform(ngl::Vec4(from.get<float>("x"),from.get<float>("y"),from.get<float>("z")),
-                                          ngl::Vec4(-to.get<float>("x"),-to.get<float>("y"),to.get<float>("z")),
-                                          ngl::Vec4(up.get<float>("x"),-up.get<float>("y"),up.get<float>("z")));
+                                          ngl::Vec4(to.get<float>("x"),to.get<float>("y"),to.get<float>("z")),
+                                          ngl::Vec4(up.get<float>("x"),up.get<float>("y"),up.get<float>("z")));
   c.fieldOfView(fov);
   c.transform(t);
 
+  auto file = pt.get<std::string>("file");
+  std::cout << "FILE: " << file << "\n";
+  ObjFile obj(file);
+  auto objs = obj.sceneObjects();
+  for (auto &o : objs) 
+  {
+    s.addObject(o);
+  }
   //Sphere attributes
   auto spheres = pt.get_child("spheres");
   auto id = 0;
@@ -131,7 +141,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
       obj->setMaterial(material);
     }
     obj->setTransform(t);
-    s.addObject(obj);
+    // s.addObject(obj);
   }
 }
 

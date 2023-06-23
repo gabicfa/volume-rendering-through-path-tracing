@@ -12,6 +12,7 @@ class Scene
 {
     public:
         Scene(bool _default = false);
+        Scene(bool _default, int num);
         std::vector<std::shared_ptr<Shape>>& objects();
         Light light() const;
         void light(Light _l);

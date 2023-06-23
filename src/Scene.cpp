@@ -13,32 +13,44 @@ Scene::Scene(bool _default)
         auto l = Light(lIntensity,lPoint);
         m_light = l;
 
-        ObjFile obj("files/Teapot.obj");
-        auto children = obj.defaultGroup()->getChildren();
-        std::cout << "NUMBER OF TRIANGLES: " << children.size() << "\n";
-        for (auto child : children)
-        {
-            auto t = std::dynamic_pointer_cast<Triangle>(child);
-            m_objects.push_back(t);
-        }
-        std::cout << "ADDED ALL TRIANGLES" << "\n";
-        std::cout << "NUMBER OF TRIANGLES IN m_objects: " << m_objects.size() << "\n";
-
-        // auto t1 = std::make_shared<Triangle>(ngl::Vec4(0, 1, 0), ngl::Vec4(-1, 0, 0), ngl::Vec4(1, 0, 0));
-
-        // auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
-        // auto m = Material();
-        // m.color(mColor);
-        // m.diffuse(0.7);
-        // m.specular(0.2);
-        // t1->setMaterial(m);
-        // m_objects.push_back(t1);
+        auto s1 = std::make_shared<Sphere>(1);
+        auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
+        auto m = Material();
+        m.color(mColor);
+        m.diffuse(0.7);
+        m.specular(0.2);
+        s1->setMaterial(m);
+        m_objects.push_back(s1);
 
         auto s2 = std::make_shared<Sphere>(2);
         auto transform = ngl::Mat4::scale(0.5f,0.5f,0.5f);
         s2->setTransform(transform);
-        // m_objects.push_back(s2);
+        m_objects.push_back(s2);
     }
+
+}
+
+Scene::Scene(bool _default, int num)
+{
+        auto lPoint = ngl::Vec4(-10.0f, 10.0f, 10.0f);
+        auto lIntensity = ngl::Vec3(1.0f,1.0f,1.0f);
+        auto l = Light(lIntensity,lPoint);
+        m_light = l;
+
+        auto s1 = std::make_shared<Sphere>(1);
+        auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
+        auto m = Material();
+        m.color(mColor);
+        m.diffuse(0.7);
+        m.specular(0.2);
+        s1->setMaterial(m);
+        s1->setTransform(ngl::Mat4::translate(-0.5f, 1.0f, 0.5f));
+        m_objects.push_back(s1);
+
+        auto s2 = std::make_shared<Sphere>(2);
+        auto transform = ngl::Mat4::scale(10.0f,0.01f,10.0f);
+        s2->setTransform(transform);
+        m_objects.push_back(s2);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()

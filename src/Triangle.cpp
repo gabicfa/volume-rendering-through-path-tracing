@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-auto EPSILON = 0.01f;
+auto EPSILON = 0.001f;
 
 Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3)
     : m_p1(p1), m_p2(p2), m_p3(p3)
@@ -95,4 +95,5 @@ std::vector<Intersection> Triangle::localIntersect(Ray _r)
         Intersection intersection(t, std::make_shared<Triangle>(*this));
         return std::vector<Intersection>{intersection};
     }
+    
 }

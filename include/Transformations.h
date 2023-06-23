@@ -8,7 +8,7 @@
 class Transformations
 {
     public:
-        static ngl::Mat4 viewTransform(ngl::Vec4 from, ngl::Vec4 to, ngl::Vec4 up);
+        static ngl::Mat4 viewTransform(const ngl::Vec4& from, const ngl::Vec4& to, const ngl::Vec4& up);
 };
 
 #endif
