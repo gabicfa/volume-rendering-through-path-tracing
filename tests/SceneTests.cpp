@@ -79,7 +79,7 @@ TEST(Scene, colorWhenRayMisses)
 {
     auto s = Scene(true);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,1.0f,0.0f));
-    auto color = s.colorAt(r);
+    auto color = s.colorAt(r, 1);
 
     auto d = r.direction()/r.direction().length();
     auto t = 0.5 * (d.m_y + 1.0);
@@ -92,7 +92,7 @@ TEST(Scene, colorWhenRayHits)
 {
     auto s = Scene(true);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto color = s.colorAt(r);
+    auto color = s.colorAt(r, 1);
     ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
 }
 
@@ -110,7 +110,7 @@ TEST(Scene, colorWithIntersectionBehindRay)
     inner->setMaterial(m2);
 
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, -0.75f), ngl::Vec4(0.0f,0.0f,1.0f));
-    auto color = s.colorAt(r);
+    auto color = s.colorAt(r, 1);
     ASSERT_EQ(color, inner->material().color());
 }
 

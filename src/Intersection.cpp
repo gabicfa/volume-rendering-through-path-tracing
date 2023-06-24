@@ -46,7 +46,7 @@ std::vector<Intersection> Intersection::intersections(std::vector<Intersection> 
 Intersection Intersection::hit(std::vector<Intersection> _intersections)
 {
     auto it = std::find_if(_intersections.begin(), _intersections.end(), [](const Intersection& i) {
-        return i.t() >= 0;
+        return i.t() >= 0.001;
     });
 
     if (it != _intersections.end())

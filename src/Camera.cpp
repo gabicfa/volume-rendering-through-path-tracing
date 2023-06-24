@@ -92,9 +92,9 @@ ngl::Vec3 Camera::writeColor(ngl::Vec3 pixelColor, int samples_per_pixel) {
     auto b = pixelColor.m_z;
 
     auto scale = 1.0 / samples_per_pixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = std::sqrt(scale * r);
+    g = std::sqrt(scale * g);
+    b = std::sqrt(scale * b);
 
     return ngl::Vec3(clamp(r, 0.0, 0.999), clamp(g, 0.0, 0.999), clamp(b, 0.0, 0.999));
 }
@@ -105,15 +105,17 @@ Canvas Camera::render(Scene &s)
     
     for (auto y=0; y< m_vsize-1; y++)
     {
+        std::cerr << "\rScanlines remaining: " << m_vsize-2-y << ' ' << std::flush;
         for(auto x=0; x< m_hsize-1; x++)
         {
             ngl::Vec3 color(0, 0, 0);
             auto samplesPerPixel = img.samplesPerPixel();
+            auto maxDepth = img.maxDepth();
             for (int sp = 0; sp < samplesPerPixel; ++sp) {
-                auto u = x + random_double();
-                auto v = y + random_double();
+                auto u = x + randomDouble();
+                auto v = y + randomDouble();
                 auto r = this->rayForPixel(u, v);
-                color+=s.colorAt(r);
+                color+=s.colorAt(r, maxDepth);
             }
             auto colorAntialias = writeColor(color, samplesPerPixel);
             img.setPixel(x, y, colorAntialias);

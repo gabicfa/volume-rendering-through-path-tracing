@@ -3,6 +3,7 @@
 #include<ngl/Vec4.h>
 #include "Triangle.h"
 #include "ObjFile.h"
+#include "Sphere.h"
 
 Scene::Scene(bool _default)
 {
@@ -44,12 +45,13 @@ Scene::Scene(bool _default, int num)
         m.diffuse(0.7);
         m.specular(0.2);
         s1->setMaterial(m);
-        s1->setTransform(ngl::Mat4::translate(0.0f, 1.0f, 0.5f));
+        s1->setTransform(ngl::Mat4::translate(0.0f, 0.0f, -1.0f));
+        s1->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         m_objects.push_back(s1);
 
         auto s2 = std::make_shared<Sphere>(2);
-        auto transform = ngl::Mat4::scale(10.0f,0.01f,10.0f);
-        s2->setTransform(transform);
+        s2->setTransform(ngl::Mat4::translate(0.0f, -100.5f, -1.0f));
+        s2->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         m_objects.push_back(s2);
 }
 
@@ -95,8 +97,12 @@ ngl::Vec3 Scene::shadeHit(Computation _c)
     return m.lighting(this->light(), _c.point, _c.eye, _c.normal);
 }
 
-ngl::Vec3 Scene::colorAt(Ray _r)
+ngl::Vec3 Scene::colorAt(Ray _r, int depth)
 {
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if (depth <= 0)
+        return ngl::Vec3(0,0,0);
+    
     auto intersections = this->intersectScene(_r);
     auto xs = Intersection::intersections(intersections);
     auto i = Intersection::hit(xs);
@@ -112,7 +118,12 @@ ngl::Vec3 Scene::colorAt(Ray _r)
     else
     {
         auto c = i.prepareComputations(_r);
-        return 0.5 * (c.normal.toVec3() + ngl::Vec3(1,1,1));
+        ngl::Vec4 target = c.point;
+        auto sphere = std::dynamic_pointer_cast<Sphere>(c.object);
+        if (sphere) {
+            target += sphere->randomInHemisphere(c.normal);
+        }
+        return 0.5 * colorAt(Ray(c.point, target - c.point), depth-1);
         // return shadeHit(c);
     }
 }

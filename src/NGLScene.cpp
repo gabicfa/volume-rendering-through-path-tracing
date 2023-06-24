@@ -49,11 +49,11 @@ void defaultScene(Scene &s, Camera &c)
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, 5.0f),
-                                        ngl::Vec4(0.0f, 1.0f, 0.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, 10.0f),
+                                        ngl::Vec4(0.0f, 0.0f, 0.0f),
                                         ngl::Vec4(0.0f, 1.0f, 0.0f));
     c.transform(t);
-    c.fieldOfView(60 * M_PI / 180);
+    c.fieldOfView(15 * M_PI / 180);
 }
 
 void readFileAndCreateScene(Scene &s, Camera &c)

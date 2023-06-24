@@ -31,6 +31,16 @@ int Canvas::samplesPerPixel() const
     return m_samplesPerPixel;
 }
 
+void Canvas::maxDepth(int _s)
+{
+    m_maxDepth = _s;
+}
+
+int Canvas::maxDepth() const
+{
+    return m_maxDepth;
+}
+
 ngl::Vec3 Canvas::getPixel(size_t _x, size_t _y) const
 {
     auto index = (_y*m_width) + _x;

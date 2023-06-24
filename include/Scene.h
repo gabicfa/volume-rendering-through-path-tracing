@@ -19,7 +19,7 @@ class Scene
         void addObject(std::shared_ptr<Shape> s);
         std::vector<Intersection> intersectScene(Ray _r);
         ngl::Vec3 shadeHit(Computation _c);
-        ngl::Vec3 colorAt(Ray _r);
+        ngl::Vec3 colorAt(Ray _r, int depth);
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;
         Light m_light;
