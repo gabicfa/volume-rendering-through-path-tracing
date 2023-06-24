@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Utility.h"
 
 Camera::Camera(size_t _h, size_t _v, double _fov) : m_hsize{_h}, m_vsize{_v}, m_fieldOfView{_fov}
 {
@@ -85,16 +86,37 @@ void Camera::transform(ngl::Mat4 _t)
     m_transformation = _t;
 }
 
+ngl::Vec3 Camera::writeColor(ngl::Vec3 pixelColor, int samples_per_pixel) {
+    auto r = pixelColor.m_x;
+    auto g = pixelColor.m_y;
+    auto b = pixelColor.m_z;
+
+    auto scale = 1.0 / samples_per_pixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    return ngl::Vec3(clamp(r, 0.0, 0.999), clamp(g, 0.0, 0.999), clamp(b, 0.0, 0.999));
+}
+
 Canvas Camera::render(Scene &s)
 {
     auto img = Canvas(m_hsize, m_vsize);
+    
     for (auto y=0; y< m_vsize-1; y++)
     {
         for(auto x=0; x< m_hsize-1; x++)
         {
-            auto r = this->rayForPixel(x, y);
-            auto color = s.colorAt(r);
-            img.setPixel(x, y, color);
+            ngl::Vec3 color(0, 0, 0);
+            auto samplesPerPixel = img.samplesPerPixel();
+            for (int sp = 0; sp < samplesPerPixel; ++sp) {
+                auto u = x + random_double();
+                auto v = y + random_double();
+                auto r = this->rayForPixel(u, v);
+                color+=s.colorAt(r);
+            }
+            auto colorAntialias = writeColor(color, samplesPerPixel);
+            img.setPixel(x, y, colorAntialias);
         }
     }
     return img;

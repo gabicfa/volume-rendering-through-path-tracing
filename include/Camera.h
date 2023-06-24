@@ -21,6 +21,7 @@ class Camera
         double halfWidth() const;
         double halfHeight() const;
         Ray rayForPixel(double _px, double _py);
+        ngl::Vec3 writeColor(ngl::Vec3 pixelColor, int samples_per_pixel);
         Canvas render(Scene &s);
     private:
         size_t m_hsize;

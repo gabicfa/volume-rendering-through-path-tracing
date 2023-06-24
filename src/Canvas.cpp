@@ -21,6 +21,16 @@ size_t Canvas::height() const
     return m_height;
 }
 
+void Canvas::samplesPerPixel(int _s)
+{
+    m_samplesPerPixel = _s;
+}
+
+int Canvas::samplesPerPixel() const
+{
+    return m_samplesPerPixel;
+}
+
 ngl::Vec3 Canvas::getPixel(size_t _x, size_t _y) const
 {
     auto index = (_y*m_width) + _x;

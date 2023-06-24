@@ -73,6 +73,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/TestShape.h
             ${PROJECT_SOURCE_DIR}/include/Triangle.h
             ${PROJECT_SOURCE_DIR}/include/ObjFile.h
+            ${PROJECT_SOURCE_DIR}/include/Utility.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)

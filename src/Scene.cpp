@@ -44,7 +44,7 @@ Scene::Scene(bool _default, int num)
         m.diffuse(0.7);
         m.specular(0.2);
         s1->setMaterial(m);
-        s1->setTransform(ngl::Mat4::translate(-0.5f, 1.0f, 0.5f));
+        s1->setTransform(ngl::Mat4::translate(0.0f, 1.0f, 0.5f));
         m_objects.push_back(s1);
 
         auto s2 = std::make_shared<Sphere>(2);
@@ -112,6 +112,7 @@ ngl::Vec3 Scene::colorAt(Ray _r)
     else
     {
         auto c = i.prepareComputations(_r);
-        return shadeHit(c);
+        return 0.5 * (c.normal.toVec3() + ngl::Vec3(1,1,1));
+        // return shadeHit(c);
     }
 }

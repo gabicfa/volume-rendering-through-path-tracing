@@ -6,10 +6,10 @@
 
 ngl::Mat4 Transformations::viewTransform(const ngl::Vec4& from, const ngl::Vec4& to, const ngl::Vec4& up)
 {
-    auto forward = (to - from).normalize();
     auto _up = up;
+    auto forward = (to - from).normalize();
     auto upn = _up.normalize();
-    auto left = upn.cross(forward);
+    auto left = forward.cross(upn);
     auto trueUp = forward.cross(left);
 
     ngl::Mat4 orientation(left.m_x, left.m_y, left.m_z, 0.0f,
