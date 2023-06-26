@@ -1,9 +1,13 @@
 #include "Scene.h"
-#include<ngl/Vec3.h>
-#include<ngl/Vec4.h>
+#include <ngl/Vec3.h>
+#include <ngl/Vec4.h>
 #include "Triangle.h"
 #include "ObjFile.h"
 #include "Sphere.h"
+#include "Utility.h"
+#include "Lambertian.h"
+#include "Metal.h"
+#include <memory>
 
 Scene::Scene(bool _default)
 {
@@ -38,21 +42,31 @@ Scene::Scene(bool _default, int num)
         auto l = Light(lIntensity,lPoint);
         m_light = l;
 
-        auto s1 = std::make_shared<Sphere>(1);
-        auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
-        auto m = Material();
-        m.color(mColor);
-        m.diffuse(0.7);
-        m.specular(0.2);
-        s1->setMaterial(m);
-        s1->setTransform(ngl::Mat4::translate(0.0f, 0.0f, -1.0f));
-        s1->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
+        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+        auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
+        auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
+
+        auto s1 = std::make_shared<Sphere>(1, materialGround);
+        auto s2 = std::make_shared<Sphere>(2, materialCenter);
+        auto s3 = std::make_shared<Sphere>(3, materialLeft);
+        auto s4 = std::make_shared<Sphere>(4, materialRight);
+
+        s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
+        s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         m_objects.push_back(s1);
 
-        auto s2 = std::make_shared<Sphere>(2);
-        s2->setTransform(ngl::Mat4::translate(0.0f, -100.5f, -1.0f));
-        s2->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
+        s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
+        s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         m_objects.push_back(s2);
+
+        s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
+        s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        m_objects.push_back(s3);
+
+        s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
+        s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
+        m_objects.push_back(s4);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -118,12 +132,12 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
     else
     {
         auto c = i.prepareComputations(_r);
-        ngl::Vec4 target = c.point;
-        auto sphere = std::dynamic_pointer_cast<Sphere>(c.object);
-        if (sphere) {
-            target += sphere->randomInHemisphere(c.normal);
-        }
-        return 0.5 * colorAt(Ray(c.point, target - c.point), depth-1);
+
+        Ray scattered;
+        ngl::Vec3 attenuation;
+        if (c.matPtr->scatter(_r, c, attenuation, scattered))
+            return attenuation * colorAt(scattered, depth-1);
+        return ngl::Vec3(0.0f,0.0f,0.0f);
         // return shadeHit(c);
     }
 }

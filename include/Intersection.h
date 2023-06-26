@@ -4,10 +4,10 @@
 #include <vector>
 #include <memory>
 
-#include "Ray.h"
-#include "Computation.h"
-#include "Shape.h"
+class Computation;
+class Shape;
 
+#include "Ray.h"
 class Intersection
 {
     public:

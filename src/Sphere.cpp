@@ -1,13 +1,21 @@
 #include "Sphere.h"
 #include "Utility.h"
-
+#include "Ray.h"
+#include "AbsMaterial.h"
+#include "Intersection.h"
 Sphere::Sphere()
 {
 }
 
 Sphere::Sphere(int _id)
 {
-    id(_id);
+    this->id(_id);
+}
+
+Sphere::Sphere(int _id, std::shared_ptr<AbsMaterial> _matPtr)
+{
+    this->id(_id);
+    m_matPtr = _matPtr;
 }
 
 bool Sphere::operator==(const Shape& other) const
@@ -67,33 +75,5 @@ ngl::Vec4 Sphere::localNormalAt(ngl::Vec4 _localPoint)
 }
 /// end of Citation
 
-ngl::Vec4 Sphere::unitVector(const ngl::Vec4& vec)
-{
-    float length = vec.length();
-    if (length != 0)
-        return vec / length;
-    else
-        return vec;
-}
 
-ngl::Vec4 Sphere::randomUnitVector()
-{
-    return unitVector(this->randomInUnitSphere());
-}
-
-ngl::Vec4 Sphere::randomInUnitSphere() {
-    while (true) {
-        auto p = randomVec4(-1,1);
-        if (p.length() >= 1) continue;
-        return p;
-    }
-}
-
-ngl::Vec4 Sphere::randomInHemisphere(const ngl::Vec4& _normal) {
-    ngl::Vec4 inUnitSphere = this->randomInUnitSphere();
-    if (inUnitSphere.dot(_normal) > 0.0) // In the same hemisphere as the normal
-        return inUnitSphere;
-    else
-        return -inUnitSphere;
-}
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Intersection.h"
-
+#include "Computation.h"
 #include "Sphere.h"
 #include "Ray.h"
 

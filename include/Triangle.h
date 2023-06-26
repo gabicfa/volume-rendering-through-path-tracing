@@ -2,6 +2,8 @@
 #define TRIANGLE_H
 
 #include "Shape.h"
+class Ray;
+class Intersection;
 
 class Triangle : public Shape
 {

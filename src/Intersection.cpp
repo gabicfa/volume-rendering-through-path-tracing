@@ -1,5 +1,7 @@
 #include "Intersection.h"
+#include "Computation.h"
 #include "Shape.h"
+#include "Sphere.h"
 
 Intersection::Intersection()
 {
@@ -65,6 +67,13 @@ Computation Intersection::prepareComputations(Ray _r)
     comp.point = _r.position(comp.t);
     comp.eye = -(_r.direction());
     comp.normal = comp.object->normalAt(comp.point);
+
+    auto sphere = std::dynamic_pointer_cast<Sphere>(m_object);
+    if (sphere) 
+    {   
+        comp.matPtr = sphere->m_matPtr;
+    }
+
 
     if (comp.normal.dot(comp.eye) < 0)
     {

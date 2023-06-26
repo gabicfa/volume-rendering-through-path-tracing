@@ -1,4 +1,6 @@
 #include "TestShape.h"
+#include "Ray.h"
+#include "Intersection.h"
 
 TestShape::TestShape()
 {

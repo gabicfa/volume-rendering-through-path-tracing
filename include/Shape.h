@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <ngl/Vec4.h>
-#include "Material.h"
-#include "Ray.h"
+#include <ngl/Mat4.h>
 
+#include "Material.h"
 class Intersection;
-#include "Intersection.h"
+class Ray;
 
 class Shape : public std::enable_shared_from_this<Shape>
 {
@@ -39,7 +39,7 @@ class Shape : public std::enable_shared_from_this<Shape>
         int m_id = 0;
         std::weak_ptr<Shape> m_parent;
         ngl::Mat4 m_transform = ngl::Mat4();
-        Material m_material = Material();
+        Material m_material;
 
 };
 

@@ -2,6 +2,8 @@
 #define TESTSHAPE_H_
 
 #include "Shape.h"
+class Ray;
+class Intersection;
 
 class TestShape : public Shape
 {

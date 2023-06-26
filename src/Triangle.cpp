@@ -1,4 +1,6 @@
 #include "Triangle.h"
+#include "Ray.h"
+#include "Intersection.h"
 
 auto EPSILON = 0.001f;
 

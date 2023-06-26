@@ -1,8 +1,12 @@
 #include "Shape.h"
+#include "Intersection.h"
+#include "Ray.h"
+#include "Material.h"
 
 Shape::Shape()
 {
     m_id = 0;
+    m_material = Material();
 }
 
 int Shape::id() const 

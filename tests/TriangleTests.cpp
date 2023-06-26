@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include "Triangle.h"
+#include "Ray.h"
+#include "Intersection.h"
 
 TEST(TriangleTest, ConstructingTriangle)
 {
