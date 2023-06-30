@@ -75,9 +75,9 @@ void Canvas::drawScene()
     auto halfY = wallSizeY/2;
 
     Sphere shape(1);
-    Material m;
+    OldMaterial m;
     m.color(ngl::Vec3(1.0f, 0.2f, 1.0f));
-    shape.setMaterial(m);
+    shape.setOldMaterial(m);
 
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, 10.0f));
     
@@ -91,7 +91,12 @@ void Canvas::drawScene()
         {
             auto worldX = -halfX + pixelSizeX * x;
             auto position = ngl::Vec4(worldX, worldY, wallZ);
-            auto direction = (position - origin).normalize();
+            auto d = position - origin;
+            auto direction = d;
+            if (d.length() > 0) 
+            {
+                direction = d.normalize();
+            }
             auto r = Ray(origin, direction);
             std::vector<Intersection> xs = shape.intersect(r);
             auto i = Intersection::hit(xs);
@@ -100,7 +105,7 @@ void Canvas::drawScene()
                 auto point = r.position(i.t());
                 auto normal = shape.normalAt(point);
                 auto eye = r.direction();
-                auto color = shape.material().lighting(light, point, eye, normal);
+                auto color = shape.oldMaterial().lighting(light, point, eye, normal);
                 setPixel(x, y, color);
             }
         }

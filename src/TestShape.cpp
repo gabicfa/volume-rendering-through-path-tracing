@@ -1,9 +1,16 @@
 #include "TestShape.h"
 #include "Ray.h"
 #include "Intersection.h"
+#include "AbsMaterial.h"
 
 TestShape::TestShape()
 {
+}
+
+TestShape::TestShape(int _id, std::shared_ptr<AbsMaterial> _matPtr)
+{
+    this->id(_id);
+    this->setMaterial(_matPtr);
 }
 
 bool TestShape::operator==(const Shape& other) const

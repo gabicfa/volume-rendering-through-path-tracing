@@ -51,14 +51,6 @@ inline ngl::Vec4 randomUnitVector()
     return unitVector(randomInUnitSphere());
 }
 
-inline ngl::Vec4 randomInHemisphere(const ngl::Vec4& _normal) {
-    ngl::Vec4 inUnitSphere = randomInUnitSphere();
-    if (inUnitSphere.dot(_normal) > 0.0) 
-        return inUnitSphere;
-    else
-        return -inUnitSphere;
-}
-
 inline bool near_zero(const ngl::Vec4& _vec) {
     // Return true if the vector is close to zero in all dimensions.
     const auto s = 1e-8;

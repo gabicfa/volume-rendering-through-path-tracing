@@ -7,8 +7,17 @@
 ngl::Mat4 Transformations::viewTransform(const ngl::Vec4& from, const ngl::Vec4& to, const ngl::Vec4& up)
 {
     auto _up = up;
-    auto forward = (to - from).normalize();
-    auto upn = _up.normalize();
+    auto f = to - from;
+    auto forward = f;
+    if(f.length() > 0)
+    {
+        forward = f.normalize();
+    }
+    auto upn = _up;
+    if(_up.length() > 0)
+    {
+        upn = _up.normalize();
+    }
     auto left = forward.cross(upn);
     auto trueUp = forward.cross(left);
 

@@ -16,6 +16,8 @@ endif()
 project(RayTracerBuild)
 # This is the name of the Exe change this and it will change everywhere
 set(TargetName RayTracer)
+# Find Intel TBB package
+find_package(TBB CONFIG REQUIRED)
 # This will include the file NGLConfig.cmake, you need to add the location to this either using
 # -DCMAKE_PREFIX_PATH=~/NGL or as a system environment variable. 
 find_package(NGL CONFIG REQUIRED)
@@ -47,7 +49,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
             ${PROJECT_SOURCE_DIR}/src/Intersection.cpp 
             ${PROJECT_SOURCE_DIR}/src/Light.cpp 
-            ${PROJECT_SOURCE_DIR}/src/Material.cpp
+            ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp
             ${PROJECT_SOURCE_DIR}/src/Scene.cpp
             ${PROJECT_SOURCE_DIR}/src/Transformations.cpp
             ${PROJECT_SOURCE_DIR}/src/Camera.cpp
@@ -65,7 +67,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Sphere.h 
             ${PROJECT_SOURCE_DIR}/include/Intersection.h
             ${PROJECT_SOURCE_DIR}/include/Light.h
-            ${PROJECT_SOURCE_DIR}/include/Material.h
+            ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
             ${PROJECT_SOURCE_DIR}/include/Scene.h
             ${PROJECT_SOURCE_DIR}/include/Computation.h
             ${PROJECT_SOURCE_DIR}/include/Transformations.h
@@ -81,7 +83,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Metal.h
 )
 
-target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
+target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
 
 add_custom_target(${TargetName}CopyShaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -118,9 +120,9 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/LightTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Light.cpp 
     ${PROJECT_SOURCE_DIR}/include/Light.h
-    tests/MaterialTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/Material.cpp 
-    ${PROJECT_SOURCE_DIR}/include/Material.h
+    tests/OldMaterialTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp 
+    ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
     tests/SceneTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Scene.cpp 
     ${PROJECT_SOURCE_DIR}/include/Scene.h
@@ -150,5 +152,5 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
     ${PROJECT_SOURCE_DIR}/src/Metal.cpp
 )
-target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
+target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

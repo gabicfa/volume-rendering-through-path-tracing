@@ -21,7 +21,7 @@
 // constexpr size_t TextureHeight = 180;
 
 const auto aspectRatio = 16.0 / 8.0;
-const int TextureWidth = 360;
+const int TextureWidth = 100;
 const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
 
 NGLScene::NGLScene()
@@ -49,11 +49,11 @@ void defaultScene(Scene &s, Camera &c)
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, 10.0f),
-                                        ngl::Vec4(0.0f, 0.0f, 0.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.0f, 1.0f),
+                                        ngl::Vec4(0.0f, 0.0f, -1.0f),
                                         ngl::Vec4(0.0f, 1.0f, 0.0f));
     c.transform(t);
-    c.fieldOfView(15 * M_PI / 180);
+    c.fieldOfView(90 * M_PI / 180);
 }
 
 void readFileAndCreateScene(Scene &s, Camera &c)
@@ -111,11 +111,11 @@ void readFileAndCreateScene(Scene &s, Camera &c)
       t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
     }
 
-    // Material attributes
+    // OldMaterial attributes
     if(sphere.second.count("material"))
     {
       auto mat = sphere.second.get_child("material");
-      auto material = Material();
+      auto material = OldMaterial();
 
       if(mat.count("specular"))
       {
@@ -142,7 +142,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
         auto color = mat.get_child("color");
         material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
       }
-      obj->setMaterial(material);
+      obj->setOldMaterial(material);
     }
     obj->setTransform(t);
     // s.addObject(obj);

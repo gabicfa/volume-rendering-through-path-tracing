@@ -1,59 +1,59 @@
-#include "Material.h"
+#include "OldMaterial.h"
 #include <ngl/Vec3.h>
 #include <ngl/Vec4.h>
 #include <cmath>
 
-ngl::Vec3 Material::color() const
+ngl::Vec3 OldMaterial::color() const
 {
     return m_color;
 }
 
-void Material::color(ngl::Vec3 _c)
+void OldMaterial::color(ngl::Vec3 _c)
 {
     m_color = _c;
 }
 
-float Material::ambient() const
+float OldMaterial::ambient() const
 {
     return m_ambient;
 }
 
-void Material::ambient(float _a)
+void OldMaterial::ambient(float _a)
 {
     m_ambient = _a;
 }
 
-float Material::diffuse() const
+float OldMaterial::diffuse() const
 {
     return m_diffuse;
 }
 
-void Material::diffuse(float _d)
+void OldMaterial::diffuse(float _d)
 {
     m_diffuse = _d;
 }
 
-float Material::specular() const
+float OldMaterial::specular() const
 {
     return m_specular;
 }
 
-void Material::specular(float _s)
+void OldMaterial::specular(float _s)
 {
     m_specular = _s;
 }
 
-float Material::shininess() const
+float OldMaterial::shininess() const
 {
     return m_shininess;
 }
 
-void Material::shininess(float _s)
+void OldMaterial::shininess(float _s)
 {
     m_shininess = _s;
 }
 
-bool Material::operator==(const Material& other) const
+bool OldMaterial::operator==(const OldMaterial& other) const
 {
     return m_color == other.color() && 
     m_ambient == other.ambient() &&
@@ -65,13 +65,18 @@ bool Material::operator==(const Material& other) const
 /// @brief light on material
 /// Modified from :
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
-ngl::Vec3 Material::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4 _normal)
+ngl::Vec3 OldMaterial::lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4 _normal)
 {
     // combine the surface color with the light's color/intensity
     auto effectiveColor = m_color * _l.intensity();
 
     // find the direction to the light source
-    auto light = (_l.position() - _pos).normalize();
+    auto l = _l.position() - _pos;
+    auto light = l;
+    if (l.length() > 0)
+    {
+        light = l.normalize();
+    }
 
     // compute the ambient contribution
     ngl::Vec3 ambient = effectiveColor * m_ambient;

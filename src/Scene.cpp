@@ -20,11 +20,11 @@ Scene::Scene(bool _default)
 
         auto s1 = std::make_shared<Sphere>(1);
         auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
-        auto m = Material();
+        auto m = OldMaterial();
         m.color(mColor);
         m.diffuse(0.7);
         m.specular(0.2);
-        s1->setMaterial(m);
+        s1->setOldMaterial(m);
         m_objects.push_back(s1);
 
         auto s2 = std::make_shared<Sphere>(2);
@@ -47,26 +47,60 @@ Scene::Scene(bool _default, int num)
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
         auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
+        ObjFile obj1("files/Pyramid.obj");
+        auto g1 = obj1.defaultGroup();
+        for (auto t=0; t < g1->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
+            triangle->setMaterial(materialRight);
+            triangle->setTransform(ngl::Mat4::translate(0.7, -0.5, -1.5));
+            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+            // m_objects.push_back(triangle);
+        }
+        
+        ObjFile obj2("files/Pyramid.obj");
+        auto g2 = obj2.defaultGroup();
+        for (auto t=0; t < g2->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
+            triangle->setMaterial(materialLeft);
+            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
+            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+            m_objects.push_back(triangle);
+        }
+
+        ObjFile obj3("files/Teapot.obj");
+        auto g3 = obj3.defaultGroup();
+        for (auto t=0; t < g3->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[t]);
+            triangle->setMaterial(materialCenter);
+            // triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
+            // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        }
+        // m_objects.push_back(g3);
+
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s2 = std::make_shared<Sphere>(2, materialCenter);
-        auto s3 = std::make_shared<Sphere>(3, materialLeft);
-        auto s4 = std::make_shared<Sphere>(4, materialRight);
+        auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
+        s3->setMaterial(materialCenter);
+        // auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s1);
+        // m_objects.push_back(s1);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        m_objects.push_back(s2);
+        // m_objects.push_back(s2);
 
-        s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
-        s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        // s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
+        // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         m_objects.push_back(s3);
 
-        s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
-        s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        m_objects.push_back(s4);
+        // s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
+        // s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
+        // m_objects.push_back(s4);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -107,7 +141,7 @@ std::vector<Intersection> Scene::intersectScene(Ray _r)
 
 ngl::Vec3 Scene::shadeHit(Computation _c)
 {
-    auto m =  _c.object->material();
+    auto m =  _c.object->oldMaterial();
     return m.lighting(this->light(), _c.point, _c.eye, _c.normal);
 }
 
@@ -135,7 +169,7 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
 
         Ray scattered;
         ngl::Vec3 attenuation;
-        if (c.matPtr->scatter(_r, c, attenuation, scattered))
+        if (c.matPtr && c.matPtr->scatter(_r, c, attenuation, scattered))
             return attenuation * colorAt(scattered, depth-1);
         return ngl::Vec3(0.0f,0.0f,0.0f);
         // return shadeHit(c);

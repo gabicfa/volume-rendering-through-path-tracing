@@ -1,12 +1,11 @@
 #include "Shape.h"
 #include "Intersection.h"
 #include "Ray.h"
-#include "Material.h"
 
 Shape::Shape()
 {
     m_id = 0;
-    m_material = Material();
+    m_material = OldMaterial();
 }
 
 int Shape::id() const 
@@ -45,14 +44,23 @@ void Shape::setTransform(const ngl::Mat4& _tMatrix)
     m_transform =  m_transform * _tMatrix;
 }
 
-Material Shape::material() const
+OldMaterial Shape::oldMaterial() const
 {
     return m_material;
 }
 
-void Shape::setMaterial(const Material& _m)
+void Shape::setOldMaterial(const OldMaterial& _m)
 {
     m_material = _m;
+}
+
+std::shared_ptr<AbsMaterial> Shape::material() const
+{
+    return m_matPtr;
+}
+void Shape::setMaterial(const std::shared_ptr<AbsMaterial>& _m)
+{
+    m_matPtr = _m;
 }
 
 ngl::Vec4 Shape::worldToObject(const ngl::Vec4& _point) const
@@ -69,8 +77,11 @@ ngl::Vec4 Shape::normalToWorld(const ngl::Vec4& _normal) const
 {
     ngl::Vec4 transformedNormal = transform().inverse().transpose() * _normal;
     transformedNormal.m_w = 0.0f;
-    transformedNormal.normalize();
-
+    if (transformedNormal.length() > 0)
+    {
+        transformedNormal.normalize();
+    }
+    
     if (auto parentShape = parent())
     {
         transformedNormal = parentShape->normalToWorld(transformedNormal);

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "Scene.h"
 #include "Intersection.h"
-
+#include "Sphere.h"
 TEST(Scene, createScene)
 {
     auto scene = Scene();
@@ -17,11 +17,11 @@ TEST(Scene, createDefaultScene)
     ASSERT_EQ(scene.light(), l);
     auto s1 = Sphere(1);
     auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
-    auto m = Material();
+    auto m = OldMaterial();
     m.color(mColor);
     m.diffuse(0.7);
     m.specular(0.2);
-    s1.setMaterial(m);
+    s1.setOldMaterial(m);
 
     auto s2 = Sphere(2);
     auto transform = ngl::Mat4::scale(0.5f,0.5f,0.5f);
@@ -93,6 +93,7 @@ TEST(Scene, colorWhenRayHits)
     auto s = Scene(true);
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
     auto color = s.colorAt(r, 1);
+    
     ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
 }
 
@@ -100,18 +101,18 @@ TEST(Scene, colorWithIntersectionBehindRay)
 {
     auto s = Scene(true);
     auto outer = std::dynamic_pointer_cast<Sphere>(s.objects()[0]);
-    auto m1 = outer->material();
+    auto m1 = outer->oldMaterial();
     m1.ambient(1.0f);
-    outer->setMaterial(m1);
+    outer->setOldMaterial(m1);
 
     auto inner = std::dynamic_pointer_cast<Sphere>(s.objects()[1]);
-    auto m2 = inner->material();
+    auto m2 = inner->oldMaterial();
     m2.ambient(1.0f);
-    inner->setMaterial(m2);
+    inner->setOldMaterial(m2);
 
     auto r = Ray(ngl::Vec4(0.0f, 0.0f, -0.75f), ngl::Vec4(0.0f,0.0f,1.0f));
     auto color = s.colorAt(r, 1);
-    ASSERT_EQ(color, inner->material().color());
+    ASSERT_EQ(color, inner->oldMaterial().color());
 }
 
 

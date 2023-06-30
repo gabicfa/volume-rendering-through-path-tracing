@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "Material.h"
+#include "OldMaterial.h"
 
-TEST(Material, defaultMaterial)
+TEST(OldMaterial, defaultMaterial)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     ASSERT_EQ(m.color(), ngl::Vec3(1.0f,1.0f,1.0f));
     ASSERT_EQ(m.ambient(), 0.1f);
     ASSERT_EQ(m.diffuse(), 0.9f);
@@ -11,9 +11,9 @@ TEST(Material, defaultMaterial)
     ASSERT_EQ(m.shininess(), 200.0f);
 }
 
-TEST(Material, lightiningEyeBetweenLightAndSurface)
+TEST(OldMaterial, lightiningEyeBetweenLightAndSurface)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     auto pos = ngl::Vec4(0.0f, 0.0f, 0.0f);
     auto eye = ngl::Vec4(0.0f,0.0f, 1.0f);
     auto normal = ngl::Vec4(0.0f,0.0f, 1.0f);
@@ -22,9 +22,9 @@ TEST(Material, lightiningEyeBetweenLightAndSurface)
     ASSERT_EQ(result, ngl::Vec3(1.9f,1.9f,1.9f));
 }
 
-TEST(Material, lightiningEyeOffset45)
+TEST(OldMaterial, lightiningEyeOffset45)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     auto pos = ngl::Vec4(0.0f, 0.0f, 0.0f);
     auto eye = ngl::Vec4(0.0f,std::sqrt(2)/2, std::sqrt(2)/2);
     auto normal = ngl::Vec4(0.0f,0.0f,1.0f);
@@ -33,9 +33,9 @@ TEST(Material, lightiningEyeOffset45)
     ASSERT_EQ(result, ngl::Vec3(1.0f,1.0f,1.0f));
 }
 
-TEST(Material, lightiningLightOffset45)
+TEST(OldMaterial, lightiningLightOffset45)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     auto pos = ngl::Vec4(0.0f, 0.0f, 0.0f);
     auto eye = ngl::Vec4(0.0f,0.0f,1.0f);
     auto normal = ngl::Vec4(0.0f,0.0f,1.0f);
@@ -44,9 +44,9 @@ TEST(Material, lightiningLightOffset45)
     ASSERT_EQ(result, ngl::Vec3(0.7364f, 0.7364f, 0.7364f));
 }
 
-TEST(Material, lightiningEyePathReflaction)
+TEST(OldMaterial, lightiningEyePathReflaction)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     auto pos = ngl::Vec4(0.0f, 0.0f, 0.0f);
     auto eye = ngl::Vec4(0.0f,-std::sqrt(2)/2,std::sqrt(2)/2);
     auto normal = ngl::Vec4(0.0f,0.0f,1.0f);
@@ -55,9 +55,9 @@ TEST(Material, lightiningEyePathReflaction)
     ASSERT_EQ(result, ngl::Vec3(1.6364f, 1.6364f, 1.6364f));
 }
 
-TEST(Material, lightiningLightBehind)
+TEST(OldMaterial, lightiningLightBehind)
 {
-    auto m = Material();
+    auto m = OldMaterial();
     auto pos = ngl::Vec4(0.0f, 0.0f, 0.0f);
     auto eye = ngl::Vec4(0.0f,0.0f, 1.0f);
     auto normal = ngl::Vec4(0.0f,0.0f, 1.0f);

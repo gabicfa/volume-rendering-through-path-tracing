@@ -5,10 +5,10 @@
 
 #include "Light.h"
 
-class Material
+class OldMaterial
 {
     public:
-        Material()=default;
+        OldMaterial()=default;
         ngl::Vec3 color() const;
         void color(ngl::Vec3 _c);
         float ambient() const;
@@ -19,7 +19,7 @@ class Material
         void specular(float _s);
         float shininess() const;
         void shininess(float _s);
-        bool operator==(const Material& other) const;
+        bool operator==(const OldMaterial& other) const;
         ngl::Vec3 lighting(Light _l, ngl::Vec4 _pos, ngl::Vec4 _eye, ngl::Vec4 _normal);
     private:
         ngl::Vec3 m_color = ngl::Vec3(1.0f,1.0f,1.0f);

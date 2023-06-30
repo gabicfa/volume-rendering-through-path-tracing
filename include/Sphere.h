@@ -19,7 +19,6 @@ class Sphere : public Shape
         bool operator!=(const Shape& other) const override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
         std::vector<Intersection> localIntersect(Ray _r) override;
-        std::shared_ptr<AbsMaterial> m_matPtr;
 };
 
 #endif

@@ -67,13 +67,7 @@ Computation Intersection::prepareComputations(Ray _r)
     comp.point = _r.position(comp.t);
     comp.eye = -(_r.direction());
     comp.normal = comp.object->normalAt(comp.point);
-
-    auto sphere = std::dynamic_pointer_cast<Sphere>(m_object);
-    if (sphere) 
-    {   
-        comp.matPtr = sphere->m_matPtr;
-    }
-
+    comp.matPtr = m_object->material();
 
     if (comp.normal.dot(comp.eye) < 0)
     {

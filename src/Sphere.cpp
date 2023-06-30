@@ -15,7 +15,7 @@ Sphere::Sphere(int _id)
 Sphere::Sphere(int _id, std::shared_ptr<AbsMaterial> _matPtr)
 {
     this->id(_id);
-    m_matPtr = _matPtr;
+    this->setMaterial(_matPtr);
 }
 
 bool Sphere::operator==(const Shape& other) const
@@ -24,7 +24,7 @@ bool Sphere::operator==(const Shape& other) const
     {
         return id() == sphere->id() &&
                transform() == sphere->transform() &&
-               material() == sphere->material();
+               oldMaterial() == sphere->oldMaterial();
     }
     return false;
 }
@@ -35,7 +35,7 @@ bool Sphere::operator!=(const Shape& other) const
     {
         return id() != sphere->id() ||
            !(transform() == sphere->transform()) ||
-           !(material() == sphere->material());
+           !(oldMaterial() == sphere->oldMaterial());
     }
     return false;
 }

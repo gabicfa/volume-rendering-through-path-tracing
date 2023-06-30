@@ -2,7 +2,6 @@
 #define SCENE_H_
 #include <iostream>
 #include <vector>
-#include "Sphere.h"
 #include "Shape.h"
 #include "Light.h"
 #include "Computation.h"

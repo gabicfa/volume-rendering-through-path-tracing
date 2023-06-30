@@ -170,15 +170,15 @@ TEST(Sphere, normalOnTransformedSphere)
 TEST(Sphere, defaultMaterial)
 {
     auto s = Sphere(1);
-    auto m = s.material();
-    ASSERT_EQ(m, Material());
+    auto m = s.oldMaterial();
+    ASSERT_EQ(m, OldMaterial());
 }
 
 TEST(Sphere, assignMaterial)
 {
     auto s = Sphere(1);
-    auto m = Material();
+    auto m = OldMaterial();
     m.ambient(1.0f);
-    s.setMaterial(m);
-    ASSERT_EQ(s.material(), m);
+    s.setOldMaterial(m);
+    ASSERT_EQ(s.oldMaterial(), m);
 }

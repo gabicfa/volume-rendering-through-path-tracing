@@ -11,7 +11,7 @@ TEST(Transformations, defautlOrientation)
 
     ngl::Mat4 idt;
     idt.m_11 = -1.0f;
-    // ASSERT_EQ(t, idt);
+    ASSERT_EQ(t, idt);
 }
 
 TEST(Transformations, transformationViewNegativeZ)
@@ -21,7 +21,7 @@ TEST(Transformations, transformationViewNegativeZ)
     auto up = ngl::Vec4(0.0f, 1.0f, 0.0f);
 
     auto t = Transformations::viewTransform(from,to,up);
-    // ASSERT_EQ(t, ngl::Mat4::scale(-1.0f,-1.0f,-1.0f));
+    ASSERT_EQ(t, ngl::Mat4::scale(-1.0f,-1.0f,-1.0f));
 }
 
 TEST(Transformations, transformationMovesScene)

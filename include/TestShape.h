@@ -4,12 +4,13 @@
 #include "Shape.h"
 class Ray;
 class Intersection;
+class AbsMaterial;
 
 class TestShape : public Shape
 {
 public:
     TestShape();
-
+    TestShape(int _id, std::shared_ptr<AbsMaterial> _matPtr);
     bool operator==(const Shape& other) const override;
     bool operator!=(const Shape& other) const override;
     ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
