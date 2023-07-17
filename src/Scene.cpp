@@ -65,7 +65,7 @@ Scene::Scene(bool _default, int num)
         {
             auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
             triangle->setMaterial(materialLeft);
-            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
+            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
             triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
             m_objects.push_back(triangle);
         }
