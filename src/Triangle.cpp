@@ -9,8 +9,7 @@ Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3
 {
     m_e1 = m_p2 - m_p1;
     m_e2 = m_p3 - m_p1;
-    // auto _n =  m_e2.cross(m_e1);
-    auto _n = m_e1.cross(m_e2);
+    auto _n =  m_e2.cross(m_e1);
     m_normal = _n;
     if (_n.length() > 0)
     {
@@ -24,8 +23,7 @@ Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3
 {
     m_e1 = m_p2 - m_p1;
     m_e2 = m_p3 - m_p1;
-    // auto _n =  m_e2.cross(m_e1);
-    auto _n = m_e1.cross(m_e2);
+    auto _n =  m_e2.cross(m_e1);
     m_normal = _n;
     if (_n.length() > 0)
     {

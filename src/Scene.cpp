@@ -53,11 +53,12 @@ Scene::Scene(bool _default, int num)
         {
             auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
             triangle->setMaterial(materialRight);
-            triangle->setTransform(ngl::Mat4::translate(0.7, -0.5, -1.5));
-            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-            // m_objects.push_back(triangle);
+            // triangle->setTransform(ngl::Mat4::translate(0.7, 1.0, -1.5));
+            // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+           
         }
-        
+        // m_objects.push_back(g1);
+
         ObjFile obj2("files/Pyramid.obj");
         auto g2 = obj2.defaultGroup();
         for (auto t=0; t < g2->getChildren().size(); t ++)
@@ -83,20 +84,19 @@ Scene::Scene(bool _default, int num)
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s2 = std::make_shared<Sphere>(2, materialCenter);
         auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
-        s3->setMaterial(materialCenter);
         // auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        // m_objects.push_back(s1);
+        m_objects.push_back(s1);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        // m_objects.push_back(s2);
+        m_objects.push_back(s2);
 
         // s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
         // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        m_objects.push_back(s3);
+        // m_objects.push_back(s3);
 
         // s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         // s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
