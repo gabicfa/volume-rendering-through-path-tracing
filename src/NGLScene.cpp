@@ -14,10 +14,16 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Camera.h"
+#include "OldMaterial.h"
 #include "Light.h"
+#include "ObjFile.h"
 
-constexpr size_t TextureWidth = 720;
-constexpr size_t TextureHeight = 360;
+// constexpr size_t TextureWidth = 360;
+// constexpr size_t TextureHeight = 180;
+
+const auto aspectRatio = 16.0 / 8.0;
+const int TextureWidth = 200;
+const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
 
 NGLScene::NGLScene()
 {
@@ -39,15 +45,16 @@ constexpr auto TextureShader="TextureShader";
 
 void defaultScene(Scene &s, Camera &c)
 {
-    s = Scene(true);
+    s = Scene(true, 1);
     
     auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 1.0f, -3.0f),
-                                        ngl::Vec4(0.0f, 2.0f, 0.0f),
-                                        ngl::Vec4(0.0f, -1.0f, 0.0f));
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.0f, -3.0f),
+                                        ngl::Vec4(0.0f, 0.0f, 3.0f),
+                                        ngl::Vec4(0.0f, 1.0f, 0.0f));
     c.transform(t);
+    c.fieldOfView(90 * M_PI / 180);
 }
 
 void readFileAndCreateScene(Scene &s, Camera &c)
@@ -73,17 +80,26 @@ void readFileAndCreateScene(Scene &s, Camera &c)
   auto to = cam.get_child("to");
   auto up = cam.get_child("up");
   auto t = Transformations::viewTransform(ngl::Vec4(from.get<float>("x"),from.get<float>("y"),from.get<float>("z")),
-                                          ngl::Vec4(-to.get<float>("x"),-to.get<float>("y"),to.get<float>("z")),
-                                          ngl::Vec4(up.get<float>("x"),-up.get<float>("y"),up.get<float>("z")));
+                                          ngl::Vec4(to.get<float>("x"),to.get<float>("y"),to.get<float>("z")),
+                                          ngl::Vec4(up.get<float>("x"),up.get<float>("y"),up.get<float>("z")));
   c.fieldOfView(fov);
   c.transform(t);
 
+  auto file = pt.get<std::string>("file");
+  std::cout << "FILE: " << file << "\n";
+  ObjFile obj(file);
+  auto objs = obj.sceneObjects();
+  for (auto &o : objs) 
+  {
+    s.addObject(o);
+  }
   //Sphere attributes
   auto spheres = pt.get_child("spheres");
   auto id = 0;
   for (auto& sphere : spheres) 
   {
-    auto obj = Sphere(id);
+    auto obj = std::make_shared<Sphere>(1);
+
     auto t = ngl::Mat4();
     if(sphere.second.count("translate"))
     {
@@ -96,11 +112,11 @@ void readFileAndCreateScene(Scene &s, Camera &c)
       t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
     }
 
-    // Material attributes
+    // OldMaterial attributes
     if(sphere.second.count("material"))
     {
       auto mat = sphere.second.get_child("material");
-      auto material = Material();
+      auto material = OldMaterial();
 
       if(mat.count("specular"))
       {
@@ -127,10 +143,10 @@ void readFileAndCreateScene(Scene &s, Camera &c)
         auto color = mat.get_child("color");
         material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
       }
-      obj.material(material);
+      // obj->setOldMaterial(material);
     }
-    obj.setTransform(t);
-    s.addObject(obj);
+    obj->setTransform(t);
+    // s.addObject(obj);
   }
 }
 

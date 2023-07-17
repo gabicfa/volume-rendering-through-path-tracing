@@ -1,21 +1,23 @@
 #ifndef COMPUTATION_H_
 #define COMPUTATION_H_
+
 #include <iostream>
-
 #include <ngl/Vec4.h>
-#include "Sphere.h"
 
-class Sphere;
+class Material;
+class Shape;
 
 class Computation
 {
     public:
         Computation() = default;
         float t;
-        Sphere *object;
+        std::shared_ptr<Shape> object;
+        std::shared_ptr<Material> matPtr;
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;
+        
         bool inside;
 }; 
 

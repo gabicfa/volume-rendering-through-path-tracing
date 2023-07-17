@@ -1,32 +1,24 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
-#include <iostream>
+
 #include <vector>
 #include <ngl/Mat4.h>
+#include "Shape.h"
 
-#include "Ray.h"
-#include "Material.h"
+class Ray;
+class Material;
 class Intersection;
-#include "Intersection.h"
-class Sphere
+
+class Sphere : public Shape
 {
     public:
         Sphere();
         Sphere(int _id);
-        std::vector<Intersection> intersect(Ray _r);
-        int id() const;
-        bool operator==(const Sphere& other) const;
-        bool operator!=(const Sphere& other) const;
-        ngl::Mat4 transform();
-        void setTransform(ngl::Mat4 _tMatrix);
-        ngl::Vec4 normalAt(ngl::Vec4 _worldPoint);
-        Material material();
-        void material(Material _m);
-    private:
-        int m_id = 0;
-        ngl::Mat4 m_transform = ngl::Mat4();
-        Material m_material = Material();
-
+        Sphere(int _id, std::shared_ptr<Material> _matPtr);
+        bool operator==(const Shape& other) const override;
+        bool operator!=(const Shape& other) const override;
+        ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
+        std::vector<Intersection> localIntersect(Ray _r) override;
 };
 
 #endif

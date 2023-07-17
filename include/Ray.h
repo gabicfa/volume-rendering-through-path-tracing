@@ -6,6 +6,7 @@
 class Ray
 {
     public:
+        Ray() = default;
         Ray(ngl::Vec4 _origin, ngl::Vec4 _direction);
         ngl::Vec4 origin() const;
         ngl::Vec4 direction() const;

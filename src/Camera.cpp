@@ -1,4 +1,7 @@
 #include "Camera.h"
+#include "Utility.h"
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
 
 Camera::Camera(size_t _h, size_t _v, double _fov) : m_hsize{_h}, m_vsize{_v}, m_fieldOfView{_fov}
 {
@@ -64,17 +67,22 @@ double Camera::pixelSize() const
 /// @brief Constructing rays at cameras pixels
 /// Modified from :
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
-Ray Camera::rayForPixel(double px, double py)
+Ray Camera::rayForPixel(double _px, double _py)
 {
-    auto xoffset = (px + 0.5) * m_pixelSize;
-    auto yoffset = (py + 0.5) * m_pixelSize;
+    auto xoffset = (_px + 0.5) * m_pixelSize;
+    auto yoffset = (_py + 0.5) * m_pixelSize;
     
     auto worldX = m_halfWidth - xoffset;
     auto worldY = m_halfHeight - yoffset;
 
     auto pixel = m_transformation.inverse() * ngl::Vec4(worldX, worldY, -1);
     auto origin = m_transformation.inverse() * ngl::Vec4(0.0f,0.0f,0.0f);
-    auto direction = (pixel - origin).normalize();
+    auto d = pixel - origin;
+    auto direction = d;
+    if (d.length() > 0)
+    {
+        direction.normalize();
+    }
 
     return Ray(origin, direction);
 }
@@ -85,17 +93,58 @@ void Camera::transform(ngl::Mat4 _t)
     m_transformation = _t;
 }
 
+ngl::Vec3 Camera::writeColor(ngl::Vec3 pixelColor, int samples_per_pixel) {
+    auto r = pixelColor.m_x;
+    auto g = pixelColor.m_y;
+    auto b = pixelColor.m_z;
+
+    auto scale = 1.0 / samples_per_pixel;
+    r = std::sqrt(scale * r);
+    g = std::sqrt(scale * g);
+    b = std::sqrt(scale * b);
+
+    return ngl::Vec3(clamp(r, 0.0, 0.999), clamp(g, 0.0, 0.999), clamp(b, 0.0, 0.999));
+}
+
 Canvas Camera::render(Scene &s)
 {
     auto img = Canvas(m_hsize, m_vsize);
-    for (auto y=0; y< m_vsize-1; y++)
-    {
-        for(auto x=0; x< m_hsize-1; x++)
-        {
-            auto r = this->rayForPixel(x, y);
-            auto color = s.colorAt(r);
-            img.setPixel(x, y, color);
+    auto samplesPerPixel = img.samplesPerPixel();
+    auto maxDepth = img.maxDepth();
+
+    // for (auto y=0; y< m_vsize-1; y++)
+    // {
+    //     std::cerr << "\rScanlines remaining: " << m_vsize-2-y << ' ' << std::flush;
+    //     for(auto x=0; x< m_hsize-1; x++)
+    //     {
+    //         ngl::Vec3 color(0, 0, 0);
+    //         for (int sp = 0; sp < samplesPerPixel; ++sp) {
+    //             auto u = x + randomDouble();
+    //             auto v = y + randomDouble();
+    //             auto r = this->rayForPixel(u, v);
+    //             color+=s.colorAt(r, maxDepth);
+    //         }
+    //         auto colorAntialias = writeColor(color, samplesPerPixel);
+    //         img.setPixel(x, y, colorAntialias);
+    //     }
+    // }
+    tbb::parallel_for(tbb::blocked_range<int>(0, m_vsize - 1), [&](const tbb::blocked_range<int>& rangeY) {
+        for (int y = rangeY.begin(); y != rangeY.end(); ++y) {
+            tbb::parallel_for(tbb::blocked_range<int>(0, m_hsize - 1), [&](const tbb::blocked_range<int>& rangeX) {
+                for (int x = rangeX.begin(); x != rangeX.end(); ++x) {
+                    ngl::Vec3 color(0, 0, 0);
+                    for (int sp = 0; sp < samplesPerPixel; ++sp) {
+                        auto u = x + randomDouble();
+                        auto v = y + randomDouble();
+                        auto r = this->rayForPixel(u, v);
+                        color += s.colorAt(r, maxDepth);
+                    }
+
+                    auto colorAntialias = writeColor(color, samplesPerPixel);
+                    img.setPixel(x, y, colorAntialias);
+                }
+            });
         }
-    }
+    });
     return img;
 }

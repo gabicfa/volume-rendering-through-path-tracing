@@ -16,6 +16,8 @@ endif()
 project(RayTracerBuild)
 # This is the name of the Exe change this and it will change everywhere
 set(TargetName RayTracer)
+# Find Intel TBB package
+find_package(TBB CONFIG REQUIRED)
 # This will include the file NGLConfig.cmake, you need to add the location to this either using
 # -DCMAKE_PREFIX_PATH=~/NGL or as a system environment variable. 
 find_package(NGL CONFIG REQUIRED)
@@ -47,25 +49,41 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
             ${PROJECT_SOURCE_DIR}/src/Intersection.cpp 
             ${PROJECT_SOURCE_DIR}/src/Light.cpp 
-            ${PROJECT_SOURCE_DIR}/src/Material.cpp
+            ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp
             ${PROJECT_SOURCE_DIR}/src/Scene.cpp
             ${PROJECT_SOURCE_DIR}/src/Transformations.cpp
             ${PROJECT_SOURCE_DIR}/src/Camera.cpp
-			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
+			${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp
+            ${PROJECT_SOURCE_DIR}/src/Group.cpp
+            ${PROJECT_SOURCE_DIR}/src/TestShape.cpp
+            ${PROJECT_SOURCE_DIR}/src/Shape.cpp
+            ${PROJECT_SOURCE_DIR}/src/Triangle.cpp
+            ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp
+            ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
+            ${PROJECT_SOURCE_DIR}/src/Metal.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
             ${PROJECT_SOURCE_DIR}/include/Sphere.h 
             ${PROJECT_SOURCE_DIR}/include/Intersection.h
             ${PROJECT_SOURCE_DIR}/include/Light.h
-            ${PROJECT_SOURCE_DIR}/include/Material.h
+            ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
             ${PROJECT_SOURCE_DIR}/include/Scene.h
             ${PROJECT_SOURCE_DIR}/include/Computation.h
             ${PROJECT_SOURCE_DIR}/include/Transformations.h
             ${PROJECT_SOURCE_DIR}/include/Camera.h
+            ${PROJECT_SOURCE_DIR}/include/Shape.h
+            ${PROJECT_SOURCE_DIR}/include/Group.h
+            ${PROJECT_SOURCE_DIR}/include/TestShape.h
+            ${PROJECT_SOURCE_DIR}/include/Triangle.h
+            ${PROJECT_SOURCE_DIR}/include/ObjFile.h
+            ${PROJECT_SOURCE_DIR}/include/Utility.h
+            ${PROJECT_SOURCE_DIR}/include/Material.h
+            ${PROJECT_SOURCE_DIR}/include/Lambertian.h
+            ${PROJECT_SOURCE_DIR}/include/Metal.h
 )
 
-target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
+target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
 
 add_custom_target(${TargetName}CopyShaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -73,6 +91,13 @@ add_custom_target(${TargetName}CopyShaders ALL
     ${PROJECT_BINARY_DIR}/shaders
 )
 ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyShaders)
+
+add_custom_target(${TargetName}CopyFilesFolder ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/files
+    ${CMAKE_BINARY_DIR}/files
+)
+ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyFilesFolder)
 
 # Add testing stuff
 find_package(GTest CONFIG REQUIRED)
@@ -95,9 +120,9 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/LightTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Light.cpp 
     ${PROJECT_SOURCE_DIR}/include/Light.h
-    tests/MaterialTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/Material.cpp 
-    ${PROJECT_SOURCE_DIR}/include/Material.h
+    tests/OldMaterialTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp 
+    ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
     tests/SceneTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Scene.cpp 
     ${PROJECT_SOURCE_DIR}/include/Scene.h
@@ -107,6 +132,25 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/CameraTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Camera.cpp 
     ${PROJECT_SOURCE_DIR}/include/Camera.h
+    tests/GroupTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Group.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Group.h
+    ${PROJECT_SOURCE_DIR}/include/TestShape.h
+    ${PROJECT_SOURCE_DIR}/src/TestShape.cpp 
+    tests/ShapeTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Shape.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Shape.h 
+    tests/TriangleTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/Triangle.cpp 
+    ${PROJECT_SOURCE_DIR}/include/Triangle.h 
+    tests/ObjFileTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp 
+    ${PROJECT_SOURCE_DIR}/include/ObjFile.h 
+    ${PROJECT_SOURCE_DIR}/include/Material.h
+    ${PROJECT_SOURCE_DIR}/include/Lambertian.h
+    ${PROJECT_SOURCE_DIR}/include/Metal.h
+    ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
+    ${PROJECT_SOURCE_DIR}/src/Metal.cpp
 )
-target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main)
+target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

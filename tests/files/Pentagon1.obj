@@ -1,0 +1,9 @@
+# This file uses centimeters as units for non-parametric coordinates.
+
+mtllib Triangle2.mtl
+v -1 1 0 
+v -1 0 0 
+v 1 0 0 
+v 1 1 0 
+v 0 2 0
+f 1 2 3 4 5
