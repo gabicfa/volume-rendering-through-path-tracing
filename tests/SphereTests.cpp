@@ -166,19 +166,3 @@ TEST(Sphere, normalOnTransformedSphere)
     auto n = s.normalAt(ngl::Vec4(0, (std::sqrt(2)/2), (std::sqrt(2)/2)));
     ASSERT_EQ(n, ngl::Vec4(0, 0.97014, 0.24254));
 }
-
-TEST(Sphere, defaultMaterial)
-{
-    auto s = Sphere(1);
-    auto m = s.oldMaterial();
-    ASSERT_EQ(m, OldMaterial());
-}
-
-TEST(Sphere, assignMaterial)
-{
-    auto s = Sphere(1);
-    auto m = OldMaterial();
-    m.ambient(1.0f);
-    s.setOldMaterial(m);
-    ASSERT_EQ(s.oldMaterial(), m);
-}

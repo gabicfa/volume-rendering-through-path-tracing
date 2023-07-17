@@ -6,7 +6,7 @@
 #include "Shape.h"
 
 class Ray;
-class AbsMaterial;
+class Material;
 class Intersection;
 
 class Sphere : public Shape
@@ -14,7 +14,7 @@ class Sphere : public Shape
     public:
         Sphere();
         Sphere(int _id);
-        Sphere(int _id, std::shared_ptr<AbsMaterial> _matPtr);
+        Sphere(int _id, std::shared_ptr<Material> _matPtr);
         bool operator==(const Shape& other) const override;
         bool operator!=(const Shape& other) const override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;

@@ -1,11 +1,11 @@
-#ifndef ABSMATERIAL_H_
-#define ABSMATERIAL_H_
+#ifndef MATERIAL_H_
+#define MATERIAL_H_
 #include <iostream>
 
 class Computation;
 #include "Ray.h"
 
-class AbsMaterial
+class Material
 {
     public:
         virtual bool scatter(

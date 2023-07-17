@@ -78,7 +78,7 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Triangle.h
             ${PROJECT_SOURCE_DIR}/include/ObjFile.h
             ${PROJECT_SOURCE_DIR}/include/Utility.h
-            ${PROJECT_SOURCE_DIR}/include/AbsMaterial.h
+            ${PROJECT_SOURCE_DIR}/include/Material.h
             ${PROJECT_SOURCE_DIR}/include/Lambertian.h
             ${PROJECT_SOURCE_DIR}/include/Metal.h
 )
@@ -146,7 +146,7 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/ObjFileTests.cpp
     ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp 
     ${PROJECT_SOURCE_DIR}/include/ObjFile.h 
-    ${PROJECT_SOURCE_DIR}/include/AbsMaterial.h
+    ${PROJECT_SOURCE_DIR}/include/Material.h
     ${PROJECT_SOURCE_DIR}/include/Lambertian.h
     ${PROJECT_SOURCE_DIR}/include/Metal.h
     ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp

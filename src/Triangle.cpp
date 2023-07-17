@@ -18,7 +18,7 @@ Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3
    
 }
 
-Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3,  std::shared_ptr<AbsMaterial> _matPtr)
+Triangle::Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3,  std::shared_ptr<Material> _matPtr)
     : m_p1(p1), m_p2(p2), m_p3(p3)
 {
     m_e1 = m_p2 - m_p1;

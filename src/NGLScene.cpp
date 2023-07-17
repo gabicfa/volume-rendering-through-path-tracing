@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Camera.h"
+#include "OldMaterial.h"
 #include "Light.h"
 #include "ObjFile.h"
 
@@ -142,7 +143,7 @@ void readFileAndCreateScene(Scene &s, Camera &c)
         auto color = mat.get_child("color");
         material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
       }
-      obj->setOldMaterial(material);
+      // obj->setOldMaterial(material);
     }
     obj->setTransform(t);
     // s.addObject(obj);

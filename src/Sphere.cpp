@@ -1,7 +1,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Ray.h"
-#include "AbsMaterial.h"
+#include "Material.h"
 #include "Intersection.h"
 Sphere::Sphere()
 {
@@ -12,7 +12,7 @@ Sphere::Sphere(int _id)
     this->id(_id);
 }
 
-Sphere::Sphere(int _id, std::shared_ptr<AbsMaterial> _matPtr)
+Sphere::Sphere(int _id, std::shared_ptr<Material> _matPtr)
 {
     this->id(_id);
     this->setMaterial(_matPtr);
@@ -23,8 +23,7 @@ bool Sphere::operator==(const Shape& other) const
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
     {
         return id() == sphere->id() &&
-               transform() == sphere->transform() &&
-               oldMaterial() == sphere->oldMaterial();
+               transform() == sphere->transform();
     }
     return false;
 }
@@ -34,8 +33,7 @@ bool Sphere::operator!=(const Shape& other) const
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
     {
         return id() != sphere->id() ||
-           !(transform() == sphere->transform()) ||
-           !(oldMaterial() == sphere->oldMaterial());
+           !(transform() == sphere->transform());
     }
     return false;
 }

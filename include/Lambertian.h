@@ -1,7 +1,7 @@
 #ifndef LAMBERTIAN_H_
 #define LAMBERTIAN_H_
 
-#include "AbsMaterial.h" 
+#include "Material.h" 
 
 #include <iostream>
 #include <vector>
@@ -10,7 +10,7 @@
 class Ray;
 class Computation;
 
-class Lambertian : public AbsMaterial {
+class Lambertian : public Material {
     public:
         Lambertian(const ngl::Vec4& _a);
         virtual bool scatter(

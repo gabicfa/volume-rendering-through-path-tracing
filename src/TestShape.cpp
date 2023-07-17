@@ -1,13 +1,13 @@
 #include "TestShape.h"
 #include "Ray.h"
 #include "Intersection.h"
-#include "AbsMaterial.h"
+#include "Material.h"
 
 TestShape::TestShape()
 {
 }
 
-TestShape::TestShape(int _id, std::shared_ptr<AbsMaterial> _matPtr)
+TestShape::TestShape(int _id, std::shared_ptr<Material> _matPtr)
 {
     this->id(_id);
     this->setMaterial(_matPtr);

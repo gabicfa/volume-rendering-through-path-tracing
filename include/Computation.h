@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ngl/Vec4.h>
 
-class AbsMaterial;
+class Material;
 class Shape;
 
 class Computation
@@ -13,7 +13,7 @@ class Computation
         Computation() = default;
         float t;
         std::shared_ptr<Shape> object;
-        std::shared_ptr<AbsMaterial> matPtr;
+        std::shared_ptr<Material> matPtr;
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;

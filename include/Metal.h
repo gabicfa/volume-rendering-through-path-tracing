@@ -1,7 +1,7 @@
 #ifndef METAL_H_
 #define METAL_H_
 
-#include "AbsMaterial.h"
+#include "Material.h"
 
 #include <iostream>
 #include <vector>
@@ -9,9 +9,9 @@
 
 class Ray;
 class Computation;
-class AbsMaterial;
+class Material;
 
-class Metal : public AbsMaterial {
+class Metal : public Material {
     public:
         Metal(const ngl::Vec4& _a);
         virtual bool scatter(

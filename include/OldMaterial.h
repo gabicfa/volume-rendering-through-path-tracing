@@ -1,5 +1,5 @@
-#ifndef MATERIAL_H_
-#define MATERIAL_H_
+#ifndef OLDMATERIAL_H_
+#define OLDMATERIAL_H_
 #include <iostream>
 #include <ngl/Vec3.h>
 

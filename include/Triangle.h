@@ -4,12 +4,12 @@
 #include "Shape.h"
 class Ray;
 class Intersection;
-class AbsMaterial;
+class Material;
 class Triangle : public Shape
 {
 public:
     Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3);
-    Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3,  std::shared_ptr<AbsMaterial> _matPtr);
+    Triangle(const ngl::Vec4& p1, const ngl::Vec4& p2, const ngl::Vec4& p3,  std::shared_ptr<Material> _matPtr);
     const ngl::Vec4& getP1() const;
     const ngl::Vec4& getP2() const;
     const ngl::Vec4& getP3() const;

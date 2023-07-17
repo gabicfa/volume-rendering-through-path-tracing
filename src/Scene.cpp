@@ -20,11 +20,6 @@ Scene::Scene(bool _default)
 
         auto s1 = std::make_shared<Sphere>(1);
         auto mColor = ngl::Vec3(0.8f,1.0f,0.6f);
-        auto m = OldMaterial();
-        m.color(mColor);
-        m.diffuse(0.7);
-        m.specular(0.2);
-        s1->setOldMaterial(m);
         m_objects.push_back(s1);
 
         auto s2 = std::make_shared<Sphere>(2);
@@ -139,11 +134,11 @@ std::vector<Intersection> Scene::intersectScene(Ray _r)
     return intersections;
 }
 
-ngl::Vec3 Scene::shadeHit(Computation _c)
-{
-    auto m =  _c.object->oldMaterial();
-    return m.lighting(this->light(), _c.point, _c.eye, _c.normal);
-}
+// ngl::Vec3 Scene::shadeHit(Computation _c)
+// {
+//     auto m =  _c.object->oldMaterial();
+//     return m.lighting(this->light(), _c.point, _c.eye, _c.normal);
+// }
 
 ngl::Vec3 Scene::colorAt(Ray _r, int depth)
 {

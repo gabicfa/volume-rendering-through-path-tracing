@@ -5,7 +5,6 @@
 Shape::Shape()
 {
     m_id = 0;
-    m_material = OldMaterial();
 }
 
 int Shape::id() const 
@@ -44,21 +43,11 @@ void Shape::setTransform(const ngl::Mat4& _tMatrix)
     m_transform =  m_transform * _tMatrix;
 }
 
-OldMaterial Shape::oldMaterial() const
-{
-    return m_material;
-}
-
-void Shape::setOldMaterial(const OldMaterial& _m)
-{
-    m_material = _m;
-}
-
-std::shared_ptr<AbsMaterial> Shape::material() const
+std::shared_ptr<Material> Shape::material() const
 {
     return m_matPtr;
 }
-void Shape::setMaterial(const std::shared_ptr<AbsMaterial>& _m)
+void Shape::setMaterial(const std::shared_ptr<Material>& _m)
 {
     m_matPtr = _m;
 }

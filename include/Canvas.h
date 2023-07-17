@@ -18,7 +18,6 @@ class Canvas
         ngl::Vec3 getPixel(size_t _x, size_t _y) const;
         void setPixel(size_t _x, size_t _y, ngl::Vec3 _colour) const;
         const ngl::Vec3 * getPixelsBuffer() const;
-        void drawScene();
     private:
         size_t m_width=0;
         size_t m_height=0;

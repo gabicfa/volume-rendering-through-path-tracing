@@ -5,8 +5,7 @@
 #include <ngl/Vec4.h>
 #include <ngl/Mat4.h>
 
-#include "OldMaterial.h"
-#include "AbsMaterial.h"
+#include "Material.h"
 class Intersection;
 class Ray;
 
@@ -19,11 +18,9 @@ class Shape : public std::enable_shared_from_this<Shape>
         void id(const int _id);
         ngl::Mat4 transform() const;
         void setTransform(const ngl::Mat4& _tMatrix);
-        OldMaterial oldMaterial() const;
-        void setOldMaterial(const OldMaterial& _m);
 
-        std::shared_ptr<AbsMaterial> material() const;
-        void setMaterial(const std::shared_ptr<AbsMaterial>& _m);
+        std::shared_ptr<Material> material() const;
+        void setMaterial(const std::shared_ptr<Material>& _m);
 
         virtual bool operator==(const Shape& _other) const = 0;
         virtual bool operator!=(const Shape& _other) const = 0;
@@ -43,8 +40,7 @@ class Shape : public std::enable_shared_from_this<Shape>
         int m_id = 0;
         std::weak_ptr<Shape> m_parent;
         ngl::Mat4 m_transform = ngl::Mat4();
-        OldMaterial m_material;
-        std::shared_ptr<AbsMaterial> m_matPtr;
+        std::shared_ptr<Material> m_matPtr;
 
 };
 
