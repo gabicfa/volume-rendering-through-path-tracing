@@ -61,6 +61,8 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp
             ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
             ${PROJECT_SOURCE_DIR}/src/Metal.cpp
+            ${PROJECT_SOURCE_DIR}/src/LambertianBSDF.cpp
+            ${PROJECT_SOURCE_DIR}/src/MetalBSDF.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -81,6 +83,9 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Material.h
             ${PROJECT_SOURCE_DIR}/include/Lambertian.h
             ${PROJECT_SOURCE_DIR}/include/Metal.h
+            ${PROJECT_SOURCE_DIR}/include/BSDF.h
+            ${PROJECT_SOURCE_DIR}/include/LambertianBSDF.h
+            ${PROJECT_SOURCE_DIR}/include/MetalBSDF.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
@@ -151,6 +156,11 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/include/Metal.h
     ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
     ${PROJECT_SOURCE_DIR}/src/Metal.cpp
+    ${PROJECT_SOURCE_DIR}/src/LambertianBSDF.cpp
+    ${PROJECT_SOURCE_DIR}/src/MetalBSDF.cpp
+    ${PROJECT_SOURCE_DIR}/include/BSDF.h
+    ${PROJECT_SOURCE_DIR}/include/LambertianBSDF.h
+    ${PROJECT_SOURCE_DIR}/include/MetalBSDF.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

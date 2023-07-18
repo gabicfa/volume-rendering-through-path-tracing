@@ -2,23 +2,20 @@
 #define METAL_H_
 
 #include "Material.h"
+#include "MetalBSDF.h"
 
-#include <iostream>
-#include <vector>
-#include <memory>
-
-class Ray;
-class Computation;
-class Material;
-
-class Metal : public Material {
+class Metal : public Material
+{
     public:
         Metal(const ngl::Vec4& _a);
-        virtual bool scatter(
-            const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered
-            ) const override;
+        std::shared_ptr<BSDF> createBSDF(const Computation& _comp) override;
+        bool scatter(
+                const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered
+                ) const override;
+        ngl::Vec4 albedo() const override;
 
-    public:
+    private:
         ngl::Vec4 m_albedo;
 };
+
 #endif

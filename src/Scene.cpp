@@ -38,47 +38,47 @@ Scene::Scene(bool _default, int num)
         m_light = l;
 
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
-        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
-        auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
-        auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
+        // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+        auto materialCenter   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
+        // auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
-        ObjFile obj1("files/Pyramid.obj");
-        auto g1 = obj1.defaultGroup();
-        for (auto t=0; t < g1->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
-            triangle->setMaterial(materialRight);
+        // ObjFile obj1("files/Pyramid.obj");
+        // auto g1 = obj1.defaultGroup();
+        // for (auto t=0; t < g1->getChildren().size(); t ++)
+        // {
+        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
+        //     triangle->setMaterial(materialRight);
             // triangle->setTransform(ngl::Mat4::translate(0.7, 1.0, -1.5));
             // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
            
-        }
+        // }
         // m_objects.push_back(g1);
 
-        ObjFile obj2("files/Pyramid.obj");
-        auto g2 = obj2.defaultGroup();
-        for (auto t=0; t < g2->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
-            triangle->setMaterial(materialLeft);
-            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
-            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-            m_objects.push_back(triangle);
-        }
+        // ObjFile obj2("files/Pyramid.obj");
+        // auto g2 = obj2.defaultGroup();
+        // for (auto t=0; t < g2->getChildren().size(); t ++)
+        // {
+        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
+        //     triangle->setMaterial(materialLeft);
+        //     triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
+        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        //     m_objects.push_back(triangle);
+        // }
 
-        ObjFile obj3("files/Teapot.obj");
-        auto g3 = obj3.defaultGroup();
-        for (auto t=0; t < g3->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[t]);
-            triangle->setMaterial(materialCenter);
+        // ObjFile obj3("files/Teapot.obj");
+        // auto g3 = obj3.defaultGroup();
+        // for (auto t=0; t < g3->getChildren().size(); t ++)
+        // {
+        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[t]);
+        //     triangle->setMaterial(materialCenter);
             // triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
             // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        }
+        // }
         // m_objects.push_back(g3);
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s2 = std::make_shared<Sphere>(2, materialCenter);
-        auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
+        // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         // auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
@@ -169,4 +169,64 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
         return ngl::Vec3(0.0f,0.0f,0.0f);
         // return shadeHit(c);
     }
+}
+
+ngl::Vec3 Scene::directLighting(const Computation& comp)
+{
+    ngl::Vec3 L(0, 0, 0);
+    ngl::Vec4 _lightDir = m_light.position() - comp.point;
+    auto lightDir = _lightDir.toVec3();
+    float distance = lightDir.length();
+    lightDir.normalize();
+
+    // Check for shadows: make sure there are no objects between the light and the point we're shading
+    Ray shadowRay(comp.point, lightDir);
+    auto shadowIntersections = this->intersectScene(shadowRay);
+    auto xs = Intersection::intersections(shadowIntersections);
+    auto i = Intersection::hit(xs);
+    if (i == Intersection() || i.t() > distance)
+    {
+        ngl::Vec3 albedo = comp.matPtr->albedo().toVec3();
+        L += albedo * m_light.intensity() * std::max(0.0f, comp.normal.dot(lightDir));
+    }
+    return L;
+}
+
+ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
+{
+    ngl::Vec3 L(0,0,0);
+    ngl::Vec3 throughput(1.0, 1.0, 1.0);
+    Ray ray = r;
+    for (int j = 0; j < maxDepth; ++j) 
+    {
+        auto intersections = this->intersectScene(ray);
+        auto xs = Intersection::intersections(intersections);
+        auto i = Intersection::hit(xs);
+
+        Intersection empty = Intersection();
+        if (i == empty)
+        {
+            break;
+        }
+
+        auto ctx = i.prepareComputations(ray);
+
+        auto m = ctx.matPtr;
+        auto bsdf = m->createBSDF(ctx);
+
+        L += throughput * directLighting(ctx);
+
+        // Sample direction for next ray from BSDF
+        float pdf;
+        ngl::Vec3 Ls;
+        ngl::Vec3 sampleDirection;
+        bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
+
+        throughput = throughput * (Ls / pdf);
+
+        // Update ray for next iteration
+        ray = Ray(ctx.point, sampleDirection);
+    }
+    
+    return L;
 }

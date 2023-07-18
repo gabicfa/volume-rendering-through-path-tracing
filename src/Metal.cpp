@@ -8,6 +8,11 @@ Metal::Metal(const ngl::Vec4& _a)
     m_albedo = _a;
 }
 
+std::shared_ptr<BSDF> Metal::createBSDF(const Computation& _comp)
+{
+    return std::make_shared<MetalBSDF>(_comp);
+}
+
 bool Metal::scatter(
             const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered
             ) const
@@ -16,4 +21,9 @@ bool Metal::scatter(
     scattered = Ray(_comp.point, reflected);
     attenuation = m_albedo;
     return (scattered.direction().dot(_comp.normal) > 0);
+}
+
+ngl::Vec4 Metal::albedo() const
+{
+    return m_albedo;
 }

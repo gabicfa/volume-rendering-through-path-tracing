@@ -15,10 +15,12 @@ class Scene
         std::vector<std::shared_ptr<Shape>>& objects();
         Light light() const;
         void light(Light _l);
+        ngl::Vec3 directLighting(const Computation& comp);
         void addObject(std::shared_ptr<Shape> s);
         std::vector<Intersection> intersectScene(Ray _r);
         // ngl::Vec3 shadeHit(Computation _c);
         ngl::Vec3 colorAt(Ray _r, int depth);
+        ngl::Vec3 pathTrace(const Ray& r, int maxDepth);
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;
         Light m_light;

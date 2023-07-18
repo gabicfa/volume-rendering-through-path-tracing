@@ -22,7 +22,7 @@
 // constexpr size_t TextureHeight = 180;
 
 const auto aspectRatio = 16.0 / 8.0;
-const int TextureWidth = 200;
+const int TextureWidth = 360;
 const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
 
 NGLScene::NGLScene()

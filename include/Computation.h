@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <ngl/Vec4.h>
+#include "Ray.h"
 
 class Material;
 class Shape;
@@ -17,6 +18,7 @@ class Computation
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;
+        Ray incomingRay;
         
         bool inside;
 }; 
