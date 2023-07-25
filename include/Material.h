@@ -20,6 +20,7 @@ class Material
         virtual bool scatter(
             const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered
             ) const = 0;
-        virtual ngl::Vec4 albedo() const = 0;
+        virtual bool hasAlbedo() const { return false; }
+        virtual ngl::Vec4 albedo() const { return ngl::Vec4(1.0f, 1.0f, 1.0f, 1.0f); }
 };
 #endif

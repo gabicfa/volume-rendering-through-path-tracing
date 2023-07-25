@@ -39,9 +39,9 @@ Scene::Scene(bool _default, int num)
         m_light = l;
 
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
-        auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2), ngl::Vec4(0.5, 0.5, 0.5));
+        auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
 
-        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+        // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
         auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
@@ -177,20 +177,31 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
 ngl::Vec3 Scene::directLighting(const Computation& comp)
 {
     ngl::Vec3 L(0, 0, 0);
-    ngl::Vec4 _lightDir = m_light.position() - comp.point;
-    auto lightDir = _lightDir.toVec3();
-    float distance = lightDir.length();
-    lightDir.normalize();
+    auto N = comp.normal;
+    auto P = comp.point;
+
+    auto lightDir = (m_light.position() - P).normalize();
+    auto distance = (m_light.position() - P).length();
 
     // Check for shadows: make sure there are no objects between the light and the point we're shading
-    Ray shadowRay(comp.point, lightDir);
-    auto shadowIntersections = this->intersectScene(shadowRay);
+    Ray shadowRay(P, lightDir);
+    auto shadowIntersections = intersectScene(shadowRay);
     auto xs = Intersection::intersections(shadowIntersections);
     auto i = Intersection::hit(xs);
     if (i == Intersection() || i.t() > distance)
     {
-        ngl::Vec3 albedo = comp.matPtr->albedo().toVec3();
-        L += albedo * m_light.intensity() * std::max(0.0f, comp.normal.dot(lightDir));
+        if (comp.matPtr->hasAlbedo())
+        {
+            ngl::Vec3 albedo = comp.matPtr->albedo().toVec3();
+
+            float cosTheta = std::max(0.0f, N.dot(lightDir));
+
+            L += albedo * m_light.intensity() * cosTheta;
+        }
+        else
+        {
+            L += m_light.intensity() * std::max(0.0f, N.dot(lightDir));
+        }
     }
     return L;
 }
@@ -232,7 +243,7 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         std::shared_ptr<Volume> volume = nullptr;
         if (m->hasVolume()) {
 
-            auto VdotN = ctx.eye.dot(ctx.normal);
+            auto VdotN = ctx.v.dot(ctx.normal);
             auto dirDotN = sampleDirection.dot(ctx.normal.toVec3());
             auto transmit = (VdotN < 0.0) != (dirDotN < 0.0);
             if (transmit) {

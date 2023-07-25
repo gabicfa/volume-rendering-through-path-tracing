@@ -30,6 +30,11 @@ bool Lambertian::scatter(
     return true;
 }
 
+bool Lambertian::hasAlbedo() const
+{
+    return true;
+}
+
 ngl::Vec4 Lambertian::albedo() const
 {
     return m_albedo;

@@ -13,6 +13,7 @@ class Lambertian : public Material
         bool scatter(
             const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered
             ) const override;
+        bool hasAlbedo() const override;
         ngl::Vec4 albedo() const override;
 
     private:

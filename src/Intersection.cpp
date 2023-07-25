@@ -67,6 +67,7 @@ Computation Intersection::prepareComputations(Ray _r)
     comp.point = _r.position(comp.t);
     comp.eye = -(_r.direction());
     comp.incomingRay = _r;
+    comp.v = -_r.direction();
     comp.normal = comp.object->normalAt(comp.point);
     comp.matPtr = m_object->material();
 

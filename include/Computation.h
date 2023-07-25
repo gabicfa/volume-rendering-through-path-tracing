@@ -18,6 +18,7 @@ class Computation
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;
+        ngl::Vec4 v;
         Ray incomingRay;
         
         bool inside;

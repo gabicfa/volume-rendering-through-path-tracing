@@ -33,8 +33,6 @@ std::vector<Intersection> Group::localIntersect(Ray _r)
         return a.t() < b.t();
     });
     return intersections;
-
-    return intersections;
 }
 
 ngl::Vec4 Group::localNormalAt(ngl::Vec4 _localPoint)

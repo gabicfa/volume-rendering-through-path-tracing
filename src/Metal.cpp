@@ -28,6 +28,11 @@ bool Metal::scatter(
     return (scattered.direction().dot(_comp.normal) > 0);
 }
 
+bool Metal::hasAlbedo() const
+{
+    return true;
+}
+
 ngl::Vec4 Metal::albedo() const
 {
     return m_albedo;
