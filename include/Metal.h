@@ -8,6 +8,7 @@ class Metal : public Material
 {
     public:
         Metal(const ngl::Vec4& _a);
+        bool hasVolume() override;
         std::shared_ptr<BSDF> createBSDF(const Computation& _comp) override;
         bool scatter(
                 const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered

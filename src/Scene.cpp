@@ -6,6 +6,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Lambertian.h"
+#include "BeersLawMaterial.h"
 #include "Metal.h"
 #include <memory>
 
@@ -38,9 +39,11 @@ Scene::Scene(bool _default, int num)
         m_light = l;
 
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
-        // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
-        auto materialCenter   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
-        // auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
+        auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2), ngl::Vec4(0.5, 0.5, 0.5));
+
+        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+        auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
+        auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
         // ObjFile obj1("files/Pyramid.obj");
         // auto g1 = obj1.defaultGroup();
@@ -48,22 +51,22 @@ Scene::Scene(bool _default, int num)
         // {
         //     auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
         //     triangle->setMaterial(materialRight);
-            // triangle->setTransform(ngl::Mat4::translate(0.7, 1.0, -1.5));
-            // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        //     triangle->setTransform(ngl::Mat4::translate(0.7, 1.0, -1.5));
+        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
            
         // }
         // m_objects.push_back(g1);
 
-        // ObjFile obj2("files/Pyramid.obj");
-        // auto g2 = obj2.defaultGroup();
-        // for (auto t=0; t < g2->getChildren().size(); t ++)
-        // {
-        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
-        //     triangle->setMaterial(materialLeft);
-        //     triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
-        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        //     m_objects.push_back(triangle);
-        // }
+        ObjFile obj2("files/Pyramid.obj");
+        auto g2 = obj2.defaultGroup();
+        for (auto t=0; t < g2->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
+            triangle->setMaterial(materialLeft);
+            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
+            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+            m_objects.push_back(triangle);
+        }
 
         // ObjFile obj3("files/Teapot.obj");
         // auto g3 = obj3.defaultGroup();
@@ -71,15 +74,15 @@ Scene::Scene(bool _default, int num)
         // {
         //     auto triangle = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[t]);
         //     triangle->setMaterial(materialCenter);
-            // triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
-            // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        //     triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
+        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         // }
         // m_objects.push_back(g3);
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
-        auto s2 = std::make_shared<Sphere>(2, materialCenter);
+        auto s2 = std::make_shared<Sphere>(2, materialBeers);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
-        // auto s4 = std::make_shared<Sphere>(4, materialRight);
+        auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
@@ -93,9 +96,9 @@ Scene::Scene(bool _default, int num)
         // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         // m_objects.push_back(s3);
 
-        // s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
-        // s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        // m_objects.push_back(s4);
+        s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
+        s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
+        m_objects.push_back(s4);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -224,8 +227,45 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
 
         throughput = throughput * (Ls / pdf);
 
-        // Update ray for next iteration
-        ray = Ray(ctx.point, sampleDirection);
+        Ray nextRay(ctx.point, sampleDirection);
+
+        std::shared_ptr<Volume> volume = nullptr;
+        if (m->hasVolume()) {
+
+            auto VdotN = ctx.eye.dot(ctx.normal);
+            auto dirDotN = sampleDirection.dot(ctx.normal.toVec3());
+            auto transmit = (VdotN < 0.0) != (dirDotN < 0.0);
+            if (transmit) {
+                // We transmitted through the surface. Check dot product between the sample direction and the
+                // surface normal N to see whether we entered or exited the volume media
+                bool entered = dirDotN < 0.0f;
+                if (entered) {
+                    nextRay.enterMaterial(m);
+                } else {
+                    nextRay.exitMaterial(m);
+                }
+            }
+            volume = nextRay.getVolume(ctx);
+        }
+        if (volume) {
+            ngl::Vec3 Lv;
+            ngl::Vec3 transmittance;
+            ngl::Vec3 weight;
+            if (!volume->integrate(nextRay, Lv, transmittance, weight, ctx.point, nextRay, *ctx.object)) break;
+            L += weight * throughput * Lv;
+            throughput = throughput * transmittance;
+        } else {
+            auto intersections = this->intersectScene(nextRay);
+            auto xs = Intersection::intersections(intersections);
+            auto i = Intersection::hit(xs);
+
+            Intersection empty = Intersection();
+            if (i == empty)
+            {
+                break;
+            }
+        }
+        ray = nextRay;
     }
     
     return L;

@@ -8,6 +8,10 @@ Lambertian::Lambertian(const ngl::Vec4& _a)
     m_albedo = _a;
 }
 
+bool Lambertian::hasVolume()
+{
+    return false;
+}
 std::shared_ptr<BSDF> Lambertian::createBSDF(const Computation& _comp)
 {
     return std::make_shared<LambertianBSDF>(_comp);
