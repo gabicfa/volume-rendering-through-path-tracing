@@ -174,35 +174,86 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
     }
 }
 
+//method to compute beam transmittance
+ngl::Vec3 Scene::transmittance() const {
+    return ngl::Vec3(1.f, 1.f, 1.f);
+}
+
+void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
+                         float &pdf, ngl::Vec3 &beamTransmittance) {
+
+    L = m_light.sampleLi(ctx, &sampleDirection, &pdf);
+
+    if (pdf > 0 && !isBlack(L)) {
+        beamTransmittance = this->transmittance();
+    } else {
+        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
+    }
+}
+
+void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
+                         ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) {
+    // evaluate radiance and pdf using scene's light source
+    L = m_light.le(Ray(ctx.point, sampleDirection));
+    pdf = m_light.pdfLi();
+
+    if (pdf > 0 && !isBlack(L)) {
+        // calculate the beam transmittance
+        beamTransmittance = this->transmittance();
+    } else {
+        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
+    }
+}
+
+void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
+                         ngl::Vec3 &L, float &pdf) {
+    L = m_light.le(Ray(ctx.point, sampleDirection));
+    pdf = m_light.pdfLi();
+}
+
 ngl::Vec3 Scene::directLighting(const Computation& comp)
 {
+    ngl::Vec3 Li(0, 0, 0);
     ngl::Vec3 L(0, 0, 0);
     auto N = comp.normal;
     auto P = comp.point;
+    ngl::Vec4 wi;
+    float pdf;
+    ngl::Vec3 beamTransmittance;
 
-    auto lightDir = (m_light.position() - P).normalize();
-    auto distance = (m_light.position() - P).length();
+    generateLightSample(comp, wi, Li, pdf, beamTransmittance);
 
-    // Check for shadows: make sure there are no objects between the light and the point we're shading
-    Ray shadowRay(P, lightDir);
+    float lightDistance = (m_light.position() - P).length();
+
+    Ray shadowRay(P, wi);
     auto shadowIntersections = intersectScene(shadowRay);
     auto xs = Intersection::intersections(shadowIntersections);
     auto i = Intersection::hit(xs);
-    if (i == Intersection() || i.t() > distance)
+
+    if(i != Intersection() && i.t() > 0.0001f && i.t() < lightDistance)
     {
+        return ngl::Vec3(0.0f, 0.0f, 0.0f); 
+    }
+
+    if(pdf > 0.f && !isBlack(Li))
+    {
+        ngl::Vec3 f;
         if (comp.matPtr->hasAlbedo())
         {
-            ngl::Vec3 albedo = comp.matPtr->albedo().toVec3();
-
-            float cosTheta = std::max(0.0f, N.dot(lightDir));
-
-            L += albedo * m_light.intensity() * cosTheta;
+            f = comp.matPtr->albedo().toVec3();
         }
         else
         {
-            L += m_light.intensity() * std::max(0.0f, N.dot(lightDir));
+            f = ngl::Vec3(1,1,1); // otherwise use white
+        }
+
+        float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
+        if (cosTheta > 0)
+        {
+            L += f * Li * cosTheta * beamTransmittance / pdf;
         }
     }
+
     return L;
 }
 
@@ -243,9 +294,9 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         std::shared_ptr<Volume> volume = nullptr;
         if (m->hasVolume()) {
 
-            auto VdotN = ctx.v.dot(ctx.normal);
+            auto EyedotN = ctx.eye.dot(ctx.normal);
             auto dirDotN = sampleDirection.dot(ctx.normal.toVec3());
-            auto transmit = (VdotN < 0.0) != (dirDotN < 0.0);
+            auto transmit = (EyedotN < 0.0) != (dirDotN < 0.0);
             if (transmit) {
                 // We transmitted through the surface. Check dot product between the sample direction and the
                 // surface normal N to see whether we entered or exited the volume media

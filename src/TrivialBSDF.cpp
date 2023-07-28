@@ -12,8 +12,8 @@ void TrivialBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& samp
 
 void TrivialBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
 {
-    auto _compV = m_comp.v;
-    sampleDirection = -_compV;
+    auto _compEye = m_comp.eye;
+    sampleDirection = -_compEye;
     pdf = 1.0;
     L = ngl::Vec3(1.0, 1.0, 1.0);
 }
