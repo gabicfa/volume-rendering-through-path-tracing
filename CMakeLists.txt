@@ -108,6 +108,10 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousMaterial.h
             ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
             ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
+            ${PROJECT_SOURCE_DIR}/src/DielectricBSDF.cpp
+            ${PROJECT_SOURCE_DIR}/include/DielectricBSDF.h
+            ${PROJECT_SOURCE_DIR}/src/Dielectric.cpp
+            ${PROJECT_SOURCE_DIR}/include/Dielectric.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
@@ -206,6 +210,10 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
     ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousMaterial.cpp
     ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
+    ${PROJECT_SOURCE_DIR}/src/DielectricBSDF.cpp
+    ${PROJECT_SOURCE_DIR}/include/DielectricBSDF.h
+    ${PROJECT_SOURCE_DIR}/src/Dielectric.cpp
+    ${PROJECT_SOURCE_DIR}/include/Dielectric.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

@@ -6,6 +6,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Lambertian.h"
+#include "Dielectric.h"
 #include "BeersLawMaterial.h"
 #include "BeersLawHeterogeneousMaterial.h"
 #include "SingleScatterHomogeneousMaterial.h"
@@ -41,14 +42,16 @@ Scene::Scene(bool _default, int num)
         auto l = Light(lIntensity,lPoint);
         m_light = l;
 
-        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(1.0, 1.0, 1.0));
+        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
         auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
         auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(1.0, 0.0, 0.0), ngl::Vec3(0.8, 0.8, 0.8));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
+        auto materialDielectric = std::make_shared<Dielectric>(-0.4);
 
 
-        // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+
+        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
         auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
@@ -88,7 +91,7 @@ Scene::Scene(bool _default, int num)
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialGround);
+        auto s2 = std::make_shared<Sphere>(2, materialBeers);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
@@ -98,7 +101,7 @@ Scene::Scene(bool _default, int num)
 
         s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
         s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        // m_objects.push_back(s5);
+        m_objects.push_back(s5);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
