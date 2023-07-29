@@ -7,7 +7,7 @@ LambertianBSDF::LambertianBSDF(const Computation& _comp)
 
 LambertianBSDF::~LambertianBSDF() {}
 
-void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float &pdf)
+void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf)
 {
     auto tempSampleDirection = _comp.normal + randomUnitVector();
     if (near_zero(tempSampleDirection))
@@ -17,7 +17,7 @@ void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& s
     pdf = 1.0 / (2.0 * M_PI);
 }
 
-void LambertianBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
+void LambertianBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
     if (sampleDirection.dot(_comp.normal.toVec3()) > 0)
     {

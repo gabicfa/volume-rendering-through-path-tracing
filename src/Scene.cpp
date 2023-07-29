@@ -6,6 +6,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Lambertian.h"
+#include "Dielectric.h"
 #include "BeersLawMaterial.h"
 #include "BeersLawHeterogeneousMaterial.h"
 #include "Metal.h"
@@ -44,9 +45,11 @@ Scene::Scene(bool _default, int num)
         auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
+        auto materialDielectric = std::make_shared<Dielectric>(-0.4);
 
 
-        // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+
+        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
         auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
 
@@ -86,7 +89,7 @@ Scene::Scene(bool _default, int num)
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialHete);
+        auto s2 = std::make_shared<Sphere>(2, materialDielectric);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
@@ -301,7 +304,7 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         // Sample direction for next ray from BSDF
         float pdf;
         ngl::Vec3 Ls;
-        ngl::Vec3 sampleDirection;
+        ngl::Vec4 sampleDirection;
         bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
 
         throughput = throughput * (Ls / pdf);

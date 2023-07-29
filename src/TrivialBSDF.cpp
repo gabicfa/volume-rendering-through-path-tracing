@@ -4,13 +4,13 @@ TrivialBSDF::TrivialBSDF(const Computation& comp) : BSDF(comp) {}
 
 TrivialBSDF::~TrivialBSDF() {}
 
-void TrivialBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float &pdf)
+void TrivialBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf)
 {
     pdf = 0.0;
     L = ngl::Vec3(0.0, 0.0, 0.0);
 }
 
-void TrivialBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
+void TrivialBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
     auto _compEye = m_comp.eye;
     sampleDirection = -_compEye;

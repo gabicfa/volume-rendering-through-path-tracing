@@ -7,7 +7,7 @@ MetalBSDF::MetalBSDF(const Computation& _comp)
 
 MetalBSDF::~MetalBSDF() {}
 
-void MetalBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
+void MetalBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
     sampleDirection = unitVector(_comp.incomingRay.direction()).toVec3().reflect(_comp.normal.toVec3());
     ngl::Vec3 albedo = _comp.matPtr->albedo().toVec3();
@@ -15,7 +15,7 @@ void MetalBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirect
     pdf = 1.0;
 }
 
-void MetalBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
+void MetalBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
     ngl::Vec3 reflectedDirection = unitVector(_comp.incomingRay.direction()).toVec3().reflect(_comp.normal.toVec3());
     if (sampleDirection == reflectedDirection)

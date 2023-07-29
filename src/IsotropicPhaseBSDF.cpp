@@ -6,13 +6,13 @@ IsotropicPhaseBSDF::IsotropicPhaseBSDF(const Computation& comp) : BSDF(comp) {}
 
 IsotropicPhaseBSDF::~IsotropicPhaseBSDF() {}
 
-void IsotropicPhaseBSDF::evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float &pdf)
+void IsotropicPhaseBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf)
 {
     pdf = 0.25 / M_PI;
     L = ngl::Vec3(pdf, pdf, pdf);
 }
 
-void IsotropicPhaseBSDF::generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf)
+void IsotropicPhaseBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
     auto xi = randomDouble(0.0, 1.0); // This function should return a random float between 0.0 and 1.0
     sampleDirection.m_z = xi * 2.0f - 1.0f; // cosTheta
