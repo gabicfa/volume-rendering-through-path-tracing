@@ -10,8 +10,8 @@ public:
     IsotropicPhaseBSDF(const Computation& comp);
     virtual ~IsotropicPhaseBSDF();
 
-    virtual void evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float &pdf) override;
-    virtual void generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf) override;
+    virtual void evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf) override;
+    virtual void generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf) override;
 };
 
 #endif

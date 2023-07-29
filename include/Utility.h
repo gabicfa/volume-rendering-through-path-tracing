@@ -68,3 +68,10 @@ inline bool isBlack(ngl::Vec3 L)
     const float epsilon = 1e-4f;
     return std::abs(L.m_x) < epsilon && std::abs(L.m_y) < epsilon && std::abs(L.m_z) < epsilon;
 }
+
+inline ngl::Vec3 refract(const ngl::Vec3& uv, const ngl::Vec3& n, double etai_over_etat) {
+    auto cos_theta = fmin(-uv.dot(n), 1.0);
+    ngl::Vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+    ngl::Vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.lengthSquared())) * n;
+    return r_out_perp + r_out_parallel;
+}
