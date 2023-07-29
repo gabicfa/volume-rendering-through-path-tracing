@@ -7,8 +7,10 @@
 #include "Utility.h"
 #include "Lambertian.h"
 #include "BeersLawMaterial.h"
+#include "BeersLawHeterogeneousMaterial.h"
 #include "Metal.h"
 #include <memory>
+#include <iostream>
 
 Scene::Scene(bool _default)
 {
@@ -39,7 +41,10 @@ Scene::Scene(bool _default, int num)
         m_light = l;
 
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
+        auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
+        auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
+
 
         // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
@@ -80,13 +85,18 @@ Scene::Scene(bool _default, int num)
         // m_objects.push_back(g3);
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
-        auto s2 = std::make_shared<Sphere>(2, materialBeers);
+        auto s5 = std::make_shared<Sphere>(1, materialBack);
+        auto s2 = std::make_shared<Sphere>(2, materialHete);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         m_objects.push_back(s1);
+
+        s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
+        s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
+        m_objects.push_back(s5);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -174,41 +184,93 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
     }
 }
 
+//method to compute beam transmittance
+ngl::Vec3 Scene::transmittance() const {
+    return ngl::Vec3(1.f, 1.f, 1.f);
+}
+
+void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
+                         float &pdf, ngl::Vec3 &beamTransmittance) {
+
+    L = m_light.sampleLi(ctx, &sampleDirection, &pdf);
+
+    if (pdf > 0 && !isBlack(L)) {
+        beamTransmittance = this->transmittance();
+    } else {
+        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
+    }
+}
+
+void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
+                         ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) {
+    // evaluate radiance and pdf using scene's light source
+    L = m_light.le(Ray(ctx.point, sampleDirection));
+    pdf = m_light.pdfLi();
+
+    if (pdf > 0 && !isBlack(L)) {
+        // calculate the beam transmittance
+        beamTransmittance = this->transmittance();
+    } else {
+        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
+    }
+}
+
+void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
+                         ngl::Vec3 &L, float &pdf) {
+    L = m_light.le(Ray(ctx.point, sampleDirection));
+    pdf = m_light.pdfLi();
+}
+
 ngl::Vec3 Scene::directLighting(const Computation& comp)
 {
+    ngl::Vec3 Li(0, 0, 0);
     ngl::Vec3 L(0, 0, 0);
     auto N = comp.normal;
     auto P = comp.point;
+    ngl::Vec4 wi;
+    float pdf;
+    ngl::Vec3 beamTransmittance;
 
-    auto lightDir = (m_light.position() - P).normalize();
-    auto distance = (m_light.position() - P).length();
+    generateLightSample(comp, wi, Li, pdf, beamTransmittance);
 
-    // Check for shadows: make sure there are no objects between the light and the point we're shading
-    Ray shadowRay(P, lightDir);
+    float lightDistance = (m_light.position() - P).length();
+
+    Ray shadowRay(P, wi);
     auto shadowIntersections = intersectScene(shadowRay);
     auto xs = Intersection::intersections(shadowIntersections);
     auto i = Intersection::hit(xs);
-    if (i == Intersection() || i.t() > distance)
+
+    if(i != Intersection() && i.t() > 0.0001f && i.t() < lightDistance)
     {
+        return ngl::Vec3(0.0f, 0.0f, 0.0f); 
+    }
+
+    if(pdf > 0.f && !isBlack(Li))
+    {
+        ngl::Vec3 f;
         if (comp.matPtr->hasAlbedo())
         {
-            ngl::Vec3 albedo = comp.matPtr->albedo().toVec3();
-
-            float cosTheta = std::max(0.0f, N.dot(lightDir));
-
-            L += albedo * m_light.intensity() * cosTheta;
+            f = comp.matPtr->albedo().toVec3();
         }
         else
         {
-            L += m_light.intensity() * std::max(0.0f, N.dot(lightDir));
+            f = ngl::Vec3(1,1,1); // otherwise use white
+        }
+
+        float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
+        if (cosTheta > 0)
+        {
+            L += f * Li * cosTheta * beamTransmittance / pdf;
         }
     }
+
     return L;
 }
 
 ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
 {
     ngl::Vec3 L(0,0,0);
+    bool hit = false;
     ngl::Vec3 throughput(1.0, 1.0, 1.0);
     Ray ray = r;
     for (int j = 0; j < maxDepth; ++j) 
@@ -220,9 +282,15 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         Intersection empty = Intersection();
         if (i == empty)
         {
+            // if (!hit) {
+            //     auto d = ray.direction()/ray.direction().length();
+            //     auto t = 0.5 * (d.m_y + 1.0);
+            //     L = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
+            // }
             break;
         }
 
+        hit = true;
         auto ctx = i.prepareComputations(ray);
 
         auto m = ctx.matPtr;
@@ -243,9 +311,9 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         std::shared_ptr<Volume> volume = nullptr;
         if (m->hasVolume()) {
 
-            auto VdotN = ctx.v.dot(ctx.normal);
+            auto EyedotN = ctx.eye.dot(ctx.normal);
             auto dirDotN = sampleDirection.dot(ctx.normal.toVec3());
-            auto transmit = (VdotN < 0.0) != (dirDotN < 0.0);
+            auto transmit = (EyedotN < 0.0) != (dirDotN < 0.0);
             if (transmit) {
                 // We transmitted through the surface. Check dot product between the sample direction and the
                 // surface normal N to see whether we entered or exited the volume media

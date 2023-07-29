@@ -7,6 +7,7 @@
 
 class Material;
 class Shape;
+class Ray;
 
 class Computation
 {
@@ -18,10 +19,10 @@ class Computation
         ngl::Vec4 point;
         ngl::Vec4 eye;
         ngl::Vec4 normal;
-        ngl::Vec4 v;
         Ray incomingRay;
-        
         bool inside;
+        void recompute(const ngl::Vec4 &newPoint, ngl::Vec4 dir);
+
 }; 
 
 #endif

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <ngl/Vec3.h>
+#include <ngl/Vec4.h>
 #include <cmath>
 
 inline double randomDouble() 
@@ -10,6 +11,11 @@ inline double randomDouble()
 inline double randomDouble(double min, double max) 
 {
     return min + (max-min)*randomDouble();
+}
+
+inline int randomInt(int min, int max) 
+{
+    return min + rand() % (( max + 1 ) - min);
 }
 
 inline double clamp(double x, double min, double max) 
@@ -55,4 +61,10 @@ inline bool near_zero(const ngl::Vec4& _vec) {
     // Return true if the vector is close to zero in all dimensions.
     const auto s = 1e-8;
     return (fabs(_vec.m_x < s) && (fabs(_vec.m_y) < s) && (_vec.m_z) < s);
+}
+
+inline bool isBlack(ngl::Vec3 L)
+{
+    const float epsilon = 1e-4f;
+    return std::abs(L.m_x) < epsilon && std::abs(L.m_y) < epsilon && std::abs(L.m_z) < epsilon;
 }
