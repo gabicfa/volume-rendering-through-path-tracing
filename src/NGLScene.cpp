@@ -22,7 +22,7 @@
 // constexpr size_t TextureHeight = 180;
 
 const auto aspectRatio = 16.0 / 8.0;
-const int TextureWidth = 200;
+const int TextureWidth = 360;
 const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
 
 NGLScene::NGLScene()
@@ -47,7 +47,7 @@ void defaultScene(Scene &s, Camera &c)
 {
     s = Scene(true, 1);
     
-    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 10.0f, -10.0f));
+    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 20.0f, -10.0f));
     s.light(light);
     
     auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.0f, -3.0f),

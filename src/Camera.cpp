@@ -137,7 +137,7 @@ Canvas Camera::render(Scene &s)
                         auto u = x + randomDouble();
                         auto v = y + randomDouble();
                         auto r = this->rayForPixel(u, v);
-                        color += s.colorAt(r, maxDepth);
+                        color += s.pathTrace(r, maxDepth);
                     }
 
                     auto colorAntialias = writeColor(color, samplesPerPixel);
