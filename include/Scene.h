@@ -28,6 +28,8 @@ class Scene
                          ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
         void evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
                          ngl::Vec3 &L, float &pdf);
+        float MISWeight(int nsamps1, float pdf1, int nsamps2, float pdf2);
+
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;
         Light m_light;

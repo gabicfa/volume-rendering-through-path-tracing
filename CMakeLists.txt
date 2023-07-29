@@ -72,6 +72,8 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousVolume.cpp
             ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousMaterial.cpp
             ${PROJECT_SOURCE_DIR}/src/IsotropicPhaseBSDF.cpp
+            ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousVolume.cpp
+            ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousMaterial.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -104,6 +106,8 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Perlin.h
             ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousVolume.h
             ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousMaterial.h
+            ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
+            ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
@@ -198,6 +202,10 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/include/Utility.h
     ${PROJECT_SOURCE_DIR}/src/IsotropicPhaseBSDF.cpp
     ${PROJECT_SOURCE_DIR}/include/IsotropicPhaseBSDF.h
+    ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousVolume.cpp
+    ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
+    ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousMaterial.cpp
+    ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

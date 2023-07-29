@@ -8,6 +8,7 @@
 #include "Lambertian.h"
 #include "BeersLawMaterial.h"
 #include "BeersLawHeterogeneousMaterial.h"
+#include "SingleScatterHomogeneousMaterial.h"
 #include "Metal.h"
 #include <memory>
 #include <iostream>
@@ -40,9 +41,10 @@ Scene::Scene(bool _default, int num)
         auto l = Light(lIntensity,lPoint);
         m_light = l;
 
-        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
+        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(1.0, 1.0, 1.0));
         auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
+        auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(1.0, 0.0, 0.0), ngl::Vec3(0.8, 0.8, 0.8));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
 
 
@@ -70,7 +72,7 @@ Scene::Scene(bool _default, int num)
             triangle->setMaterial(materialLeft);
             triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
             triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-            m_objects.push_back(triangle);
+            // m_objects.push_back(triangle);
         }
 
         // ObjFile obj3("files/Teapot.obj");
@@ -86,7 +88,7 @@ Scene::Scene(bool _default, int num)
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialHete);
+        auto s2 = std::make_shared<Sphere>(2, materialGround);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
@@ -96,7 +98,7 @@ Scene::Scene(bool _default, int num)
 
         s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
         s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s5);
+        // m_objects.push_back(s5);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -108,7 +110,7 @@ Scene::Scene(bool _default, int num)
 
         s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        m_objects.push_back(s4);
+        // m_objects.push_back(s4);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -221,6 +223,17 @@ void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleD
     pdf = m_light.pdfLi();
 }
 
+float Scene::MISWeight(int nsamps1, float pdf1, int nsamps2, float pdf2)
+{
+    // calculate the weight for the first sampling technique
+    float weight1 = nsamps1 * pdf1;
+    // calculate the weight for the second sampling technique
+    float weight2 = nsamps2 * pdf2;
+
+    // return the balance heuristic weight
+    return weight1 / (weight1 + weight2);
+}
+
 ngl::Vec3 Scene::directLighting(const Computation& comp)
 {
     ngl::Vec3 Li(0, 0, 0);
@@ -260,7 +273,7 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
         if (cosTheta > 0)
         {
-            L += f * Li * cosTheta * beamTransmittance / pdf;
+            L += f * Li * cosTheta ;//* beamTransmittance / pdf;
         }
     }
 
@@ -282,11 +295,11 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         Intersection empty = Intersection();
         if (i == empty)
         {
-            // if (!hit) {
-            //     auto d = ray.direction()/ray.direction().length();
-            //     auto t = 0.5 * (d.m_y + 1.0);
-            //     L = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
-            // }
+            if (!hit) {
+                auto d = ray.direction()/ray.direction().length();
+                auto t = 0.5 * (d.m_y + 1.0);
+                L = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
+            }
             break;
         }
 
@@ -301,7 +314,7 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         // Sample direction for next ray from BSDF
         float pdf;
         ngl::Vec3 Ls;
-        ngl::Vec3 sampleDirection;
+        ngl::Vec4 sampleDirection;
         bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
 
         throughput = throughput * (Ls / pdf);
@@ -330,7 +343,7 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
             ngl::Vec3 Lv;
             ngl::Vec3 transmittance;
             ngl::Vec3 weight;
-            if (!volume->integrate(nextRay, Lv, transmittance, weight, ctx.point, nextRay, *ctx.object)) break;
+            if (!volume->integrate(nextRay, Lv, transmittance, weight, ctx.point, nextRay, *ctx.object, *this)) break;
             L += weight * throughput * Lv;
             throughput = throughput * transmittance;
         } else {

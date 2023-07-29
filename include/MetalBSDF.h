@@ -9,8 +9,8 @@ class MetalBSDF : public BSDF
         MetalBSDF(const Computation& _comp);
         ~MetalBSDF();
 
-        void evaluateSample(const Computation& _comp, const ngl::Vec3& sampleDirection, ngl::Vec3& L, float &pdf) override;
-        void generateSample(const Computation& _comp, ngl::Vec3& sampleDirection, ngl::Vec3& L, float& pdf) override;
+        void evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf) override;
+        void generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf) override;
 
     private:
         Computation m_comp;

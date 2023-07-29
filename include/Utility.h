@@ -68,3 +68,8 @@ inline bool isBlack(ngl::Vec3 L)
     const float epsilon = 1e-4f;
     return std::abs(L.m_x) < epsilon && std::abs(L.m_y) < epsilon && std::abs(L.m_z) < epsilon;
 }
+
+inline double channelAvg(const ngl::Vec3 &vec)
+{
+    return (vec.m_x + vec.m_y + vec.m_z) / 3.0;
+}

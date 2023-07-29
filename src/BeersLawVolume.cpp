@@ -8,7 +8,7 @@ BeersLawVolume::BeersLawVolume(const ngl::Vec3 &absorption, Computation &comp)
     : Volume(comp), m_absorption(absorption) {}
 
 bool BeersLawVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s) {
+        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, Scene &scene) {
     auto intersections = s.intersect(Ray(m_comp.point, wi.direction()));
     auto xs = Intersection::intersections(intersections);
     auto i = Intersection::hit(xs);
