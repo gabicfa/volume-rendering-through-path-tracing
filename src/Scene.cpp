@@ -7,8 +7,10 @@
 #include "Utility.h"
 #include "Lambertian.h"
 #include "BeersLawMaterial.h"
+#include "BeersLawHeterogeneousMaterial.h"
 #include "Metal.h"
 #include <memory>
+#include <iostream>
 
 Scene::Scene(bool _default)
 {
@@ -39,7 +41,10 @@ Scene::Scene(bool _default, int num)
         m_light = l;
 
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
+        auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
+        auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
+
 
         // auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
@@ -80,13 +85,18 @@ Scene::Scene(bool _default, int num)
         // m_objects.push_back(g3);
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
-        auto s2 = std::make_shared<Sphere>(2, materialBeers);
+        auto s5 = std::make_shared<Sphere>(1, materialBack);
+        auto s2 = std::make_shared<Sphere>(2, materialHete);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         m_objects.push_back(s1);
+
+        s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
+        s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
+        m_objects.push_back(s5);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -260,6 +270,7 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
 ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
 {
     ngl::Vec3 L(0,0,0);
+    bool hit = false;
     ngl::Vec3 throughput(1.0, 1.0, 1.0);
     Ray ray = r;
     for (int j = 0; j < maxDepth; ++j) 
@@ -271,9 +282,15 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         Intersection empty = Intersection();
         if (i == empty)
         {
+            // if (!hit) {
+            //     auto d = ray.direction()/ray.direction().length();
+            //     auto t = 0.5 * (d.m_y + 1.0);
+            //     L = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
+            // }
             break;
         }
 
+        hit = true;
         auto ctx = i.prepareComputations(ray);
 
         auto m = ctx.matPtr;

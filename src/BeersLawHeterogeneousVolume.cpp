@@ -1,5 +1,6 @@
 #include "BeersLawHeterogeneousVolume.h"
 #include "Intersection.h"
+#include "Utility.h"
 #include <algorithm>
 #include <cmath>
 
@@ -17,8 +18,10 @@ bool BeersLawHeterogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Ve
     }
 
     L = ngl::Vec3(0, 0, 0);
-    P = m_comp.point + wi.direction() * i.t();
-    transmittance = this->transmittance(m_comp.point, P);
+    auto P1 = m_comp.point;
+    auto P0 = m_comp.point + wi.direction() * i.t();
+    P = P0;
+    transmittance = this->transmittance(P0, P1);
     weight = ngl::Vec3(1.0, 1.0, 1.0);
     wo = Ray(P, wi.direction());
 
@@ -32,17 +35,16 @@ ngl::Vec3 BeersLawHeterogeneousVolume::transmittance(const ngl::Vec4 &P0, const 
     float t = 0;
 
     do {
-        float zeta = rand() / (RAND_MAX + 1.0);
+        float zeta = randomDouble(0.0,1.0);
         t = t - log(1 - zeta) / m_maxAbsorption;
         if (t > distance) {
             break; // Did not terminate in the volume
         }
         // Update the shading context
         ngl::Vec4 P = P0 + t * dir;
-        m_comp.recompute(P, dir);
         // Recompute the local absorption after updating the shading context
-        float absorption = m_perlin.noise(P * m_absorptionProperty);
-        float xi = rand() / (RAND_MAX + 1.0);
+        float absorption = m_perlin.noise(P);
+        float xi = randomDouble(0.0,1.0);
         if (xi < (absorption / m_maxAbsorption))
             terminated = true;
     } while (!terminated);

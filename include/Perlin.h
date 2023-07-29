@@ -1,6 +1,5 @@
 #ifndef PERLIN_H
 #define PERLIN_H
-#include "Utility.h"
 #include <ngl/Vec3.h>
 
 class Perlin {
@@ -14,10 +13,12 @@ class Perlin {
         double* m_ranfloat;
         int* m_permX;
         int* m_permY;
-        int* permZ;
+        int* m_permZ;
 
         static int* perlinGeneratePerm();
         static void permute(int* p, int n);
+        double trilinearInterp(double c[2][2][2], double u, double v, double w) const;
+
 };
 
 #endif

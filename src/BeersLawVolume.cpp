@@ -18,8 +18,10 @@ bool BeersLawVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
     }
 
     L = ngl::Vec3(0, 0, 0);
-    P = m_comp.point + wi.direction() * i.t();
-    transmittance = this->transmittance(m_comp.point, P);
+    auto P1 = m_comp.point;
+    auto P0 = m_comp.point + wi.direction() * i.t();
+    P = P0;
+    transmittance = this->transmittance(P0, P1);
     weight = ngl::Vec3(1.0, 1.0, 1.0);
     wo = Ray(P, wi.direction());
 
