@@ -1,5 +1,5 @@
 #include "Group.h"
-
+#include "Utility.h"
 Group::Group()
 {
 }
@@ -49,4 +49,24 @@ void Group::addChild(std::shared_ptr<Shape> _shape)
 const std::vector<std::shared_ptr<Shape>>& Group::getChildren() const
 { 
     return m_children; 
+}
+
+bool Group::boundingBox(double time0, double time1, AABB& outputBox) const
+{
+    if (m_children.empty())
+        return false;
+
+    AABB tempBox;
+    bool firstBox = true;
+
+    for (const auto& shape : m_children)
+    {
+        if (!shape->boundingBox(time0, time1, tempBox))
+            return false;
+
+        outputBox = firstBox ? tempBox : AABB::surroundingBox(outputBox, tempBox);
+        firstBox = false;
+    }
+    
+    return true;
 }

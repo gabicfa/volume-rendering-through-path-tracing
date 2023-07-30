@@ -73,5 +73,31 @@ ngl::Vec4 Sphere::localNormalAt(ngl::Vec4 _localPoint)
 }
 /// end of Citation
 
+bool Sphere::boundingBox(double time0, double time1, AABB& outputBox) const
+{
+    // Define the AABB in the local space of the Sphere
+    ngl::Vec3 min(-1.0f, -1.0f, -1.0f);
+    ngl::Vec3 max(1.0f, 1.0f, 1.0f);
+
+    // Transform the AABB to the world space
+    auto worldMin = transform() * ngl::Vec4(min.m_x, min.m_y, min.m_z, 1.0f);
+    auto worldMax = transform() * ngl::Vec4(max.m_x, max.m_y, max.m_z, 1.0f);
+
+    // Adjust the bounding box if necessary (if scaling is not uniform)
+    for (int i = 0; i < 3; ++i)
+    {
+        if (worldMin.m_openGL[i] > worldMax.m_openGL[i])
+        {
+            std::swap(worldMin.m_openGL[i], worldMax.m_openGL[i]);
+        }
+    }
+
+    // Create a new AABB with the transformed corners
+    outputBox = AABB(worldMin.toVec3(), worldMax.toVec3());
+
+    return true;
+}
+
+
 
 

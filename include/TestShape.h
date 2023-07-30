@@ -15,6 +15,7 @@ public:
     bool operator!=(const Shape& other) const override;
     ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
     std::vector<Intersection> localIntersect(Ray _r) override;        
+    bool boundingBox(double time0, double time1, AABB& outputBox) const override;
 
 };
 

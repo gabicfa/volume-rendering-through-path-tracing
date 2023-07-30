@@ -120,3 +120,21 @@ std::vector<Intersection> Triangle::localIntersect(Ray _r)
     }
     
 }
+
+bool Triangle::boundingBox(double time0, double time1, AABB& outputBox) const
+{
+    ngl::Vec3 min_point = ngl::Vec3(
+        std::min({m_p1.m_x, m_p2.m_x, m_p3.m_x}),
+        std::min({m_p1.m_y, m_p2.m_y, m_p3.m_y}),
+        std::min({m_p1.m_z, m_p2.m_z, m_p3.m_z})
+    );
+
+    ngl::Vec3 max_point = ngl::Vec3(
+        std::max({m_p1.m_x, m_p2.m_x, m_p3.m_x}),
+        std::max({m_p1.m_y, m_p2.m_y, m_p3.m_y}),
+        std::max({m_p1.m_z, m_p2.m_z, m_p3.m_z})
+    );
+
+    outputBox = AABB(min_point, max_point);
+    return true;
+}

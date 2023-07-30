@@ -18,6 +18,8 @@ class Group : public Shape
         const std::vector<std::shared_ptr<Shape>>& getChildren() const;
         std::vector<Intersection> localIntersect(Ray _r) override;
         ngl::Vec4 localNormalAt(ngl::Vec4 _localPoint) override;
+        bool boundingBox(double time0, double time1, AABB& outputBox) const override;
+
     private:
         std::vector<std::shared_ptr<Shape>> m_children;
 };
