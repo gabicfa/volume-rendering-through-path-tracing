@@ -91,7 +91,7 @@ Scene::Scene(bool _default, int num)
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialBeers);
+        auto s2 = std::make_shared<Sphere>(2, materialSingleScatterHomo);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
@@ -276,7 +276,7 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
         if (cosTheta > 0)
         {
-            L += f * Li * cosTheta ;//* beamTransmittance / pdf;
+            L += f * Li * cosTheta * beamTransmittance / pdf;
         }
     }
 
