@@ -30,3 +30,13 @@ AABB AABB::surroundingBox(const AABB& box0, const AABB& box1) {
     
     return AABB(small, big);
 }
+
+bool AABB::operator==(const AABB& other) const
+{
+    return minimum == other.minimum && maximum == other.maximum;
+}
+
+bool AABB::operator!=(const AABB& other) const
+{
+    return !(operator==(other));
+}

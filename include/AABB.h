@@ -15,6 +15,9 @@ class AABB {
         bool intersect(const Ray& r, double t_min, double t_max) const;
         static AABB surroundingBox(const AABB& box0, const AABB& box1);
 
+        bool operator==(const AABB& other) const;
+        bool operator!=(const AABB& other) const;
+
     private:
         ngl::Vec3 minimum;
         ngl::Vec3 maximum;

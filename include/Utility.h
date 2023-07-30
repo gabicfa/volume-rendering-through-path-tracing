@@ -15,7 +15,7 @@ inline double randomDouble(double min, double max)
 
 inline int randomInt(int min, int max) 
 {
-    return min + rand() % (( max + 1 ) - min);
+     return static_cast<int>(randomDouble(min, max+1));
 }
 
 inline double clamp(double x, double min, double max) 
