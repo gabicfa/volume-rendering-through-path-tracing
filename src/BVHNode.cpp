@@ -6,9 +6,9 @@ BVHNode::BVHNode()
 {
 }
 
-BVHNode::BVHNode(const Group& list, double time0, double time1) 
-{
-}
+BVHNode::BVHNode(const std::shared_ptr<Group>& list, double time0, double time1) : 
+    BVHNode(list->getChildren(), 0, list->getChildren().size(), time0, time1)
+        {}
 
 bool BVHNode::operator==(const Shape& _other) const
 {

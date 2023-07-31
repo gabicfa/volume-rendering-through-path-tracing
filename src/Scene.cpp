@@ -12,6 +12,7 @@
 #include "Metal.h"
 #include <memory>
 #include <iostream>
+#include "BVHNode.h"
 
 Scene::Scene(bool _default)
 {
@@ -36,6 +37,9 @@ Scene::Scene(bool _default)
 
 Scene::Scene(bool _default, int num)
 {
+
+        auto group = std::make_shared<Group>();
+        
         auto lPoint = ngl::Vec4(-10.0f, 10.0f, 10.0f);
         auto lIntensity = ngl::Vec3(1.0f,1.0f,1.0f);
         auto l = Light(lIntensity,lPoint);
@@ -46,9 +50,6 @@ Scene::Scene(bool _default, int num)
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
         auto materialDielectric = std::make_shared<Dielectric>(-0.4);
-
-
-
         auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
         auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
@@ -73,8 +74,11 @@ Scene::Scene(bool _default, int num)
             triangle->setMaterial(materialLeft);
             triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
             triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-            m_objects.push_back(triangle);
+            // m_objects.push_back(triangle);
+            // group->addChild(triangle);
         }
+
+        
 
         // ObjFile obj3("files/Teapot.obj");
         // auto g3 = obj3.defaultGroup();
@@ -89,21 +93,24 @@ Scene::Scene(bool _default, int num)
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
         auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialDielectric);
+        auto s2 = std::make_shared<Sphere>(2, materialGround);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
         auto s4 = std::make_shared<Sphere>(4, materialRight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s1);
+        // m_objects.push_back(s1);
+        // group->addChild(s1);
 
         s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
         s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s5);
+        // m_objects.push_back(s5);
+        // group->addChild(s5);
 
-        s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
+        // s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        m_objects.push_back(s2);
+        // m_objects.push_back(s2);
+        group->addChild(s2);
 
         // s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
         // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -111,7 +118,10 @@ Scene::Scene(bool _default, int num)
 
         s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        m_objects.push_back(s4);
+        // m_objects.push_back(s4);
+        // group->addChild(s4);
+
+        m_objects.push_back(std::make_shared<BVHNode>(group, 0, 1));
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()

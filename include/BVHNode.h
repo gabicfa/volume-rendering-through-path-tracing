@@ -8,7 +8,7 @@
 class BVHNode : public Shape {
     public:
         BVHNode();
-        BVHNode(const Group& list, double time0, double time1);
+        BVHNode(const std::shared_ptr<Group>& list, double time0, double time1);
         BVHNode(const std::vector<std::shared_ptr<Shape>>& src_objects, size_t start, size_t end, double time0, double time1);
 
         virtual std::vector<Intersection> localIntersect(Ray _r) override;
