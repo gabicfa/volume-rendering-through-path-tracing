@@ -10,6 +10,7 @@
 #include "BeersLawMaterial.h"
 #include "BeersLawHeterogeneousMaterial.h"
 #include "SingleScatterHomogeneousMaterial.h"
+#include "LightEmitting.h"
 #include "Metal.h"
 #include <memory>
 #include <iostream>
@@ -48,6 +49,8 @@ Scene::Scene(bool _default, int num)
         auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(1.0, 0.0, 0.0), ngl::Vec3(0.8, 0.8, 0.8));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
         auto materialDielectric = std::make_shared<Dielectric>(-0.4);
+        auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
+
 
 
 
@@ -93,15 +96,15 @@ Scene::Scene(bool _default, int num)
         auto s5 = std::make_shared<Sphere>(1, materialBack);
         auto s2 = std::make_shared<Sphere>(2, materialSingleScatterHomo);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
-        auto s4 = std::make_shared<Sphere>(4, materialRight);
+        auto s4 = std::make_shared<Sphere>(4, difflight);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s1);
+        // m_objects.push_back(s1);
 
         s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
         s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s5);
+        // m_objects.push_back(s5);
 
         s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
         s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -113,7 +116,7 @@ Scene::Scene(bool _default, int num)
 
         s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        // m_objects.push_back(s4);
+        m_objects.push_back(s4);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -276,7 +279,7 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
         if (cosTheta > 0)
         {
-            L += f * Li * cosTheta * beamTransmittance / pdf;
+            L += f * Li;// * cosTheta * beamTransmittance / pdf;
         }
     }
 
@@ -298,11 +301,6 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         Intersection empty = Intersection();
         if (i == empty)
         {
-            if (!hit) {
-                auto d = ray.direction()/ray.direction().length();
-                auto t = 0.5 * (d.m_y + 1.0);
-                L = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
-            }
             break;
         }
 
@@ -312,7 +310,10 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         auto m = ctx.matPtr;
         auto bsdf = m->createBSDF(ctx);
 
-        L += throughput * directLighting(ctx);
+        if(dynamic_cast<LightEmitting*>(m.get())) {
+            L += throughput * m->albedo().toVec3();
+            break;
+        }
 
         // Sample direction for next ray from BSDF
         float pdf;
