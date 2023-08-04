@@ -8,8 +8,13 @@
 #include <iostream>
 #include <cmath>
 #include <ngl/Random.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+// #include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/json_parser.hpp>
+
+#include <rapidjson/document.h>
+#include <rapidjson/filereadstream.h>
+#include <rapidjson/istreamwrapper.h>
+#include <fstream>
 
 #include "Scene.h"
 #include "Sphere.h"
@@ -57,141 +62,145 @@ void defaultScene(Scene &s, Camera &c)
     c.fieldOfView(90 * M_PI / 180);
 }
 
-void readFileAndCreateScene(Scene &s, Camera &c)
+void readFileAndCreateScene(Scene &s, Camera &c, rapidjson::Document &document)
 {
-  boost::property_tree::ptree pt;
-  boost::property_tree::read_json("../json/input.json", pt);
+    std::ifstream ifs("../json/input.json");
+    rapidjson::IStreamWrapper isw(ifs);
+    // rapidjson::Document document;
+    document.ParseStream(isw);
 
-  // Light attributes
-  auto l = pt.get_child("light");
-  auto li = l.get_child("intensity");
-  auto intensityVector = ngl::Vec3(li.get<float>("r"),li.get<float>("g"),li.get<float>("b"));
-  auto lp = l.get_child("position");
-  auto positionVector = ngl::Vec4(lp.get<float>("x"),lp.get<float>("y"),lp.get<float>("z"));
+    // Light attributes
+    const auto& l = document["light"];
+    const auto& intensity = l["intensity"];
+    auto intensityVector = ngl::Vec3(intensity["r"].GetFloat(), intensity["g"].GetFloat(), intensity["b"].GetFloat());
+    const auto& position = l["position"];
+    auto positionVector = ngl::Vec4(position["x"].GetFloat(), position["y"].GetFloat(), position["z"].GetFloat());
 
-  auto light = Light(intensityVector, positionVector);
-  s.light(light);
+    auto light = Light(intensityVector, positionVector);
+    s.light(light);
 
+    // Camera attributes
+    const auto& cam = document["camera"];
+    auto fov = cam["fieldOfView"].GetDouble() * M_PI / 180.0;
+    const auto& from = cam["from"];
+    const auto& to = cam["to"];
+    const auto& up = cam["up"];
+    auto t = Transformations::viewTransform(ngl::Vec4(from["x"].GetFloat(), from["y"].GetFloat(), from["z"].GetFloat()),
+                                            ngl::Vec4(to["x"].GetFloat(), to["y"].GetFloat(), to["z"].GetFloat()),
+                                            ngl::Vec4(up["x"].GetFloat(), up["y"].GetFloat(), up["z"].GetFloat()));
+    c.fieldOfView(fov);
+    c.transform(t);
 
-  // Camera attributes
-  auto cam = pt.get_child("camera");
-  auto fov = cam.get<double>("fieldOfView") * M_PI / 180.0;
-  auto from = cam.get_child("from");
-  auto to = cam.get_child("to");
-  auto up = cam.get_child("up");
-  auto t = Transformations::viewTransform(ngl::Vec4(from.get<float>("x"),from.get<float>("y"),from.get<float>("z")),
-                                          ngl::Vec4(to.get<float>("x"),to.get<float>("y"),to.get<float>("z")),
-                                          ngl::Vec4(up.get<float>("x"),up.get<float>("y"),up.get<float>("z")));
-  c.fieldOfView(fov);
-  c.transform(t);
-
-  auto file = pt.get<std::string>("file");
-  std::cout << "FILE: " << file << "\n";
-  ObjFile obj(file);
-  auto objs = obj.sceneObjects();
-  for (auto &o : objs) 
-  {
-    s.addObject(o);
-  }
-  //Sphere attributes
-  auto spheres = pt.get_child("spheres");
-  auto id = 0;
-  for (auto& sphere : spheres) 
-  {
-    auto obj = std::make_shared<Sphere>(1);
-
-    auto t = ngl::Mat4();
-    if(sphere.second.count("translate"))
+    const auto& file = document["file"].GetString();
+    std::cout << "FILE: " << file << "\n";
+    ObjFile obj(file);
+    auto objs = obj.sceneObjects();
+    for (auto &o : objs)
     {
-      auto translate = sphere.second.get_child("translate");
-      t = t * ngl::Mat4::translate(translate.get<float>("x"),translate.get<float>("y"),translate.get<float>("z"));
-    }
-    if(sphere.second.count("scale"))
-    {
-      auto scale = sphere.second.get_child("scale");
-      t = t * ngl::Mat4::scale(scale.get<float>("x"),scale.get<float>("y"),scale.get<float>("z"));
+        s.addObject(o);
     }
 
-    // OldMaterial attributes
-    if(sphere.second.count("material"))
+    // Sphere attributes
+    const auto& spheres = document["spheres"];
+    auto id = 0;
+    for (rapidjson::Value::ConstValueIterator it = spheres.Begin(); it != spheres.End(); ++it)
     {
-      auto mat = sphere.second.get_child("material");
-      auto material = OldMaterial();
+        const auto& sphere = *it;
+        auto obj = std::make_shared<Sphere>(1);
 
-      if(mat.count("specular"))
-      {
-        material.specular(mat.get<float>("specular"));
-      }
+        auto t = ngl::Mat4();
+        if (sphere.HasMember("translate"))
+        {
+            const auto& translate = sphere["translate"];
+            t = t * ngl::Mat4::translate(translate["x"].GetFloat(), translate["y"].GetFloat(), translate["z"].GetFloat());
+        }
+        if (sphere.HasMember("scale"))
+        {
+            const auto& scale = sphere["scale"];
+            t = t * ngl::Mat4::scale(scale["x"].GetFloat(), scale["y"].GetFloat(), scale["z"].GetFloat());
+        }
 
-      if(mat.count("diffuse"))
-      {
-        material.diffuse(mat.get<float>("diffuse"));
-      }
+        // OldMaterial attributes
+        if (sphere.HasMember("material"))
+        {
+            const auto& mat = sphere["material"];
+            auto material = OldMaterial();
 
-      if(mat.count("ambient"))
-      {
-        material.ambient(mat.get<float>("ambient"));
-      }
+            if (mat.HasMember("specular"))
+            {
+                material.specular(mat["specular"].GetFloat());
+            }
 
-      if(mat.count("shininess"))
-      {
-        material.shininess(mat.get<float>("shininess"));
-      }
+            if (mat.HasMember("diffuse"))
+            {
+                material.diffuse(mat["diffuse"].GetFloat());
+            }
 
-      if(mat.count("color"))
-      {
-        auto color = mat.get_child("color");
-        material.color(ngl::Vec3(color.get<float>("r"),color.get<float>("g"),color.get<float>("b")));
-      }
-      // obj->setOldMaterial(material);
+            if (mat.HasMember("ambient"))
+            {
+                material.ambient(mat["ambient"].GetFloat());
+            }
+
+            if (mat.HasMember("shininess"))
+            {
+                material.shininess(mat["shininess"].GetFloat());
+            }
+
+            if (mat.HasMember("color"))
+            {
+                const auto& color = mat["color"];
+                material.color(ngl::Vec3(color["r"].GetFloat(), color["g"].GetFloat(), color["b"].GetFloat()));
+            }
+            // obj->setOldMaterial(material);
+        }
+        obj->setTransform(t);
+        // s.addObject(obj);
     }
-    obj->setTransform(t);
-    // s.addObject(obj);
-  }
 }
 
 void NGLScene::initializeGL()
 {
-  // we must call that first before any other GL commands to load and link the
-  // gl commands from the lib, if that is not done program will crash
-  ngl::NGLInit::initialize();
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  // enable depth testing for drawing
-  glEnable(GL_DEPTH_TEST);
-  // enable multisampling for smoother drawing
-  glEnable(GL_MULTISAMPLE);
-  ngl::ShaderLib::loadShader(TextureShader,"shaders/TextureVertex.glsl","shaders/TextureFragment.glsl");
-  glGenTextures(1, &m_textureID);
-  glGenVertexArrays(1,&m_vao);
-  // Generate our buffer for the texture data
+    // Initialize OpenGL and other settings
+    ngl::NGLInit::initialize();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
-  auto scene = Scene();
-  auto camera = Camera(TextureWidth, TextureHeight, M_PI/2);
-  
-  std::ifstream infile;
-  infile.open("../json/input.json");
-  if(infile.is_open())
-  {
-    boost::property_tree::ptree pt;
-    boost::property_tree::read_json("../json/input.json", pt);
-    if(pt.get<bool>("defaultScene"))
+    ngl::ShaderLib::loadShader(TextureShader, "shaders/TextureVertex.glsl", "shaders/TextureFragment.glsl");
+    glGenTextures(1, &m_textureID);
+    glGenVertexArrays(1, &m_vao);
+
+    // Generate our buffer for the texture data
+
+    auto scene = Scene();
+    auto camera = Camera(TextureWidth, TextureHeight, M_PI / 2);
+
+    std::ifstream infile("../json/input.json");
+    if (infile.is_open())
     {
-      defaultScene(scene, camera);
+        rapidjson::IStreamWrapper isw(infile);
+        rapidjson::Document document;
+        document.ParseStream(isw);
+
+        if (document.HasMember("defaultScene") && document["defaultScene"].IsBool() && document["defaultScene"].GetBool())
+        {
+            defaultScene(scene, camera);
+        }
+        else
+        {
+            readFileAndCreateScene(scene, camera, document);
+        }
+
+        infile.close();
     }
     else
     {
-      readFileAndCreateScene(scene, camera);
+        defaultScene(scene, camera);
     }
-    infile.close();
-  }
-  else
-  {
-    defaultScene(scene, camera);
-  }
 
-  m_canvas = std::make_unique<Canvas>(camera.render(scene));
-  updateTextureBuffer();
-  startTimer(10);
+    m_canvas = std::make_unique<Canvas>(camera.render(scene));
+    updateTextureBuffer();
+    startTimer(10);
 }
 
 void NGLScene::timerEvent(QTimerEvent *_event)
