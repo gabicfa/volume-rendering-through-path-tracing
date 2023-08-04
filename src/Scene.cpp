@@ -14,6 +14,7 @@
 #include "Metal.h"
 #include <memory>
 #include <iostream>
+#include <random>
 
 Scene::Scene(bool _default)
 {
@@ -46,13 +47,17 @@ Scene::Scene(bool _default, int num)
         auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
         auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
         auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
-        auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(1.0, 0.0, 0.0), ngl::Vec3(0.8, 0.8, 0.8));
+        auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.0, 0.0, 1.0), ngl::Vec3(0.01, 0.01, 0.01));
         auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
         auto materialDielectric = std::make_shared<Dielectric>(-0.4);
         auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
+        auto difflight2 = std::make_shared<LightEmitting>(ngl::Vec3(5,5,5));
 
 
-
+        auto materialGreen = std::make_shared<Lambertian>(ngl::Vec4(0.0, 1.0, 0.0));
+        auto materialRed = std::make_shared<Lambertian>(ngl::Vec4(1.0, 0.0, 0.0));
+        auto materialWhite = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.5, 0.5 ));
+        auto materialGray = std::make_shared<Lambertian>(ngl::Vec4(0.45, 0.45, 0.45));
 
         auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
         auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
@@ -70,13 +75,50 @@ Scene::Scene(bool _default, int num)
         // }
         // m_objects.push_back(g1);
 
+        std::shared_ptr<Lambertian> cornelBoxMaterial[3] = {materialGreen, materialRed, materialWhite};
+        ObjFile cornellBox("files/CornellBox.obj");
+        auto cornellBoxGroup = cornellBox.defaultGroup();
+        auto mIdx = 0;
+        for (auto t=0; t < cornellBoxGroup->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(cornellBoxGroup->getChildren()[t]);
+            triangle->setMaterial(cornelBoxMaterial[mIdx]);
+            // m_objects.push_back(triangle);
+            if (mIdx < 2 && t % 2 == 1) 
+            {
+                mIdx++;
+            }
+        }
+
+        ObjFile box1("files/Box.obj");
+        auto gBox1 = box1.defaultGroup();
+        for (auto t=0; t < gBox1->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(gBox1->getChildren()[t]);
+            triangle->setMaterial(materialGray);
+            triangle->setTransform(ngl::Mat4::translate(-0.5f, -0.5f, 0.5f));
+            triangle->setTransform(ngl::Mat4::scale(0.3f, 0.6f, 0.3f));
+            // m_objects.push_back(triangle);
+        }
+
+        ObjFile box2("files/Box.obj");
+        auto gBox2 = box2.defaultGroup();
+        for (auto t=0; t < gBox2->getChildren().size(); t ++)
+        {
+            auto triangle = std::dynamic_pointer_cast<Triangle>(gBox2->getChildren()[t]);
+            triangle->setMaterial(materialGray);
+            triangle->setTransform(ngl::Mat4::translate(0.4f, -0.6f, 0.0f));
+            triangle->setTransform(ngl::Mat4::scale(0.3f, 0.3f, 0.3f));
+            // m_objects.push_back(triangle);
+        }
+
         ObjFile obj2("files/Pyramid.obj");
         auto g2 = obj2.defaultGroup();
         for (auto t=0; t < g2->getChildren().size(); t ++)
         {
             auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
             triangle->setMaterial(materialLeft);
-            triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.0));
+            triangle->setTransform(ngl::Mat4::translate(-0.71, -0.5, -1.0));
             triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
             // m_objects.push_back(triangle);
         }
@@ -93,22 +135,29 @@ Scene::Scene(bool _default, int num)
         // m_objects.push_back(g3);
 
         auto s1 = std::make_shared<Sphere>(1, materialGround);
-        auto s5 = std::make_shared<Sphere>(1, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialSingleScatterHomo);
+        auto s5 = std::make_shared<Sphere>(5, materialBack);
+        auto s2 = std::make_shared<Sphere>(2, materialCenter);
+        auto s7 = std::make_shared<Sphere>(2, materialBeers);
         // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
-        auto s4 = std::make_shared<Sphere>(4, difflight);
+        auto s4 = std::make_shared<Sphere>(4, materialLeft);
+        auto s6 = std::make_shared<Sphere>(6, difflight2);
 
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        // m_objects.push_back(s1);
+        m_objects.push_back(s1);
 
         s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
         s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         // m_objects.push_back(s5);
 
-        s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
-        s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        m_objects.push_back(s2);
+        s2->setTransform(ngl::Mat4::translate(0.0, -0.59, -0.75));
+        s2->setTransform(ngl::Mat4::scale(0.4f, 0.4f, 0.4f));
+        // m_objects.push_back(s2);
+
+        s7->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
+        s7->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        m_objects.push_back(s7);
+
 
         // s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
         // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
@@ -117,6 +166,10 @@ Scene::Scene(bool _default, int num)
         s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
         m_objects.push_back(s4);
+
+        s6->setTransform(ngl::Mat4::translate(0.0f, 1.0f, 0.0f));
+        s6->setTransform(ngl::Mat4::scale(0.2, 0.2, 0.2));
+        // m_objects.push_back(s6);
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -209,6 +262,46 @@ void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirecti
     }
 }
 
+// struct RectAreaLight {
+//     ngl::Vec3 center;  // Position of the light's center
+//     float width, height;  // Dimensions of the light
+//     ngl::Vec3 color;  // Radiance (color) of the light
+//     ngl::Vec3 u, v;  // Two orthogonal vectors defining the light's orientation
+// };
+
+// void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
+//                          float &pdf, ngl::Vec3 &beamTransmittance) {
+//     // For simplicity, assume we only have one rectangular area light in the scene
+//     ngl::Vec4 center (0.0f, 0.9f, -.8f);
+//     float width = 1.0f;
+//     float height = 1.0f; 
+//     ngl::Vec3 color (1.0f,1.0f,1.0f); // Radiance (color) of the light
+//     ngl::Vec4 u (1.0f,0.0f,0.0f);
+//     ngl::Vec4 v (0.0f,0.0f,-1.0f);
+
+//     // Sample a random point within the light's area
+//     float randomX = randomDouble(-0.5, 0.5); // Gives a value between -0.5 and 0.5
+//     float randomY = randomDouble(-0.5, 0.5); // Gives a value between -0.5 and 0.5
+
+//     ngl::Vec4 randomPosition = center + randomX * width * u + randomY * height * v;
+    
+//     // Compute direction from the point to the sampled position on the light
+//     auto sampleDirectionNotNormalized = (randomPosition - ctx.point);
+//     sampleDirectionNotNormalized.normalize();
+//     sampleDirection = sampleDirectionNotNormalized;
+//     // The radiance is simply the light's color
+//     L = color;
+
+//     // The pdf is 1 over the area of the light
+//     float area = width * height;
+//     pdf = 1.0f / area;
+
+//     // For simplicity, assuming that the beam transmittance is 1 (no light is blocked or absorbed)
+//     // In reality, you would calculate the actual beam transmittance based on objects in the scene and their material properties
+//     beamTransmittance = ngl::Vec3(1.0, 1.0, 1.0);
+// }
+
+
 void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
                          ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) {
     // evaluate radiance and pdf using scene's light source
@@ -279,17 +372,64 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
         if (cosTheta > 0)
         {
-            L += f * Li;// * cosTheta * beamTransmittance / pdf;
+            L += f * Li * cosTheta * beamTransmittance / pdf;
         }
     }
 
     return L;
 }
 
-ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
+bool Scene::isOccluded(const ngl::Vec4 &point, const ngl::Vec4 &direction) {
+    // Create a ray starting from the point and going in the direction
+    Ray ray(point, direction);
+    
+    // Initialize the nearest intersection to be at infinity
+    float nearestT = std::numeric_limits<float>::infinity();
+    Intersection nearestIntersection;
+
+    // Check for intersection with each object in the scene
+    for (auto& object : m_objects) {
+        auto intersections = intersectScene(ray);
+        auto xs = Intersection::intersections(intersections);
+        auto i = Intersection::hit(xs);
+        if(i != Intersection() && i.t() > 0.001f && i.t() < nearestT) {
+            // Ignore intersections at the starting point (t == 0)
+            nearestT = i.t();
+            nearestIntersection = i;
+        }
+    }
+
+    // If the nearest intersection is at infinity, there is no occlusion
+    return nearestT != std::numeric_limits<float>::infinity();
+}
+
+// ngl::Vec3 Scene::directLighting(const Computation& comp)
+// {
+//     ngl::Vec3 L = ngl::Vec3(0.0, 0.0, 0.0);  // Initialize radiance to black
+
+//     // Iterate over each light source in the scene
+//     ngl::Vec4 sampleDirection;
+//     ngl::Vec3 sampleRadiance, beamTransmittance;
+//     float pdf;
+
+//     // Sample the light source
+//     generateLightSample(comp, sampleDirection, sampleRadiance, pdf, beamTransmittance);
+
+//     // Check if the light source is visible from the point
+//     if (!isOccluded(comp.point, sampleDirection)) {
+//         float cosTheta = std::max(0.0f, comp.normal.dot(sampleDirection));
+
+//         // Accumulate the radiance contribution from this light
+//         L += (sampleRadiance * cosTheta * beamTransmittance) / pdf;
+//     }
+
+
+//     return L;
+// }
+
+ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth) 
 {
     ngl::Vec3 L(0,0,0);
-    bool hit = false;
     ngl::Vec3 throughput(1.0, 1.0, 1.0);
     Ray ray = r;
     for (int j = 0; j < maxDepth; ++j) 
@@ -304,16 +444,16 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
             break;
         }
 
-        hit = true;
         auto ctx = i.prepareComputations(ray);
 
         auto m = ctx.matPtr;
         auto bsdf = m->createBSDF(ctx);
 
-        if(dynamic_cast<LightEmitting*>(m.get())) {
-            L += throughput * m->albedo().toVec3();
-            break;
-        }
+        L += throughput * directLighting(ctx);
+
+        // if(dynamic_cast<LightEmitting*>(m.get())) {
+        //     L += throughput * m->albedo().toVec3();
+        // }
 
         // Sample direction for next ray from BSDF
         float pdf;
@@ -322,6 +462,7 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
 
         throughput = throughput * (Ls / pdf);
+        // throughput = throughput * m->albedo().toVec3() * (Ls / pdf);
 
         Ray nextRay(ctx.point, sampleDirection);
 
@@ -363,6 +504,6 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         }
         ray = nextRay;
     }
-    
+
     return L;
 }

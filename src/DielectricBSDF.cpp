@@ -16,7 +16,7 @@ void DielectricBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleD
     bool cannot_refract = refraction_ratio * sin_theta > 1.0;
     ngl::Vec3 direction;
 
-    if (cannot_refract || reflectance(cos_theta, refraction_ratio) > randomDouble())
+    if (cannot_refract || reflectance(cos_theta, refraction_ratio) > randomDouble(0,1))
         direction = unit_direction.reflect(_comp.normal.toVec3());
     else
         direction = refract(unit_direction, _comp.normal.toVec3(), refraction_ratio);
@@ -36,7 +36,7 @@ void DielectricBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& s
     bool cannot_refract = refraction_ratio * sin_theta > 1.0;
     ngl::Vec3 expectedDirection;
 
-    if (cannot_refract || reflectance(cos_theta, refraction_ratio) > randomDouble())
+    if (cannot_refract || reflectance(cos_theta, refraction_ratio) > randomDouble(0,1))
         expectedDirection = unit_direction.reflect(_comp.normal.toVec3());
     else
         expectedDirection = refract(unit_direction, _comp.normal.toVec3(), refraction_ratio);

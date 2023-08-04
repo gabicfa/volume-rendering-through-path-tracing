@@ -18,12 +18,12 @@
 #include "Light.h"
 #include "ObjFile.h"
 
-// constexpr size_t TextureWidth = 360;
-// constexpr size_t TextureHeight = 180;
+constexpr size_t TextureWidth = 200;
+constexpr size_t TextureHeight = 200;
 
-const auto aspectRatio = 16.0 / 8.0;
-const int TextureWidth = 360;
-const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
+// const auto aspectRatio = 16.0 / 16.0;
+// const int TextureWidth = 180;
+// const int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
 
 NGLScene::NGLScene()
 {
@@ -47,14 +47,14 @@ void defaultScene(Scene &s, Camera &c)
 {
     s = Scene(true, 1);
     
-    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(-10.0f, 30.0f, -10.0f));
+    auto light = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(0.0f, 10.0f, 0.0f));
     s.light(light);
     
-    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.0f, -3.0f),
-                                        ngl::Vec4(0.0f, 0.0f, 3.0f),
+    auto t = Transformations::viewTransform(ngl::Vec4(0.0f, 0.0f, -4.3f),
+                                        ngl::Vec4(0.0f, 0.0f, 0.0f),
                                         ngl::Vec4(0.0f, 1.0f, 0.0f));
     c.transform(t);
-    c.fieldOfView(90 * M_PI / 180);
+    c.fieldOfView(60 * M_PI / 180);
 }
 
 void readFileAndCreateScene(Scene &s, Camera &c)
