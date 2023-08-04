@@ -82,6 +82,8 @@ void openTeapot(Scene &scene, std::shared_ptr<Material> material)
     for (auto t=0; t < teaPotGroup->getChildren().size(); t ++)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(teaPotGroup->getChildren()[t]);
+        triangle->setTransform(ngl::Mat4::translate(0.0, -0.5, -0.5));
+        // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         triangle->setMaterial(material);
     }
     scene.addObject(teaPotGroup);
@@ -138,6 +140,11 @@ void Scene::chooseScene (SceneMode mode)
     if (mode == SceneMode::Scene1)
     {
         openCornelBox(*this);
+        openTeapot(*this, materialCenter);
+        // auto s4 = std::make_shared<Sphere>(4, materialHete);
+        // s4->setTransform(ngl::Mat4::translate(0.0f, -0.5f, 0.0f));
+        // s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
+        // m_objects.push_back(s4);
     }
     else if (mode == SceneMode::Scene2)
     {
@@ -176,13 +183,6 @@ void Scene::chooseScene (SceneMode mode)
         auto sphere = std::make_shared<Sphere>(1, materialGray);
         this->addObject(sphere);
     }
-}
-
-Scene::Scene(bool _default, int num)
-{
-        
-
-        
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -285,7 +285,7 @@ void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirecti
 // void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
 //                          float &pdf, ngl::Vec3 &beamTransmittance) {
 //     // For simplicity, assume we only have one rectangular area light in the scene
-//     ngl::Vec4 center (0.0f, 0.9f, -.8f);
+//     ngl::Vec4 center (0.0f, .95f, 0.0f);
 //     float width = 1.0f;
 //     float height = 1.0f; 
 //     ngl::Vec3 color (1.0f,1.0f,1.0f); // Radiance (color) of the light
@@ -313,7 +313,6 @@ void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirecti
 //     // In reality, you would calculate the actual beam transmittance based on objects in the scene and their material properties
 //     beamTransmittance = ngl::Vec3(1.0, 1.0, 1.0);
 // }
-
 
 void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
                          ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) {

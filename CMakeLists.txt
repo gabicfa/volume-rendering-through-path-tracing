@@ -101,7 +101,11 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/BSDF.h
             ${PROJECT_SOURCE_DIR}/include/Volume.h
             ${PROJECT_SOURCE_DIR}/include/Perlin.h
-
+            ${PROJECT_SOURCE_DIR}/src/RendererServices.cpp
+            ${PROJECT_SOURCE_DIR}/include/RendererServices.h
+            ${PROJECT_SOURCE_DIR}/src/AreaLight.cpp
+            ${PROJECT_SOURCE_DIR}/include/AreaLight.h
+            
             # Add the header files from /include/bsdfs/
             ${BSDF_HEADERS}
 
@@ -191,6 +195,10 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Perlin.cpp
     ${PROJECT_SOURCE_DIR}/src/Computation.cpp
     ${PROJECT_SOURCE_DIR}/include/Utility.h
+    ${PROJECT_SOURCE_DIR}/src/RendererServices.cpp
+    ${PROJECT_SOURCE_DIR}/include/RendererServices.h
+    ${PROJECT_SOURCE_DIR}/src/AreaLight.cpp
+    ${PROJECT_SOURCE_DIR}/include/AreaLight.h
 
     # Add the header files from /include/bsdfs/
     ${BSDF_HEADERS}

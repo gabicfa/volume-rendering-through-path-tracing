@@ -19,7 +19,6 @@ class Scene
             Scene4
         };
         Scene(bool _default = false);
-        Scene(bool _default, int num);
         void chooseScene (SceneMode mode);
         std::vector<std::shared_ptr<Shape>>& objects();
         Light light() const;

@@ -21,8 +21,8 @@
 #include "Light.h"
 #include "ObjFile.h"
 
-constexpr size_t TextureWidth = 720;
-constexpr size_t TextureHeight = 720;
+constexpr size_t TextureWidth = 200;
+constexpr size_t TextureHeight = 200;
 
 // const auto aspectRatio = 16.0 / 16.0;
 // int TextureWidth = 180;
@@ -60,8 +60,13 @@ void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::V
 
     if (mode == Scene::SceneMode::Scene1)
     {
-      fov = 60;
+      fov = 90;
       lightPosition = ngl::Vec4(0.0f, 0.9f, 0.0f);
+    }
+    if (mode == Scene::SceneMode::Scene2)
+    {
+      fov = 90;
+      lightPosition = ngl::Vec4(0.0f, 10.0f, 0.0f);
     }
               
     auto light = Light(lightIntensity, lightPosition);
@@ -94,7 +99,7 @@ void NGLScene::initializeGL()
     ngl::Vec3 lightIntensity;
 
     createScene(scene, camera, fov, from, to, up,
-                lightPosition, lightIntensity, Scene::SceneMode::Scene4);
+                lightPosition, lightIntensity, Scene::SceneMode::Scene1);
 
     m_canvas = std::make_unique<Canvas>(camera.render(scene));
     updateTextureBuffer();
