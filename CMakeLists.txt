@@ -37,6 +37,25 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
+
+# Add all header files inside the /include/bsdfs/ folder
+file(GLOB BSDF_HEADERS "include/bsdfs/*.h")
+
+# Add all source files inside the /src/bsdfs/ folder
+file(GLOB BSDF_SOURCES "src/bsdfs/*.cpp")
+
+# Add all header files inside the /include/volumes/ folder
+file(GLOB VOLUMES_HEADERS "include/volumes/*.h")
+
+# Add all source files inside the /src/volumes/ folder
+file(GLOB VOLUMES_SOURCES "src/volumes/*.cpp")
+
+# Add all header files inside the /include/materials/ folder
+file(GLOB MATERIALS_HEADERS "include/materials/*.h")
+
+# Add all source files inside the /src/materials/ folder
+file(GLOB MATERIALS_SOURCES "src/materials/*.cpp")
+
 # Set the name of the executable we want to build
 add_executable(${TargetName})
 
@@ -59,21 +78,8 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Shape.cpp
             ${PROJECT_SOURCE_DIR}/src/Triangle.cpp
             ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp
-            ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
-            ${PROJECT_SOURCE_DIR}/src/Metal.cpp
-            ${PROJECT_SOURCE_DIR}/src/LambertianBSDF.cpp
-            ${PROJECT_SOURCE_DIR}/src/MetalBSDF.cpp
-            ${PROJECT_SOURCE_DIR}/src/EmptyVolume.cpp
-            ${PROJECT_SOURCE_DIR}/src/BeersLawVolume.cpp
-            ${PROJECT_SOURCE_DIR}/src/BeersLawMaterial.cpp
-            ${PROJECT_SOURCE_DIR}/src/TrivialBSDF.cpp
             ${PROJECT_SOURCE_DIR}/src/Computation.cpp
             ${PROJECT_SOURCE_DIR}/src/Perlin.cpp
-            ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousVolume.cpp
-            ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousMaterial.cpp
-            ${PROJECT_SOURCE_DIR}/src/IsotropicPhaseBSDF.cpp
-            ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousVolume.cpp
-            ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousMaterial.cpp
             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
             ${PROJECT_SOURCE_DIR}/include/Canvas.h  
             ${PROJECT_SOURCE_DIR}/include/Ray.h 
@@ -92,30 +98,27 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/ObjFile.h
             ${PROJECT_SOURCE_DIR}/include/Utility.h
             ${PROJECT_SOURCE_DIR}/include/Material.h
-            ${PROJECT_SOURCE_DIR}/include/Lambertian.h
-            ${PROJECT_SOURCE_DIR}/include/Metal.h
             ${PROJECT_SOURCE_DIR}/include/BSDF.h
-            ${PROJECT_SOURCE_DIR}/include/LambertianBSDF.h
-            ${PROJECT_SOURCE_DIR}/include/MetalBSDF.h
             ${PROJECT_SOURCE_DIR}/include/Volume.h
-            ${PROJECT_SOURCE_DIR}/include/EmptyVolume.h
-            ${PROJECT_SOURCE_DIR}/include/BeersLawVolume.h
-            ${PROJECT_SOURCE_DIR}/include/BeersLawMaterial.h
-            ${PROJECT_SOURCE_DIR}/include/TrivialBSDF.h
-            ${PROJECT_SOURCE_DIR}/include/IsotropicPhaseBSDF.h
             ${PROJECT_SOURCE_DIR}/include/Perlin.h
-            ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousVolume.h
-            ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousMaterial.h
-            ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
-            ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
-            ${PROJECT_SOURCE_DIR}/src/DielectricBSDF.cpp
-            ${PROJECT_SOURCE_DIR}/include/DielectricBSDF.h
-            ${PROJECT_SOURCE_DIR}/src/Dielectric.cpp
-            ${PROJECT_SOURCE_DIR}/include/Dielectric.h
-            ${PROJECT_SOURCE_DIR}/src/LightEmitting.cpp
-            ${PROJECT_SOURCE_DIR}/include/LightEmitting.h
-            ${PROJECT_SOURCE_DIR}/src/LightEmittingBSDF.cpp
-            ${PROJECT_SOURCE_DIR}/include/LightEmittingBSDF.h
+
+            # Add the header files from /include/bsdfs/
+            ${BSDF_HEADERS}
+
+            # Add the source files from /src/bsdfs/
+            ${BSDF_SOURCES}
+
+            # Add the header files from /include/volumes/
+            ${VOLUMES_HEADERS}
+
+            # Add the source files from /src/volumes/
+            ${VOLUMES_SOURCES}
+
+            # Add the header files from /include/materials/
+            ${MATERIALS_HEADERS}
+
+            # Add the source files from /src/materials/
+            ${MATERIALS_SOURCES}
 )
 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL TBB::tbb TBB::tbbmalloc)
@@ -129,7 +132,7 @@ ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyShaders)
 
 add_custom_target(${TargetName}CopyFilesFolder ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/files
+    ${CMAKE_CURRENT_SOURCE_DIR}/files
     ${CMAKE_BINARY_DIR}/files
 )
 ADD_DEPENDENCIES(${TargetName} ${TargetName}CopyFilesFolder)
@@ -144,7 +147,7 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Canvas.cpp 
     ${PROJECT_SOURCE_DIR}/include/Canvas.h
     tests/RayTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/Ray.cpp 
+    ${PROJECT_SOURCE_DIR}/src/Ray.cpp
     ${PROJECT_SOURCE_DIR}/include/Ray.h
     tests/SphereTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
@@ -182,46 +185,30 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     ${PROJECT_SOURCE_DIR}/src/ObjFile.cpp 
     ${PROJECT_SOURCE_DIR}/include/ObjFile.h 
     ${PROJECT_SOURCE_DIR}/include/Material.h
-    ${PROJECT_SOURCE_DIR}/include/Lambertian.h
-    ${PROJECT_SOURCE_DIR}/include/Metal.h
-    ${PROJECT_SOURCE_DIR}/src/Lambertian.cpp
-    ${PROJECT_SOURCE_DIR}/src/Metal.cpp
-    ${PROJECT_SOURCE_DIR}/src/LambertianBSDF.cpp
-    ${PROJECT_SOURCE_DIR}/src/MetalBSDF.cpp
     ${PROJECT_SOURCE_DIR}/include/BSDF.h
-    ${PROJECT_SOURCE_DIR}/include/LambertianBSDF.h
-    ${PROJECT_SOURCE_DIR}/include/MetalBSDF.h
     ${PROJECT_SOURCE_DIR}/include/Volume.h
-    ${PROJECT_SOURCE_DIR}/include/EmptyVolume.h
-    ${PROJECT_SOURCE_DIR}/include/BeersLawVolume.h
-    ${PROJECT_SOURCE_DIR}/include/BeersLawMaterial.h
-    ${PROJECT_SOURCE_DIR}/src/EmptyVolume.cpp
-    ${PROJECT_SOURCE_DIR}/src/BeersLawVolume.cpp
-    ${PROJECT_SOURCE_DIR}/src/BeersLawMaterial.cpp
-    ${PROJECT_SOURCE_DIR}/src/TrivialBSDF.cpp
-    ${PROJECT_SOURCE_DIR}/include/TrivialBSDF.h
     ${PROJECT_SOURCE_DIR}/include/Perlin.h
     ${PROJECT_SOURCE_DIR}/src/Perlin.cpp
     ${PROJECT_SOURCE_DIR}/src/Computation.cpp
-    ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousVolume.h
-    ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousVolume.cpp
-    ${PROJECT_SOURCE_DIR}/include/BeersLawHeterogeneousMaterial.h
-    ${PROJECT_SOURCE_DIR}/src/BeersLawHeterogeneousMaterial.cpp
     ${PROJECT_SOURCE_DIR}/include/Utility.h
-    ${PROJECT_SOURCE_DIR}/src/IsotropicPhaseBSDF.cpp
-    ${PROJECT_SOURCE_DIR}/include/IsotropicPhaseBSDF.h
-    ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousVolume.cpp
-    ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousVolume.h
-    ${PROJECT_SOURCE_DIR}/src/SingleScatterHomogeneousMaterial.cpp
-    ${PROJECT_SOURCE_DIR}/include/SingleScatterHomogeneousMaterial.h
-    ${PROJECT_SOURCE_DIR}/src/DielectricBSDF.cpp
-    ${PROJECT_SOURCE_DIR}/include/DielectricBSDF.h
-    ${PROJECT_SOURCE_DIR}/src/Dielectric.cpp
-    ${PROJECT_SOURCE_DIR}/include/Dielectric.h
-    ${PROJECT_SOURCE_DIR}/src/LightEmitting.cpp
-    ${PROJECT_SOURCE_DIR}/include/LightEmitting.h
-    ${PROJECT_SOURCE_DIR}/src/LightEmittingBSDF.cpp
-    ${PROJECT_SOURCE_DIR}/include/LightEmittingBSDF.h
+
+    # Add the header files from /include/bsdfs/
+    ${BSDF_HEADERS}
+
+    # Add the source files from /src/bsdfs/
+    ${BSDF_SOURCES}
+
+    # Add the header files from /include/volumes/
+    ${VOLUMES_HEADERS}
+
+    # Add the source files from /src/volumes/
+    ${VOLUMES_SOURCES}
+
+    # Add the header files from /include/materials/
+    ${MATERIALS_HEADERS}
+
+    # Add the source files from /src/materials/
+    ${MATERIALS_SOURCES}
 )
 target_link_libraries(RayTracerTests PRIVATE GTest::gtest GTest::gtest_main TBB::tbb TBB::tbbmalloc)
 gtest_discover_tests(RayTracerTests)

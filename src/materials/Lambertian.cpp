@@ -1,4 +1,4 @@
-#include "Lambertian.h"
+#include "materials/Lambertian.h"
 #include "Utility.h"
 #include "Ray.h"
 #include "Computation.h"

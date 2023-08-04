@@ -2,8 +2,8 @@
 #define BEERS_LAW_MATERIAL_H_
 
 #include "Material.h"
-#include "TrivialBSDF.h"
-#include "BeersLawVolume.h"
+#include "bsdfs/TrivialBSDF.h"
+#include "volumes/BeersLawVolume.h"
 #include "ngl/Vec3.h"
 
 class BeersLawMaterial : public Material

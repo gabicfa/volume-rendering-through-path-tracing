@@ -1,4 +1,4 @@
-#include "IsotropicPhaseBSDF.h"
+#include "bsdfs/IsotropicPhaseBSDF.h"
 #include <cmath>
 #include "Utility.h"
 

@@ -1,4 +1,4 @@
-#include "DielectricBSDF.h"
+#include "bsdfs/DielectricBSDF.h"
 #include "Utility.h"
 
 DielectricBSDF::DielectricBSDF(const Computation& _comp, float ir)

@@ -2,8 +2,8 @@
 #define SINGLE_SCATTER_HOMOGENEOUS_MATERIAL_H_
 
 #include "Material.h"
-#include "IsotropicPhaseBSDF.h"
-#include "SingleScatterHomogeneousVolume.h"
+#include "bsdfs/IsotropicPhaseBSDF.h"
+#include "volumes/SingleScatterHomogeneousVolume.h"
 #include "ngl/Vec3.h"
 
 class SingleScatterHomogeneousMaterial : public Material

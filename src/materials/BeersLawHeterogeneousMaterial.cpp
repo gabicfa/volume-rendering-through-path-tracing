@@ -1,4 +1,4 @@
-#include "BeersLawHeterogeneousMaterial.h"
+#include "materials/BeersLawHeterogeneousMaterial.h"
 #include "Computation.h"
 #include "Ray.h"
 

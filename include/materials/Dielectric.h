@@ -2,7 +2,7 @@
 #define DIELECTRIC_H_
 
 #include "Material.h"
-#include "DielectricBSDF.h"
+#include "bsdfs/DielectricBSDF.h"
 
 class Dielectric : public Material {
 public:

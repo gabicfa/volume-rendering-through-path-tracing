@@ -1,4 +1,4 @@
-#include "SingleScatterHomogeneousMaterial.h"
+#include "materials/SingleScatterHomogeneousMaterial.h"
 #include "Computation.h"
 #include "Ray.h"
 

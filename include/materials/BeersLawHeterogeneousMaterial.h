@@ -2,8 +2,8 @@
 #define BEERS_LAW_HETEROGENEOUS_MATERIAL_H_
 
 #include "Material.h"
-#include "TrivialBSDF.h"
-#include "BeersLawHeterogeneousVolume.h"
+#include "bsdfs/TrivialBSDF.h"
+#include "volumes/BeersLawHeterogeneousVolume.h"
 #include "ngl/Vec3.h"
 
 class BeersLawHeterogeneousMaterial : public Material

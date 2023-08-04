@@ -5,16 +5,17 @@
 #include "ObjFile.h"
 #include "Sphere.h"
 #include "Utility.h"
-#include "Lambertian.h"
-#include "Dielectric.h"
-#include "BeersLawMaterial.h"
-#include "BeersLawHeterogeneousMaterial.h"
-#include "SingleScatterHomogeneousMaterial.h"
-#include "LightEmitting.h"
-#include "Metal.h"
 #include <memory>
 #include <iostream>
 #include <random>
+
+#include "materials/Lambertian.h"
+#include "materials/Dielectric.h"
+#include "materials/BeersLawMaterial.h"
+#include "materials/BeersLawHeterogeneousMaterial.h"
+#include "materials/SingleScatterHomogeneousMaterial.h"
+#include "materials/LightEmitting.h"
+#include "materials/Metal.h"
 
 Scene::Scene(bool _default)
 {
@@ -37,139 +38,151 @@ Scene::Scene(bool _default)
 
 }
 
-Scene::Scene(bool _default, int num)
+void openCornelBox (Scene &scene)
 {
-        auto lPoint = ngl::Vec4(-10.0f, 10.0f, 10.0f);
-        auto lIntensity = ngl::Vec3(1.0f,1.0f,1.0f);
-        auto l = Light(lIntensity,lPoint);
-        m_light = l;
+    auto materialGreen = std::make_shared<Lambertian>(ngl::Vec4(0.0, 1.0, 0.0));
+    auto materialRed = std::make_shared<Lambertian>(ngl::Vec4(1.0, 0.0, 0.0));
+    auto materialWhite = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.5, 0.5 ));
 
-        auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
-        auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
-        auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
-        auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.0, 0.0, 1.0), ngl::Vec3(0.01, 0.01, 0.01));
-        auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
-        auto materialDielectric = std::make_shared<Dielectric>(-0.4);
-        auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
-        auto difflight2 = std::make_shared<LightEmitting>(ngl::Vec3(5,5,5));
+    std::shared_ptr<Lambertian> cornelBoxMaterial[3] = {materialGreen, materialRed, materialWhite};
 
-
-        auto materialGreen = std::make_shared<Lambertian>(ngl::Vec4(0.0, 1.0, 0.0));
-        auto materialRed = std::make_shared<Lambertian>(ngl::Vec4(1.0, 0.0, 0.0));
-        auto materialWhite = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.5, 0.5 ));
-        auto materialGray = std::make_shared<Lambertian>(ngl::Vec4(0.45, 0.45, 0.45));
-
-        auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
-        auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
-        auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
-
-        // ObjFile obj1("files/Pyramid.obj");
-        // auto g1 = obj1.defaultGroup();
-        // for (auto t=0; t < g1->getChildren().size(); t ++)
-        // {
-        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g1->getChildren()[t]);
-        //     triangle->setMaterial(materialRight);
-        //     triangle->setTransform(ngl::Mat4::translate(0.7, 1.0, -1.5));
-        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-           
-        // }
-        // m_objects.push_back(g1);
-
-        std::shared_ptr<Lambertian> cornelBoxMaterial[3] = {materialGreen, materialRed, materialWhite};
-        ObjFile cornellBox("files/CornellBox.obj");
-        auto cornellBoxGroup = cornellBox.defaultGroup();
-        auto mIdx = 0;
-        for (auto t=0; t < cornellBoxGroup->getChildren().size(); t ++)
+    ObjFile cornellBox("files/CornellBox.obj");
+    auto cornellBoxGroup = cornellBox.defaultGroup();
+    auto mIdx = 0;
+    for (auto t=0; t < cornellBoxGroup->getChildren().size(); t ++)
+    {
+        auto triangle = std::dynamic_pointer_cast<Triangle>(cornellBoxGroup->getChildren()[t]);
+        triangle->setMaterial(cornelBoxMaterial[mIdx]);
+        scene.addObject(triangle);
+        if (mIdx < 2 && t % 2 == 1) 
         {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(cornellBoxGroup->getChildren()[t]);
-            triangle->setMaterial(cornelBoxMaterial[mIdx]);
-            // m_objects.push_back(triangle);
-            if (mIdx < 2 && t % 2 == 1) 
-            {
-                mIdx++;
-            }
+            mIdx++;
         }
+    }
+}
 
-        ObjFile box1("files/Box.obj");
-        auto gBox1 = box1.defaultGroup();
-        for (auto t=0; t < gBox1->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(gBox1->getChildren()[t]);
-            triangle->setMaterial(materialGray);
-            triangle->setTransform(ngl::Mat4::translate(-0.5f, -0.5f, 0.5f));
-            triangle->setTransform(ngl::Mat4::scale(0.3f, 0.6f, 0.3f));
-            // m_objects.push_back(triangle);
-        }
+void openPyramid (Scene &scene, std::shared_ptr<Material> material)
+{
+    ObjFile pyramid("files/Pyramid.obj");
+    auto pyramidGroup = pyramid.defaultGroup();
+    for (auto t=0; t < pyramidGroup->getChildren().size(); t ++)
+    {
+        auto triangle = std::dynamic_pointer_cast<Triangle>(pyramidGroup->getChildren()[t]);
+        triangle->setMaterial(material);
+        triangle->setTransform(ngl::Mat4::translate(-0.71, -0.6, -1.0));
+        triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        scene.addObject(triangle);
+    }
+}
 
-        ObjFile box2("files/Box.obj");
-        auto gBox2 = box2.defaultGroup();
-        for (auto t=0; t < gBox2->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(gBox2->getChildren()[t]);
-            triangle->setMaterial(materialGray);
-            triangle->setTransform(ngl::Mat4::translate(0.4f, -0.6f, 0.0f));
-            triangle->setTransform(ngl::Mat4::scale(0.3f, 0.3f, 0.3f));
-            // m_objects.push_back(triangle);
-        }
+void openTeapot(Scene &scene, std::shared_ptr<Material> material)
+{
+    ObjFile teaPot("files/Teapot.obj");
+    auto teaPotGroup = teaPot.defaultGroup();
+    for (auto t=0; t < teaPotGroup->getChildren().size(); t ++)
+    {
+        auto triangle = std::dynamic_pointer_cast<Triangle>(teaPotGroup->getChildren()[t]);
+        triangle->setMaterial(material);
+    }
+    scene.addObject(teaPotGroup);
+}
 
-        ObjFile obj2("files/Pyramid.obj");
-        auto g2 = obj2.defaultGroup();
-        for (auto t=0; t < g2->getChildren().size(); t ++)
-        {
-            auto triangle = std::dynamic_pointer_cast<Triangle>(g2->getChildren()[t]);
-            triangle->setMaterial(materialLeft);
-            triangle->setTransform(ngl::Mat4::translate(-0.71, -0.5, -1.0));
-            triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-            // m_objects.push_back(triangle);
-        }
+void openBox1(Scene &scene, std::shared_ptr<Material> material)
+{
+    ObjFile box1("files/Box.obj");
+    auto gBox1 = box1.defaultGroup();
+    for (auto t=0; t < gBox1->getChildren().size(); t ++)
+    {
+        auto triangle = std::dynamic_pointer_cast<Triangle>(gBox1->getChildren()[t]);
+        triangle->setMaterial(material);
+        triangle->setTransform(ngl::Mat4::translate(-0.5f, -0.5f, 0.5f));
+        triangle->setTransform(ngl::Mat4::scale(0.3f, 0.6f, 0.3f));
+        scene.addObject(triangle);
+    }
+}
 
-        // ObjFile obj3("files/Teapot.obj");
-        // auto g3 = obj3.defaultGroup();
-        // for (auto t=0; t < g3->getChildren().size(); t ++)
-        // {
-        //     auto triangle = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[t]);
-        //     triangle->setMaterial(materialCenter);
-        //     triangle->setTransform(ngl::Mat4::translate(-0.7, -0.5, -1.5));
-        //     triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        // }
-        // m_objects.push_back(g3);
+void openBox2(Scene &scene, std::shared_ptr<Material> material)
+{
+    ObjFile box2("files/Box.obj");
+    auto gBox2 = box2.defaultGroup();
+    for (auto t=0; t < gBox2->getChildren().size(); t ++)
+    {
+        auto triangle = std::dynamic_pointer_cast<Triangle>(gBox2->getChildren()[t]);
+        triangle->setMaterial(material);
+        triangle->setTransform(ngl::Mat4::translate(0.4f, -0.7f, 0.0f));
+        triangle->setTransform(ngl::Mat4::scale(0.3f, 0.3f, 0.3f));
+        scene.addObject(triangle);
+    }
+}
 
+void Scene::chooseScene (SceneMode mode)
+{
+    auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
+    auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
+    auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.2, 0.2, 0.2));
+    auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.0, 0.0, 1.0), ngl::Vec3(0.1, 0.1, 0.1));
+    auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.9, 1);
+    auto materialDielectric = std::make_shared<Dielectric>(-0.4);
+    auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
+    auto difflight2 = std::make_shared<LightEmitting>(ngl::Vec3(5,5,5));
+
+    auto materialGreen = std::make_shared<Lambertian>(ngl::Vec4(0.0, 1.0, 0.0));
+    auto materialRed = std::make_shared<Lambertian>(ngl::Vec4(1.0, 0.0, 0.0));
+    auto materialWhite = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.5, 0.5 ));
+    auto materialGray = std::make_shared<Lambertian>(ngl::Vec4(0.45, 0.45, 0.45));
+
+    auto materialCenter = std::make_shared<Lambertian>(ngl::Vec4(0.7, 0.3, 0.3));
+    auto materialLeft   = std::make_shared<Metal>(ngl::Vec4(0.8, 0.8, 0.8));
+    auto materialRight  = std::make_shared<Metal>(ngl::Vec4(0.8, 0.6, 0.2));
+
+    if (mode == SceneMode::Scene1)
+    {
+        openCornelBox(*this);
+    }
+    else if (mode == SceneMode::Scene2)
+    {
+        openPyramid(*this, materialLeft);
+    }
+    else if (mode == SceneMode::Scene3)
+    {
+        openTeapot(*this, materialCenter);
+    }
+    else if (mode == SceneMode::Scene4)
+    {
         auto s1 = std::make_shared<Sphere>(1, materialGround);
-        auto s5 = std::make_shared<Sphere>(5, materialBack);
-        auto s2 = std::make_shared<Sphere>(2, materialCenter);
-        auto s7 = std::make_shared<Sphere>(2, materialBeers);
-        // auto s3 = std::dynamic_pointer_cast<Triangle>(g3->getChildren()[1]);
-        auto s4 = std::make_shared<Sphere>(4, materialLeft);
-        auto s6 = std::make_shared<Sphere>(6, difflight2);
-
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        m_objects.push_back(s1);
+        this->addObject(s1);
 
-        s5->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
-        s5->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        // m_objects.push_back(s5);
+        // auto s2 = std::make_shared<Sphere>(2, materialBack);
+        // s2->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
+        // s2->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
+        // this->addObject(s2);
 
-        s2->setTransform(ngl::Mat4::translate(0.0, -0.59, -0.75));
-        s2->setTransform(ngl::Mat4::scale(0.4f, 0.4f, 0.4f));
-        // m_objects.push_back(s2);
-
-        s7->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
-        s7->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        m_objects.push_back(s7);
-
-
-        // s3->setTransform(ngl::Mat4::translate(-1.0, 0.0, -1.0));
-        // s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        // m_objects.push_back(s3);
-
+        auto s3 = std::make_shared<Sphere>(3, materialCenter);
+        s3->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
+        s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        this->addObject(s3);
+        
+        auto s4 = std::make_shared<Sphere>(4, materialRight);
         s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
         s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
         m_objects.push_back(s4);
 
-        s6->setTransform(ngl::Mat4::translate(0.0f, 1.0f, 0.0f));
-        s6->setTransform(ngl::Mat4::scale(0.2, 0.2, 0.2));
-        // m_objects.push_back(s6);
+        openPyramid(*this, materialRight);
+    }
+    else 
+    {
+        auto sphere = std::make_shared<Sphere>(1, materialGray);
+        this->addObject(sphere);
+    }
+}
+
+Scene::Scene(bool _default, int num)
+{
+        
+
+        
 }
 
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
@@ -347,32 +360,22 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
 
     float lightDistance = (m_light.position() - P).length();
 
-    Ray shadowRay(P, wi);
-    auto shadowIntersections = intersectScene(shadowRay);
-    auto xs = Intersection::intersections(shadowIntersections);
-    auto i = Intersection::hit(xs);
+    // Ray shadowRay(P, wi);
+    // auto shadowIntersections = intersectScene(shadowRay);
+    // auto xs = Intersection::intersections(shadowIntersections);
+    // auto i = Intersection::hit(xs);
 
-    if(i != Intersection() && i.t() > 0.0001f && i.t() < lightDistance)
-    {
-        return ngl::Vec3(0.0f, 0.0f, 0.0f); 
-    }
+    // if(i != Intersection() && i.t() > 0.0001f && i.t() < lightDistance)
+    // {
+    //     return ngl::Vec3(0.0f, 0.0f, 0.0f); 
+    // }
 
     if(pdf > 0.f && !isBlack(Li))
     {
-        ngl::Vec3 f;
-        if (comp.matPtr->hasAlbedo())
-        {
-            f = comp.matPtr->albedo().toVec3();
-        }
-        else
-        {
-            f = ngl::Vec3(1,1,1); // otherwise use white
-        }
-
         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
         if (cosTheta > 0)
         {
-            L += f * Li * cosTheta * beamTransmittance / pdf;
+            L += comp.matPtr->albedo().toVec3() * Li * cosTheta * beamTransmittance / pdf;
         }
     }
 

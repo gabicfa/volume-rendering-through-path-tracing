@@ -1,4 +1,4 @@
-#include "LightEmitting.h"
+#include "materials/LightEmitting.h"
 
 LightEmitting::LightEmitting(const ngl::Vec4& _a)
 {

@@ -1,4 +1,4 @@
-#include "Dielectric.h"
+#include "materials/Dielectric.h"
 
 Dielectric::Dielectric(float index_of_refraction) {
     m_ir = index_of_refraction;

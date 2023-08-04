@@ -1,4 +1,4 @@
-#include "BeersLawHeterogeneousVolume.h"
+#include "volumes/BeersLawHeterogeneousVolume.h"
 #include "Intersection.h"
 #include "Utility.h"
 #include <algorithm>

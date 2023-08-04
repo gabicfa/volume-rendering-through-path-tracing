@@ -21,8 +21,8 @@ class Canvas
     private:
         size_t m_width=0;
         size_t m_height=0;
-        int m_samplesPerPixel=6;
-        int m_maxDepth=8;
+        int m_samplesPerPixel=8;
+        int m_maxDepth=6;
         std::unique_ptr<ngl::Vec3 []> m_pixels; 
 };
 

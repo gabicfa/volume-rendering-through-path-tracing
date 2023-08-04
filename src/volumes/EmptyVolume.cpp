@@ -1,4 +1,4 @@
-#include "EmptyVolume.h"
+#include "volumes/EmptyVolume.h"
 
 EmptyVolume::EmptyVolume(Computation &comp) 
     : Volume(comp) {}

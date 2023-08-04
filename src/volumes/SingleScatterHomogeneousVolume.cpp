@@ -1,7 +1,7 @@
-#include "SingleScatterHomogeneousVolume.h"
+#include "volumes/SingleScatterHomogeneousVolume.h"
 #include "Intersection.h"
 #include "Utility.h"
-#include "IsotropicPhaseBSDF.h"
+#include "bsdfs/IsotropicPhaseBSDF.h"
 #include <algorithm>
 #include <cmath>
 

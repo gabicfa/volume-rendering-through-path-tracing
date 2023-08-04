@@ -1,4 +1,4 @@
-#include "LightEmittingBSDF.h"
+#include "bsdfs/LightEmittingBSDF.h"
 
 LightEmittingBSDF::LightEmittingBSDF(const Computation& _comp) 
     : BSDF(_comp) {}

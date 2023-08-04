@@ -10,8 +10,17 @@
 class Scene
 {
     public:
+        enum class SceneMode
+        {
+            Default,
+            Scene1,
+            Scene2,
+            Scene3,
+            Scene4
+        };
         Scene(bool _default = false);
         Scene(bool _default, int num);
+        void chooseScene (SceneMode mode);
         std::vector<std::shared_ptr<Shape>>& objects();
         Light light() const;
         void light(Light _l);

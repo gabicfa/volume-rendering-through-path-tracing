@@ -1,4 +1,4 @@
-#include "TrivialBSDF.h"
+#include "bsdfs/TrivialBSDF.h"
 
 TrivialBSDF::TrivialBSDF(const Computation& comp) : BSDF(comp) {}
 

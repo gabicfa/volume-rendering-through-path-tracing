@@ -1,13 +1,13 @@
-#ifndef LIGHT_EMITTING_H_
-#define LIGHT_EMITTING_H_
+#ifndef METAL_H_
+#define METAL_H_
 
 #include "Material.h"
-#include "LightEmittingBSDF.h"
+#include "bsdfs/MetalBSDF.h"
 
-class LightEmitting : public Material
+class Metal : public Material
 {
     public:
-        LightEmitting(const ngl::Vec4& _a);
+        Metal(const ngl::Vec4& _a);
         bool hasVolume() override;
         std::shared_ptr<BSDF> createBSDF(const Computation& _comp) override;
         bool scatter(
@@ -17,7 +17,7 @@ class LightEmitting : public Material
         ngl::Vec4 albedo() const override;
 
     private:
-        ngl::Vec4 m_emitColor;
+        ngl::Vec4 m_albedo;
 };
 
 #endif

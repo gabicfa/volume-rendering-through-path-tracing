@@ -1,4 +1,4 @@
-#include "BeersLawMaterial.h"
+#include "materials/BeersLawMaterial.h"
 #include "Computation.h"
 #include "Ray.h"
 

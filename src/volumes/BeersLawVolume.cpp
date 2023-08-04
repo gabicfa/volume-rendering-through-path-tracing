@@ -1,4 +1,4 @@
-#include "BeersLawVolume.h"
+#include "volumes/BeersLawVolume.h"
 #include "Intersection.h"
 #include <algorithm>
 #include <cmath>
