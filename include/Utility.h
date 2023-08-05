@@ -3,6 +3,11 @@
 #include <ngl/Vec4.h>
 #include <cmath>
 
+inline const int SAMPLES_PER_PIXEL = 750;
+inline const int MAX_DEPTH = 8;
+inline const int NUM_LIGHT_SAMPLES = 1;
+
+
 inline double randomDouble() 
 {
     return rand() / (RAND_MAX + 1.0);

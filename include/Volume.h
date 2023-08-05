@@ -7,7 +7,7 @@
 #include "Computation.h"
 #include "Ray.h"
 #include "Shape.h"
-#include "Scene.h"
+#include "RendererServices.h"
 
 class Volume
 {
@@ -15,7 +15,7 @@ class Volume
         Volume(Computation &comp) : m_comp(comp) {}
         virtual ~Volume() {}
         virtual bool integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-            &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, Scene &scene) = 0;
+            &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s,  RendererServices &rs) = 0;
         virtual ngl::Vec3 transmittance(const ngl::Vec4 &P0, const ngl::Vec4 &P1) = 0;
     protected:
         Computation &m_comp;

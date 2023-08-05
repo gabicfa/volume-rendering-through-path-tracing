@@ -7,7 +7,7 @@ EmptyVolume::~EmptyVolume() {}
 
 bool EmptyVolume::integrate(
     const Ray &wi, ngl::Vec3 &L, ngl::Vec3 &transmittance, ngl::Vec3 &weight, 
-    ngl::Vec4 &P, Ray &wo, Shape &s, Scene &scene
+    ngl::Vec4 &P, Ray &wo, Shape &s,  RendererServices &rs
 ) {
     Ray r(m_comp.point, wi.direction());
     auto intersections = s.intersect(r);

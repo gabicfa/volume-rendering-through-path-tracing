@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "Shape.h"
+#include "AreaLight.h"
+#include "RendererServices.h"
 #include "Light.h"
 #include "Computation.h"
 #include <ngl/Vec3.h>
@@ -21,6 +23,10 @@ class Scene
         Scene(bool _default = false);
         void chooseScene (SceneMode mode);
         std::vector<std::shared_ptr<Shape>>& objects();
+        AreaLight areaLight() const;
+        void areaLight(AreaLight _l);
+        RendererServices rs() const;
+        void rs(RendererServices _rs);
         Light light() const;
         void light(Light _l);
         ngl::Vec3 directLighting(const Computation& comp);
@@ -38,11 +44,15 @@ class Scene
         void evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
                          ngl::Vec3 &L, float &pdf);
         float MISWeight(int nsamps1, float pdf1, int nsamps2, float pdf2);
-        bool isOccluded(const ngl::Vec4 &point, const ngl::Vec4 &direction);
+        bool isOccluded(const ngl::Vec4 &start, const ngl::Vec4 &end);
+        float softShadowFactor(const Computation &comp, int numSamples); 
+
+
 
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;
+        AreaLight m_areaLight;
         Light m_light;
-
+        RendererServices m_rs;
 };
 #endif

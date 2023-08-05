@@ -1,7 +1,6 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 #include <fstream>
-
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/ShaderLib.h>
@@ -16,13 +15,15 @@
 
 #include "Scene.h"
 #include "Sphere.h"
+#include "Utility.h"
 #include "Camera.h"
 #include "OldMaterial.h"
-#include "Light.h"
+#include "AreaLight.h"
+#include "RendererServices.h"
 #include "ObjFile.h"
 
-constexpr size_t TextureWidth = 200;
-constexpr size_t TextureHeight = 200;
+constexpr size_t TextureWidth = 300;
+constexpr size_t TextureHeight = 300;
 
 // const auto aspectRatio = 16.0 / 16.0;
 // int TextureWidth = 180;
@@ -47,30 +48,36 @@ void NGLScene::resizeGL(int _w , int _h)
 constexpr auto TextureShader="TextureShader";
 
 void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::Vec4 to, ngl::Vec4 up,
-                ngl::Vec4 &lightPosition, ngl::Vec3 &lightIntensity, Scene::SceneMode mode)
+                ngl::Vec4 &lightCenter, ngl::Vec4 &lightU,ngl::Vec4 &lightV, ngl::Vec3 &lightIntensity, Scene::SceneMode mode)
 {
-    fov = 60;
-    from = ngl::Vec4(0.0f, 0.0f, -3.3f);
-    to = ngl::Vec4(0.0f, 0.0f, 0.0f);
+    fov = 100;
+    from = ngl::Vec4(0.0f, 3.0f, -5.0f);
+    to = ngl::Vec4(0.0f, 5.0f, 0.0f);
     up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-    lightPosition = ngl::Vec4(0.0f, 10.0f, 0.0f);
-    lightIntensity = ngl::Vec3(1.0f,1.0f,1.0f);
+    lightCenter = ngl::Vec4(0.0f, 30.0f, 0.0f);
+    lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
+    lightV = ngl::Vec4(0.0f, 0.0f, -1.0f);
+    lightIntensity = ngl::Vec3(15.0f,15.0f,15.0f);
 
     scene.chooseScene(mode);
 
     if (mode == Scene::SceneMode::Scene1)
     {
-      fov = 90;
-      lightPosition = ngl::Vec4(0.0f, 0.9f, 0.0f);
+      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      to = ngl::Vec4(0.0f, 0.0f, 0.0f);
+      lightCenter = ngl::Vec4(0.0f, 0.9f, 0.0f);
+      lightIntensity = ngl::Vec3(5.0f,5.0f,5.0f);
+      fov = 60;
     }
     if (mode == Scene::SceneMode::Scene2)
     {
       fov = 90;
-      lightPosition = ngl::Vec4(0.0f, 10.0f, 0.0f);
     }
               
-    auto light = Light(lightIntensity, lightPosition);
-    scene.light(light);
+    auto light = AreaLight(lightCenter, lightU, lightV, lightIntensity);
+    scene.areaLight(light);
+    auto rs = RendererServices(light);
+    scene.rs(rs);
 
     auto t = Transformations::viewTransform(from, to, up);
     camera.transform(t);
@@ -91,19 +98,19 @@ void NGLScene::initializeGL()
     
     // Generate our buffer for the texture data
 
-    auto scene = Scene();
-    auto camera = Camera(TextureWidth, TextureHeight, M_PI / 2);
+      auto scene = Scene();
+      auto camera = Camera(TextureWidth, TextureHeight, M_PI / 2);
 
-    int fov;
-    ngl::Vec4 from, to, up, lightPosition;
-    ngl::Vec3 lightIntensity;
+      int fov;
+      ngl::Vec4 from, to, up, lightPosition, lightU, lightV;
+      ngl::Vec3 lightIntensity;
 
-    createScene(scene, camera, fov, from, to, up,
-                lightPosition, lightIntensity, Scene::SceneMode::Scene1);
+      createScene(scene, camera, fov, from, to, up,
+                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Scene1);
 
-    m_canvas = std::make_unique<Canvas>(camera.render(scene));
-    updateTextureBuffer();
-    startTimer(10);
+      m_canvas = std::make_unique<Canvas>(camera.render(scene));
+      updateTextureBuffer();
+      startTimer(10);
 }
 
 void NGLScene::timerEvent(QTimerEvent *_event)

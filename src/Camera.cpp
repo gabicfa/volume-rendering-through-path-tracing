@@ -146,5 +146,6 @@ Canvas Camera::render(Scene &s)
             });
         }
     });
+    std::cout << "FINISHED \n";
     return img;
 }

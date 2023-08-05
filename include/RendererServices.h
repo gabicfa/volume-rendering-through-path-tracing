@@ -1,3 +1,6 @@
+#ifndef RENDERERSERVICES_H
+#define RENDERERSERVICES_H
+
 #include <random>
 #include "Ray.h"
 #include "Computation.h"
@@ -9,11 +12,14 @@
 
 class RendererServices {
 public:
+    RendererServices() = default;
     RendererServices(AreaLight _light);
     float MISWeight(int nsamps1, float pdf1, int nsamps2, float pdf2);
-    void GenerateLightSample(const Computation &_comp, ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
-    void EvaluateLightSample(const Computation &_comp, const ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
-    void EvaluateLightSample(const Computation &_comp, const ngl::Vec3 &sampleDirection, ngl::Vec3 &L, float &pdf);
+    void generateLightSample(const Computation &_comp, ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
+    void evaluateLightSample(const Computation &_comp, const ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
+    void evaluateLightSample(const Computation &_comp, const ngl::Vec3 &sampleDirection, ngl::Vec3 &L, float &pdf);
     private:
         AreaLight m_light;
 };
+
+#endif

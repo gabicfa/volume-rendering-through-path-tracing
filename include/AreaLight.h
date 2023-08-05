@@ -1,8 +1,12 @@
+#ifndef AREALIGHT_H
+#define AREALIGHT_H
+
 #include <ngl/Vec4.h>
 #include <ngl/Vec3.h>
 
 class AreaLight {
 public:
+    AreaLight() = default;
     AreaLight(const ngl::Vec4& _center, const ngl::Vec4& _udir, const ngl::Vec4& _vdir, const ngl::Vec3& _intensity);
 
     ngl::Vec4 udir() const;
@@ -17,3 +21,5 @@ private:
     ngl::Vec4 m_udir, m_vdir;
     ngl::Vec3 m_intensity;
 };
+
+#endif // AREALIGHT_H

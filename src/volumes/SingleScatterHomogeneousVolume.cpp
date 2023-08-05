@@ -9,7 +9,7 @@ SingleScatterHomogeneousVolume::SingleScatterHomogeneousVolume(ngl::Vec3 scatter
     : Volume(comp), m_scatteringAlbedo(scatteringAlbedo), m_extinction(extinction) {}
 
 bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, Scene &scene) {
+        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs) {
     
     auto intersections = s.intersect(Ray(m_comp.point, wi.direction()));
     auto xs = Intersection::intersections(intersections);
@@ -39,14 +39,14 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     ngl::Vec3 lightL, bsdfL, beamTransmittance;
     float lightPdf, bsdfPdf;
     ngl::Vec4 sampleDirection;
-    scene.generateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
+    rs.generateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
     phaseBSDF.evaluateSample(m_comp, sampleDirection, bsdfL, bsdfPdf);
-    L += lightL * bsdfL * beamTransmittance * scene.MISWeight(1, lightPdf, 1, bsdfPdf) / lightPdf;
+    L += lightL * bsdfL * beamTransmittance * rs.MISWeight(1, lightPdf, 1, bsdfPdf) / lightPdf;
 
 
     phaseBSDF.generateSample(m_comp, sampleDirection, bsdfL, bsdfPdf);
-    scene.evaluateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
-    L += lightL * bsdfL * beamTransmittance * scene.MISWeight(1, lightPdf, 1, bsdfPdf) / bsdfPdf;
+    rs.evaluateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
+    L += lightL * bsdfL * beamTransmittance * rs.MISWeight(1, lightPdf, 1, bsdfPdf) / bsdfPdf;
 
     ngl::Vec3 trasmission(exp(m_extinction.m_x * -scatterDistance), exp(m_extinction.m_y *
         -scatterDistance), exp(m_extinction.m_z * -scatterDistance));

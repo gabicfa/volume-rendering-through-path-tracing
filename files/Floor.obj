@@ -1,0 +1,41 @@
+# 2x2Plane.obj
+
+# Vertices
+# Bottom-left square
+v -1.0 -1.0 -1.0
+v 0.0 -1.0 -1.0
+v 0.0 -1.0 0.0
+v -1.0 -1.0 0.0
+
+# Bottom-right square (reuse vertices 2, 3)
+v 1.0 -1.0 -1.0
+v 1.0 -1.0 0.0
+
+# Top-left square (reuse vertices 3, 4)
+v -1.0 -1.0 1.0
+v 0.0 -1.0 1.0
+
+# Top-right square (reuse vertices 6, 7, 8)
+v 1.0 -1.0 1.0
+
+# Texture coordinates (Reused for all squares)
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+
+# Normal (Same for all squares, pointing upward on the y-axis)
+vn 0.0 1.0 0.0
+
+# Faces
+# Bottom-left
+f 1/1/1 2/2/1 3/3/1 4/4/1
+
+# Bottom-right
+f 2/1/1 5/2/1 6/3/1 3/4/1
+
+# Top-left
+f 4/1/1 3/2/1 8/3/1 7/4/1
+
+# Top-right
+f 3/1/1 6/2/1 9/3/1 8/4/1
