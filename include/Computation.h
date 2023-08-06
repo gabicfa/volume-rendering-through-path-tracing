@@ -21,7 +21,7 @@ class Computation
         ngl::Vec4 normal;
         Ray incomingRay;
         bool inside;
-        void recompute(const ngl::Vec4 &newPoint, ngl::Vec4 dir);
+        void recompute();
 
 }; 
 

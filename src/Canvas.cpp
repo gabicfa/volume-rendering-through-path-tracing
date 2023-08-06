@@ -1,5 +1,6 @@
 #include "Canvas.h"
 #include "Sphere.h"
+#include "Utility.h"
 #include "Intersection.h"
 
 Canvas::Canvas(size_t _w, size_t _h) : m_width{_w}, m_height{_h}
@@ -9,6 +10,8 @@ Canvas::Canvas(size_t _w, size_t _h) : m_width{_w}, m_height{_h}
     {
         m_pixels[i]=ngl::Vec3(0.0f, 0.0f, 0.0f);
     }
+    m_samplesPerPixel= SAMPLES_PER_PIXEL;
+    m_maxDepth= MAX_DEPTH;
 }
 
 size_t Canvas::width() const

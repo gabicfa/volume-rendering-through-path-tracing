@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Canvas.h"
+#include "Utility.h"
 
 TEST(Canvas, createCanvas)
 {

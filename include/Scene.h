@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "Shape.h"
+#include "AreaLight.h"
+#include "RendererServices.h"
 #include "Light.h"
 #include "Computation.h"
 #include <ngl/Vec3.h>
@@ -10,9 +12,21 @@
 class Scene
 {
     public:
+        enum class SceneMode
+        {
+            Default,
+            Scene1,
+            Scene2,
+            Scene3,
+            Scene4
+        };
         Scene(bool _default = false);
-        Scene(bool _default, int num);
+        void chooseScene (SceneMode mode);
         std::vector<std::shared_ptr<Shape>>& objects();
+        AreaLight areaLight() const;
+        void areaLight(AreaLight _l);
+        RendererServices rs() const;
+        void rs(RendererServices _rs);
         Light light() const;
         void light(Light _l);
         ngl::Vec3 directLighting(const Computation& comp);
@@ -21,16 +35,17 @@ class Scene
         // ngl::Vec3 shadeHit(Computation _c);
         ngl::Vec3 colorAt(Ray _r, int depth);
         ngl::Vec3 pathTrace(const Ray& r, int maxDepth);
-        ngl::Vec3 transmittance() const;
-        void generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
-                         float &pdf, ngl::Vec3 &beamTransmittance);
-        void evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
-                         ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance);
-        void evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
-                         ngl::Vec3 &L, float &pdf);
+        bool isOccluded(const ngl::Vec4 &start, const ngl::Vec4 &end);
+        float softShadowFactor(const Computation &comp, int numSamples); 
+        std::pair<bool, float> computeTransmittance(const ngl::Vec4 &start, const ngl::Vec4 &end);
+
+
+
+
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;
+        AreaLight m_areaLight;
         Light m_light;
-
+        RendererServices m_rs;
 };
 #endif

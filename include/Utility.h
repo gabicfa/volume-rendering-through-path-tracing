@@ -3,6 +3,11 @@
 #include <ngl/Vec4.h>
 #include <cmath>
 
+inline const int SAMPLES_PER_PIXEL = 50;
+inline const int MAX_DEPTH = 5;
+inline const int NUM_LIGHT_SAMPLES = 2;
+
+
 inline double randomDouble() 
 {
     return rand() / (RAND_MAX + 1.0);
@@ -69,6 +74,10 @@ inline bool isBlack(ngl::Vec3 L)
     return std::abs(L.m_x) < epsilon && std::abs(L.m_y) < epsilon && std::abs(L.m_z) < epsilon;
 }
 
+inline double channelAvg(const ngl::Vec3 &vec)
+{
+    return (vec.m_x + vec.m_y + vec.m_z) / 3.0;
+}
 inline ngl::Vec3 refract(const ngl::Vec3& uv, const ngl::Vec3& n, double etai_over_etat) {
     auto cos_theta = fmin(-uv.dot(n), 1.0);
     ngl::Vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);

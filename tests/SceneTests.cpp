@@ -2,6 +2,8 @@
 #include "Scene.h"
 #include "Intersection.h"
 #include "Sphere.h"
+#include "RendererServices.h"
+
 TEST(Scene, createScene)
 {
     auto scene = Scene();

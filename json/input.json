@@ -1,6 +1,6 @@
 {
     "defaultScene": true,
-    "light" : 
+    "scene" : 
     {
         "intensity": {
             "r": 1.0, 
