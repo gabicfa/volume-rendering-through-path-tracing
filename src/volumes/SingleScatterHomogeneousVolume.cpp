@@ -24,14 +24,14 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     transmittance = this->transmittance(m_comp.point, hitPoint);
     
     // Compute sample location for scattering, based on the PDF
-    float xi = randomDouble(0.0,1.0);
+    float xi = randomDouble();
     float scatterDistance = -logf(1.0f - xi * (1.0f - channelAvg(transmittance))) /
             channelAvg(m_extinction);
 
     // Set up computation to be at the scatter location
     ngl::Vec4 Pscatter = m_comp.point + scatterDistance * wi.direction();
     m_comp.point = Pscatter;
-    m_comp.recompute(Pscatter, wi.direction());
+    m_comp.recompute();
     
     // Compute direct lighting with light sampling and phase function sampling
     IsotropicPhaseBSDF phaseBSDF(m_comp);

@@ -22,8 +22,8 @@ void DielectricBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleD
         direction = refract(unit_direction, _comp.normal.toVec3(), refraction_ratio);
 
     sampleDirection = direction;
-    L = ngl::Vec3(1.0, 1.0, 1.0); // assuming full white as the light color
-    pdf = 1.0; // considering uniform sampling
+    L = ngl::Vec3(1.0, 1.0, 1.0);
+    pdf = 1.0;
 }
 
 void DielectricBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
@@ -42,8 +42,8 @@ void DielectricBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& s
         expectedDirection = refract(unit_direction, _comp.normal.toVec3(), refraction_ratio);
 
     if (expectedDirection == sampleDirection.toVec3()) {
-        L = ngl::Vec3(1.0, 1.0, 1.0); // assuming full white as the light color
-        pdf = 1.0; // considering uniform sampling
+        L = ngl::Vec3(1.0, 1.0, 1.0); 
+        pdf = 1.0;
     } else {
         L = ngl::Vec3(0.0, 0.0, 0.0);
         pdf = 0.0;

@@ -15,6 +15,7 @@
 #include "materials/BeersLawMaterial.h"
 #include "materials/BeersLawHeterogeneousMaterial.h"
 #include "materials/SingleScatterHomogeneousMaterial.h"
+#include "materials/SingleScatterHeterogeneousMaterial.h"
 #include "materials/LightEmitting.h"
 #include "materials/Metal.h"
 
@@ -96,8 +97,8 @@ void openPyramid (Scene &scene, std::shared_ptr<Material> material)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(pyramidGroup->getChildren()[t]);
         triangle->setMaterial(material);
-        triangle->setTransform(ngl::Mat4::translate(-0.71, -0.6, -1.0));
-        triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        triangle->setTransform(ngl::Mat4::translate(0, -1.0, -1.0));
+        // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         scene.addObject(triangle);
     }
 }
@@ -148,8 +149,10 @@ void Scene::chooseScene (SceneMode mode)
 {
     auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
     auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
-    auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.5, 0.5, 0.5));
-    auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.2, 0.2, 0.2), ngl::Vec3(0.5, 0.5, 0.5));
+    auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.8, 0.8, 0.8));
+    auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.2, 0.2, 0.2), ngl::Vec3(0.01, 0.01, 0.01));
+    // auto materialSingleScatterHete = std::make_shared<SingleScatterHeterogeneousMaterial>(ngl::Vec3(0.2, 0.2, 0.2), ngl::Vec3(0.2, 0.2, 0.2), 1);
+
     auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.5, 1);
     auto materialDielectric = std::make_shared<Dielectric>(-0.4);
     auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
@@ -177,7 +180,8 @@ void Scene::chooseScene (SceneMode mode)
     }
     else if (mode == SceneMode::Scene2)
     {
-        openPyramid(*this, materialLeft);
+        openPyramid(*this, materialBeers);
+        openFloor(*this);
     }
     else if (mode == SceneMode::Scene3)
     {
@@ -189,11 +193,6 @@ void Scene::chooseScene (SceneMode mode)
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         this->addObject(s1);
-
-        // auto s2 = std::make_shared<Sphere>(2, materialBack);
-        // s2->setTransform(ngl::Mat4::translate(0.0, -1.0, -95.5));
-        // s2->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
-        // this->addObject(s2);
 
         auto s3 = std::make_shared<Sphere>(3, materialCenter);
         s3->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
@@ -209,8 +208,8 @@ void Scene::chooseScene (SceneMode mode)
     }
     else 
     {
-        auto sphere = std::make_shared<Sphere>(1, materialWhite);
-        sphere->setTransform(ngl::Mat4::translate(0.0f, 1.0f, 0.0f));
+        auto sphere = std::make_shared<Sphere>(1, materialHete);
+        sphere->setTransform(ngl::Mat4::translate(0.0f, 1.0f, -3.0f));
         sphere->setTransform(ngl::Mat4::scale(2.0f, 2.0f, 2.0f));
         this->addObject(sphere);
         openFloor(*this);
@@ -304,188 +303,121 @@ ngl::Vec3 Scene::colorAt(Ray _r, int depth)
 
         Ray scattered;
         ngl::Vec3 attenuation;
-        if (c.matPtr && c.matPtr->scatter(_r, c, attenuation, scattered))
-            return attenuation * colorAt(scattered, depth-1);
-        return ngl::Vec3(0.0f,0.0f,0.0f);
+        // if (c.matPtr && c.matPtr->scatter(_r, c, attenuation, scattered))
+        //     return attenuation * colorAt(scattered, depth-1);
+        // return ngl::Vec3(0.0f,0.0f,0.0f);
         // return shadeHit(c);
     }
 }
 
-//method to compute beam transmittance
-ngl::Vec3 Scene::transmittance() const {
-    return ngl::Vec3(1.f, 1.f, 1.f);
-}
-
-void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
-                         float &pdf, ngl::Vec3 &beamTransmittance) {
-
-    L = m_light.sampleLi(ctx, &sampleDirection, &pdf);
-
-    if (pdf > 0 && !isBlack(L)) {
-        beamTransmittance = this->transmittance();
-    } else {
-        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
-    }
-}
-
-// struct RectAreaLight {
-//     ngl::Vec3 center;  // Position of the light's center
-//     float width, height;  // Dimensions of the light
-//     ngl::Vec3 color;  // Radiance (color) of the light
-//     ngl::Vec3 u, v;  // Two orthogonal vectors defining the light's orientation
-// };
-
-// void Scene::generateLightSample(const Computation &ctx, ngl::Vec4 &sampleDirection, ngl::Vec3 &L,
-//                          float &pdf, ngl::Vec3 &beamTransmittance) {
-//     // For simplicity, assume we only have one rectangular area light in the scene
-//     ngl::Vec4 center (0.0f, .95f, 0.0f);
-//     float width = 1.0f;
-//     float height = 1.0f; 
-//     ngl::Vec3 color (1.0f,1.0f,1.0f); // Radiance (color) of the light
-//     ngl::Vec4 u (1.0f,0.0f,0.0f);
-//     ngl::Vec4 v (0.0f,0.0f,-1.0f);
-
-//     // Sample a random point within the light's area
-//     float randomX = randomDouble(-0.5, 0.5); // Gives a value between -0.5 and 0.5
-//     float randomY = randomDouble(-0.5, 0.5); // Gives a value between -0.5 and 0.5
-
-//     ngl::Vec4 randomPosition = center + randomX * width * u + randomY * height * v;
-    
-//     // Compute direction from the point to the sampled position on the light
-//     auto sampleDirectionNotNormalized = (randomPosition - ctx.point);
-//     sampleDirectionNotNormalized.normalize();
-//     sampleDirection = sampleDirectionNotNormalized;
-//     // The radiance is simply the light's color
-//     L = color;
-
-//     // The pdf is 1 over the area of the light
-//     float area = width * height;
-//     pdf = 1.0f / area;
-
-//     // For simplicity, assuming that the beam transmittance is 1 (no light is blocked or absorbed)
-//     // In reality, you would calculate the actual beam transmittance based on objects in the scene and their material properties
-//     beamTransmittance = ngl::Vec3(1.0, 1.0, 1.0);
-// }
-
-void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
-                         ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) {
-    // evaluate radiance and pdf using scene's light source
-    L = m_light.le(Ray(ctx.point, sampleDirection));
-    pdf = m_light.pdfLi();
-
-    if (pdf > 0 && !isBlack(L)) {
-        // calculate the beam transmittance
-        beamTransmittance = this->transmittance();
-    } else {
-        beamTransmittance = ngl::Vec3(0.f, 0.f, 0.f);
-    }
-}
-
-void Scene::evaluateLightSample(const Computation &ctx, const ngl::Vec4 &sampleDirection,
-                         ngl::Vec3 &L, float &pdf) {
-    L = m_light.le(Ray(ctx.point, sampleDirection));
-    pdf = m_light.pdfLi();
-}
-
-// ngl::Vec3 Scene::directLighting(const Computation& comp)
+// bool Scene::isOccluded(const ngl::Vec4 &start, const ngl::Vec4 &end) 
 // {
-//     ngl::Vec3 Li(0, 0, 0);
-//     ngl::Vec3 L(0, 0, 0);
-//     auto N = comp.normal;
-//     auto P = comp.point;
-//     ngl::Vec4 wi;
-//     float pdf;
-//     ngl::Vec3 beamTransmittance;
+//     auto direction = end - start;
+//     float distance = direction.length();
+//     direction.normalize();
+    
+//     // Create a ray from start towards direction
+//     ngl::Vec4 offsetStart = start + 0.001f * direction; // Offset by a small amount
+//     Ray shadowRay(offsetStart, direction);
+    
+//     // For each object in the scene
+//     auto intersections = this->intersectScene(shadowRay);
+//     auto xs = Intersection::intersections(intersections);
+//     auto i = Intersection::hit(xs);
 
-//     generateLightSample(comp, wi, Li, pdf, beamTransmittance);
-
-//     float lightDistance = (m_light.position() - P).length();
-
-//     // Ray shadowRay(P, wi);
-//     // auto shadowIntersections = intersectScene(shadowRay);
-//     // auto xs = Intersection::intersections(shadowIntersections);
-//     // auto i = Intersection::hit(xs);
-
-//     // if(i != Intersection() && i.t() > 0.0001f && i.t() < lightDistance)
-//     // {
-//     //     return ngl::Vec3(0.0f, 0.0f, 0.0f); 
-//     // }
-
-//     if(pdf > 0.f && !isBlack(Li))
+//     if (i != Intersection())
 //     {
-//         float cosTheta = std::max(0.0f, N.dot(ngl::Vec3(wi.m_x, wi.m_y, wi.m_z)));
-//         if (cosTheta > 0)
-//         {
-//             L += comp.matPtr->albedo().toVec3() * Li * cosTheta * beamTransmittance / pdf;
-//         }
+//         return true;
 //     }
-
-//     return L;
+//     return false;
 // }
 
-bool Scene::isOccluded(const ngl::Vec4 &start, const ngl::Vec4 &end) 
+std::pair<bool, float> Scene::computeTransmittance(const ngl::Vec4 &start, const ngl::Vec4 &end)
 {
     auto direction = end - start;
     float distance = direction.length();
     direction.normalize();
-    
-    // Create a ray from start towards direction
-    ngl::Vec4 offsetStart = start + 0.001f * direction; // Offset by a small amount
+
+    ngl::Vec4 offsetStart = start + 0.001f * direction;
     Ray shadowRay(offsetStart, direction);
-    
-    // For each object in the scene
+
     auto intersections = this->intersectScene(shadowRay);
     auto xs = Intersection::intersections(intersections);
     auto i = Intersection::hit(xs);
 
+    float transmittance = 1.0f; 
     if (i != Intersection())
     {
-        return true;
+        // This is where you'll need to compute the transmittance based on the volume's properties.
+        // This can be a function of the volume's density, the distance the ray travels within the volume, etc.
+        // For now, let's assume a simple exponential attenuation:
+        // transmittance = exp(-volumeDensity * distance);
+
+        // NOTE: You'll need more logic here to determine the correct volume and its properties.
+        auto comp = i.prepareComputations(shadowRay);
+        auto m = comp.matPtr;
+        if (m->hasVolume()) 
+        {
+            float dirDotN = shadowRay.direction().dot(comp.normal);
+            bool entered = dirDotN < 0.0f;
+            if (entered) {
+                shadowRay.enterMaterial(m);
+            } else {
+                shadowRay.exitMaterial(m);
+            }
+            auto volume = shadowRay.getVolume(comp);
+            // Store the entry point
+            ngl::Vec4 P0 = comp.point;
+
+            // Continue tracing from P0 to find the exit point
+            ngl::Vec4 offsetP0 = P0 + 0.001f * direction;
+            Ray continueRay(offsetP0, direction);
+            auto nextIntersections = this->intersectScene(continueRay);
+            auto nextHits = Intersection::intersections(nextIntersections);
+            auto nextI = Intersection::hit(nextHits);
+
+            ngl::Vec4 P1;
+            if (nextI != Intersection())
+            {
+                auto compI = nextI.prepareComputations(shadowRay);
+                P1 = compI.point;
+            }
+            else
+            {
+                return {i != Intersection(), transmittance};
+                // Handle the case where there's no exit point. Could be a max distance or special case.
+            }
+
+            // Compute transmittance using P0 and P1
+            if(volume != nullptr)
+                transmittance = volume->transmittance(P0, P1).length();
+                    
+        }
     }
-    return false;
+    return {i != Intersection(), transmittance};
 }
-
-// ngl::Vec3 Scene::directLighting(const Computation& comp)
-// {
-//     ngl::Vec3 L = ngl::Vec3(0.0, 0.0, 0.0);  // Initialize radiance to black
-
-//     // Iterate over each light source in the scene
-//     ngl::Vec4 sampleDirection;
-//     ngl::Vec3 sampleRadiance, beamTransmittance;
-//     float pdf;
-
-//     // Sample the light source
-//     generateLightSample(comp, sampleDirection, sampleRadiance, pdf, beamTransmittance);
-
-//     // Check if the light source is visible from the point
-//     if (!isOccluded(comp.point, sampleDirection)) {
-//         float cosTheta = std::max(0.0f, comp.normal.dot(sampleDirection));
-
-//         // Accumulate the radiance contribution from this light
-//         L += (sampleRadiance * cosTheta * beamTransmittance) / pdf;
-//     }
-
-
-//     return L;
-// }
 
 float Scene::softShadowFactor(const Computation &comp, int numSamples) 
 {
     int unoccludedRays = 0;
+    float totalTransmittance = 0.0f;
 
     for (int i = 0; i < numSamples; ++i) 
     {
         ngl::Vec4 samplePoint;
-        ngl::Vec3 intensity; // Not used here
-        m_areaLight.sample(samplePoint, intensity); // Assuming m_rs has the light info
+        ngl::Vec3 intensity; 
+        m_areaLight.sample(samplePoint, intensity);
 
-        if (!isOccluded(comp.point, samplePoint)) 
+        auto [occluded, transmittance] = computeTransmittance(comp.point, samplePoint);
+        if (!occluded) 
         {
             unoccludedRays++;
+            totalTransmittance += transmittance;
         }
     }
 
-    return static_cast<float>(unoccludedRays) / numSamples;
+    // We'll average the transmittance of all the rays to get a soft shadow effect.
+    return (static_cast<float>(unoccludedRays) / numSamples) * (totalTransmittance / numSamples);
 }
 
 ngl::Vec3 Scene::directLighting(const Computation& comp) 
@@ -504,6 +436,10 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
     {
         return directLight;
     }
+    // if (isOccluded(comp.point, comp.point + sampledDirLight)) 
+    // {
+    //     return directLight;
+    // }
     if (pdfLight > 0.0f) 
     {
         // compute contribution to directLight from the light sample
@@ -518,10 +454,11 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
             float weight = rs.MISWeight(1, pdfLight, SAMPLES_PER_PIXEL, pdfMaterial);
 
             directLight += shadowFactor * fr * Ll * beamTransmittance * std::abs(comp.normal.dot(sampledDirLight.toVec3())) * weight / pdfLight;
+            // directLight += fr * Ll * beamTransmittance * std::abs(comp.normal.dot(sampledDirLight.toVec3())) * weight / pdfLight;
+
         }
     }
 
-    // generate a sample based on the BSDF
     ngl::Vec3 Lm;
     ngl::Vec4 sampledDirMaterial;
     float pdfMaterial;
@@ -530,7 +467,6 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
     bsdf->generateSample(comp, sampledDirMaterial, Lm, pdfMaterial);
     if (pdfMaterial > 0.0f) 
     {
-        // compute contribution to directLight from the material sample
         ngl::Vec3 fr;
         float pdfLight;
         ngl::Vec3 beamTransmittance;
@@ -570,10 +506,6 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
 
         L += throughput * directLighting(ctx);
 
-        // if(dynamic_cast<LightEmitting*>(m.get())) {
-        //     L += throughput * m->albedo().toVec3();
-        // }
-
         // Sample direction for next ray from BSDF
         float pdf;
         ngl::Vec3 Ls;
@@ -581,7 +513,6 @@ ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth)
         bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
 
         throughput = throughput * (Ls / pdf);
-        // throughput = throughput * m->albedo().toVec3() * (Ls / pdf);
 
         Ray nextRay(ctx.point, sampleDirection);
 

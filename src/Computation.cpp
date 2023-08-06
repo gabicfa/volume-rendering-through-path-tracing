@@ -2,20 +2,13 @@
 #include "Shape.h"
 #include "Material.h"
 #include "Ray.h"
-void Computation::recompute(const ngl::Vec4 &newPoint, ngl::Vec4 dir) 
+void Computation::recompute()
 {
-    point = newPoint;
-    eye = - dir;
     normal = object->normalAt(point);
-    matPtr = object->material();
-
-    if (normal.dot(eye) < 0)
+    inside = incomingRay.direction().dot(normal) < 0.0f;
+    if (inside)
     {
-        inside = true;
-        normal = -normal;
+        this->normal = -this->normal;
     }
-    else
-    {
-        inside = false;
-    }
+    this->eye = -incomingRay.direction();
 }

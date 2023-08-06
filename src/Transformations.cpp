@@ -18,11 +18,11 @@ ngl::Mat4 Transformations::viewTransform(const ngl::Vec4& from, const ngl::Vec4&
     {
         upn = _up.normalize();
     }
-    auto left = forward.cross(upn);
-    auto trueUp = forward.cross(left);
+    ngl::Vec4 left = upn.cross(forward);
+    ngl::Vec4 trueUp = forward.cross(left);
 
     ngl::Mat4 orientation(left.m_x, left.m_y, left.m_z, 0.0f,
-                          trueUp.m_x, trueUp.m_y, trueUp.m_z, 0.0f,
+                          trueUp.m_x, -trueUp.m_y, trueUp.m_z, 0.0f,
                           -forward.m_x, -forward.m_y, -forward.m_z, 0.0f,
                           0.0f, 0.0f, 0.0f, 1.0f);
     ngl::Mat4 translation = ngl::Mat4::translate(-from.m_x, -from.m_y, -from.m_z);

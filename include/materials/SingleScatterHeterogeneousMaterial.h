@@ -3,14 +3,14 @@
 
 #include "Material.h"
 #include "bsdfs/IsotropicPhaseBSDF.h"
-#include "volumes/SingleScatterHomogeneousVolume.h"
+#include "volumes/SingleScatterHeterogeneousVolume.h"
 #include "ngl/Vec3.h"
 
-class SingleScatterHomogeneousMaterial : public Material
+class SingleScatterHeterogeneousMaterial : public Material
 {
 public:
-    SingleScatterHomogeneousMaterial(ngl::Vec3 scatteringAlbedo, ngl::Vec3 extinction);
-    virtual ~SingleScatterHomogeneousMaterial();
+    SingleScatterHeterogeneousMaterial(ngl::Vec3 scatteringAlbedo, ngl::Vec3 maxExtinction, int extinction);
+    virtual ~SingleScatterHeterogeneousMaterial();
 
     std::shared_ptr<BSDF> createBSDF(const Computation& _comp) override;
     bool hasVolume() override;
@@ -18,7 +18,8 @@ public:
 
 private:
     const ngl::Vec3 m_scatteringAlbedo;
-    const ngl::Vec3 m_extinction;
+    const ngl::Vec3 m_maxExtinction;
+    const int m_extinctionProperty;
 };
 
 #endif

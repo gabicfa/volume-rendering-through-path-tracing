@@ -21,8 +21,3 @@ std::shared_ptr<Volume> SingleScatterHomogeneousMaterial::createVolume(Computati
 {
     return std::make_shared<SingleScatterHomogeneousVolume>(m_scatteringAlbedo, m_extinction, _comp);
 }
-
-bool SingleScatterHomogeneousMaterial::scatter(const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered) const
-{
-    return false;
-}

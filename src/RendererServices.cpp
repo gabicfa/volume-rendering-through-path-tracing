@@ -16,7 +16,6 @@
     void RendererServices::generateLightSample(const Computation &_comp, ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance) 
     {
         
-        // Compute SampleDirection
         ngl::Vec4 samplePoint;
         m_light.sample(samplePoint, L);
         L = m_light.intensity() * L;  // Scale the light color by the light's intensity
@@ -24,7 +23,6 @@
         lightToSurface.normalize();
         sampleDirection = lightToSurface;
 
-        // Compute pdf
         float lightArea = m_light.udir().length() * m_light.vdir().length();
         float distanceSquared = lightToSurface.lengthSquared();
 
@@ -33,7 +31,6 @@
 
         pdf = distanceSquared / (lightArea * std::abs(sampleDirection.dot(normalToLightPlane)));
 
-        // Compute beamTransmittance
         if(_comp.matPtr->hasVolume()) {
             Computation comp = _comp;
             auto volume = _comp.matPtr->createVolume(comp);
@@ -45,7 +42,6 @@
 
     void RendererServices::evaluateLightSample(const Computation &_comp, const ngl::Vec4 &sampleDirection, ngl::Vec3 &L, float &pdf, ngl::Vec3 &beamTransmittance)
     {
-        // Compute L using BSDF and incident direction.
         auto m = _comp.matPtr;
         auto bsdf = m->createBSDF(_comp);
 
@@ -53,7 +49,6 @@
         bsdf->evaluateSample(_comp, sampleDirection, evaluatedColor, pdf);
         L = evaluatedColor;
 
-        // Compute pdf
         if (sampleDirection.dot(_comp.normal) > 0) {
             float lightArea = m_light.udir().length() * m_light.vdir().length();
             float distanceSquared = (m_light.center() - _comp.point).lengthSquared();
@@ -64,7 +59,6 @@
             pdf = 0.0f;
         }
 
-        // Compute beamTransmittance
         if(_comp.matPtr->hasVolume()) {
             Computation comp = _comp;
             auto volume = _comp.matPtr->createVolume(comp);
@@ -76,7 +70,6 @@
 
     void RendererServices::evaluateLightSample(const Computation &_comp, const ngl::Vec3 &sampleDirection, ngl::Vec3 &L, float &pdf)
     {
-        // Compute L using BSDF and incident direction.
         auto m = _comp.matPtr;
         auto bsdf = m->createBSDF(_comp);
 

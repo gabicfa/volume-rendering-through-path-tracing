@@ -20,8 +20,3 @@ std::shared_ptr<Volume> BeersLawHeterogeneousMaterial::createVolume(Computation&
 {
     return std::make_shared<BeersLawHeterogeneousVolume>(m_maxAbsorption, m_absorptionProperty, _comp);
 }
-
-bool BeersLawHeterogeneousMaterial::scatter(const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered) const
-{
-    return false;
-}

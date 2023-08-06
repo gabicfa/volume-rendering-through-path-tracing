@@ -22,8 +22,8 @@
 #include "RendererServices.h"
 #include "ObjFile.h"
 
-constexpr size_t TextureWidth = 300;
-constexpr size_t TextureHeight = 300;
+constexpr size_t TextureWidth = 100;
+constexpr size_t TextureHeight = 100;
 
 // const auto aspectRatio = 16.0 / 16.0;
 // int TextureWidth = 180;
@@ -50,14 +50,14 @@ constexpr auto TextureShader="TextureShader";
 void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::Vec4 to, ngl::Vec4 up,
                 ngl::Vec4 &lightCenter, ngl::Vec4 &lightU,ngl::Vec4 &lightV, ngl::Vec3 &lightIntensity, Scene::SceneMode mode)
 {
-    fov = 100;
-    from = ngl::Vec4(0.0f, 3.0f, -5.0f);
-    to = ngl::Vec4(0.0f, 5.0f, 0.0f);
+    fov = 90;
+    from = ngl::Vec4(0.0f, 2.5f, -8.0f);
+    to = ngl::Vec4(0.0f, 4.0f, 0.0f);
     up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-    lightCenter = ngl::Vec4(0.0f, 30.0f, 0.0f);
+    lightCenter = ngl::Vec4(0.0f, 70.0f, 0.0f);
     lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
     lightV = ngl::Vec4(0.0f, 0.0f, -1.0f);
-    lightIntensity = ngl::Vec3(15.0f,15.0f,15.0f);
+    lightIntensity = ngl::Vec3(10.0f,10.0f,10.0f);
 
     scene.chooseScene(mode);
 
@@ -71,8 +71,20 @@ void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::V
     }
     if (mode == Scene::SceneMode::Scene2)
     {
+      from = ngl::Vec4(0.0f, 2.0f, -5.0f);
+      to = ngl::Vec4(0.0f, 5.0f, 0.0f);
+      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
       fov = 90;
     }
+    if (mode == Scene::SceneMode::Scene3)
+    {
+      from = ngl::Vec4(0.0f, 2.0f, -5.0f);
+      to = ngl::Vec4(0.0f, 5.0f, 0.0f);
+      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
+      lightCenter = ngl::Vec4(0.0f, 10.0f, 0.0f);
+      fov = 60;
+    }
+    
               
     auto light = AreaLight(lightCenter, lightU, lightV, lightIntensity);
     scene.areaLight(light);
@@ -106,7 +118,7 @@ void NGLScene::initializeGL()
       ngl::Vec3 lightIntensity;
 
       createScene(scene, camera, fov, from, to, up,
-                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Scene1);
+                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Default);
 
       m_canvas = std::make_unique<Canvas>(camera.render(scene));
       updateTextureBuffer();

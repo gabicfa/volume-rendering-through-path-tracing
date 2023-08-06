@@ -21,8 +21,6 @@ bool EmptyVolume::integrate(
 
     P = r.position(i.t());
 
-    // If the ray successfully hit the object, 
-    // we can define the outgoing ray (wo), transmittance, weight, and L.
     L = ngl::Vec3(0.0, 0.0, 0.0);
     transmittance = ngl::Vec3(1.0, 1.0, 1.0);
     weight = ngl::Vec3(1.0, 1.0, 1.0);

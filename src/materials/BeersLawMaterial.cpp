@@ -20,8 +20,3 @@ std::shared_ptr<Volume> BeersLawMaterial::createVolume(Computation& _comp)
 {
     return std::make_shared<BeersLawVolume>(m_extinction, _comp);
 }
-
-bool BeersLawMaterial::scatter(const Ray& _rIn, const Computation& _comp, ngl::Vec3& attenuation, Ray& scattered) const
-{
-    return false;
-}
