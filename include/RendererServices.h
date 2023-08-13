@@ -9,6 +9,9 @@
 #include <ngl/Vec4.h>
 class Scene;
 
+
+// RendererServices is responsible for light sampling and BSDF sampling,
+// given a shading context from a particular point in the scene.
 class RendererServices {
 public:
     RendererServices() = default;
@@ -19,8 +22,9 @@ public:
     void evaluateLightSample(const Computation &_comp, const ngl::Vec3 &sampleDirection, ngl::Vec3 &L, float &pdf);
     std::pair<bool, ngl::Vec3> computeTransmittance(const ngl::Vec4 &start, const ngl::Vec4 &end, Scene &scene);
 
-    private:
-        AreaLight m_light;
+private:
+    // Light source used for sampling in the scene.
+    AreaLight m_light;
 };
 
 #endif
