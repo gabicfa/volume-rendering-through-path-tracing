@@ -3,9 +3,9 @@
 #include <ngl/Vec4.h>
 #include <cmath>
 
-inline const int SAMPLES_PER_PIXEL = 50;
-inline const int MAX_DEPTH = 5;
-inline const int NUM_LIGHT_SAMPLES = 2;
+inline const int SAMPLES_PER_PIXEL = 1000;
+inline const int MAX_DEPTH = 6;
+inline const int NUM_LIGHT_SAMPLES = 1;
 
 
 inline double randomDouble() 
@@ -18,7 +18,7 @@ inline double randomDouble(double min, double max)
     return min + (max-min)*randomDouble();
 }
 
-inline int randomInt(int min, int max) 
+inline int randomInt(int min, int max)  
 {
     return min + rand() % (( max + 1 ) - min);
 }

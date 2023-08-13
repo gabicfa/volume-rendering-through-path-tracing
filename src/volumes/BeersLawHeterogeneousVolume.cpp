@@ -8,7 +8,7 @@ BeersLawHeterogeneousVolume::BeersLawHeterogeneousVolume(float maxAbsorption, in
     : Volume(comp), m_maxAbsorption(maxAbsorption), m_absorptionProperty(absorptionProperty) {}
 
 bool BeersLawHeterogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s,  RendererServices &rs) {
+        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s,  RendererServices &rs, Scene &scene) {
     auto intersections = s.intersect(Ray(m_comp.point, wi.direction()));
     auto xs = Intersection::intersections(intersections);
     auto i = Intersection::hit(xs);

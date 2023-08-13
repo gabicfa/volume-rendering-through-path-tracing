@@ -59,6 +59,20 @@ Intersection Intersection::hit(std::vector<Intersection> _intersections)
     return Intersection();
 }
 
+Intersection Intersection::nextHitAfter(const Intersection& currentHit, const std::vector<Intersection>& sortedIntersections) {
+    auto it = std::find(sortedIntersections.begin(), sortedIntersections.end(), currentHit);
+
+    if (it != sortedIntersections.end()) {
+        ++it;
+
+        if (it != sortedIntersections.end()) {
+            return *it;
+        }
+    }
+
+    return Intersection();
+}
+
 Computation Intersection::prepareComputations(Ray _r)
 {
     Computation comp;

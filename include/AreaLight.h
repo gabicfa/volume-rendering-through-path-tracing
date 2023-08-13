@@ -22,4 +22,4 @@ private:
     ngl::Vec3 m_intensity;
 };
 
-#endif // AREALIGHT_H
+#endif

@@ -9,7 +9,7 @@ SingleScatterHomogeneousVolume::SingleScatterHomogeneousVolume(ngl::Vec3 scatter
     : Volume(comp), m_scatteringAlbedo(scatteringAlbedo), m_extinction(extinction) {}
 
 bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs) {
+        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs, Scene &scene) {
     
     auto intersections = s.intersect(Ray(m_comp.point, wi.direction()));
     auto xs = Intersection::intersections(intersections);
@@ -39,13 +39,13 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     ngl::Vec3 lightL, bsdfL, beamTransmittance;
     float lightPdf, bsdfPdf;
     ngl::Vec4 sampleDirection;
-    rs.generateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
+    rs.generateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance, scene);
     phaseBSDF.evaluateSample(m_comp, sampleDirection, bsdfL, bsdfPdf);
     L += lightL * bsdfL * beamTransmittance * rs.MISWeight(1, lightPdf, 1, bsdfPdf) / lightPdf;
 
 
     phaseBSDF.generateSample(m_comp, sampleDirection, bsdfL, bsdfPdf);
-    rs.evaluateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance);
+    rs.evaluateLightSample(m_comp, sampleDirection, lightL, lightPdf, beamTransmittance, scene);
     L += lightL * bsdfL * beamTransmittance * rs.MISWeight(1, lightPdf, 1, bsdfPdf) / bsdfPdf;
 
     ngl::Vec3 trasmission(exp(m_extinction.m_x * -scatterDistance), exp(m_extinction.m_y *
@@ -62,6 +62,7 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
 
 ngl::Vec3 SingleScatterHomogeneousVolume::transmittance(const ngl::Vec4 &P0, const ngl::Vec4 &P1) {
     float distance = (P0 - P1).length();
-    return ngl::Vec3(exp(m_extinction.m_x * -distance), exp(m_extinction.m_y * -distance),
+    auto transmittance = ngl::Vec3(exp(m_extinction.m_x * -distance), exp(m_extinction.m_y * -distance),
                      exp(m_extinction.m_z * -distance));
+    return transmittance;
 }

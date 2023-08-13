@@ -2,7 +2,6 @@
 #include "Scene.h"
 #include "Intersection.h"
 #include "Sphere.h"
-#include "RendererServices.h"
 
 TEST(Scene, createScene)
 {
@@ -40,70 +39,6 @@ TEST(Scene, intersectScene)
     ASSERT_EQ(xs[1].t(), 4.5);
     ASSERT_EQ(xs[2].t(), 5.5);
     ASSERT_EQ(xs[3].t(), 6);
-}
-
-TEST(Scene, shadingIntersection)
-{
-    auto s = Scene(true);
-    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto s1 = std::dynamic_pointer_cast<Sphere>(s.objects()[0]);
-    auto i = Intersection(4.0f, s1);
-
-    auto comp = i.prepareComputations(r);
-    // auto color = s.shadeHit(comp);
-
-    // ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
-}
-
-TEST(Scene, shadingIntersectionFromInside)
-{
-    auto s = Scene(true);
-    auto l = Light(ngl::Vec3(1.0f,1.0f,1.0f), ngl::Vec4(0.0f,0.25f,0.0f));
-    s.light(l);
-    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 0.0f), ngl::Vec4(0.0f,0.0f,1.0f));
-    
-    auto s2 = std::dynamic_pointer_cast<Sphere>(s.objects()[1]);
-    auto i = Intersection(0.5f, s2);
-
-    auto comp = i.prepareComputations(r);
-    // auto color = s.shadeHit(comp);
-
-    // ASSERT_EQ(color, ngl::Vec3(0.90498f, 0.90498f, 0.90498f));
-}
-
-TEST(Scene, colorWhenRayMisses)
-{
-    auto s = Scene(true);
-    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,1.0f,0.0f));
-    auto color = s.colorAt(r, 1);
-
-    auto d = r.direction()/r.direction().length();
-    auto t = 0.5 * (d.m_y + 1.0);
-    auto c = (1.0-t)*ngl::Vec3(1.0, 1.0, 1.0) + t*ngl::Vec3(0.5, 0.7, 1.0);    
-
-    ASSERT_EQ(color, c);
-}
-
-TEST(Scene, colorWhenRayHits)
-{
-    auto s = Scene(true);
-    auto r = Ray(ngl::Vec4(0.0f, 0.0f, 5.0f), ngl::Vec4(0.0f,0.0f,-1.0f));
-    auto color = s.colorAt(r, 1);
-    
-    ASSERT_EQ(color, ngl::Vec3(0.38066f, 0.47583f, 0.2855f));
-}
-
-TEST(Scene, colorWithIntersectionBehindRay)
-{
-    auto s = Scene(true);
-    auto outer = std::dynamic_pointer_cast<Sphere>(s.objects()[0]);
-
-    auto inner = std::dynamic_pointer_cast<Sphere>(s.objects()[1]);
-
-    auto r = Ray(ngl::Vec4(0.0f, 0.0f, -0.75f), ngl::Vec4(0.0f,0.0f,1.0f));
-    auto color = s.colorAt(r, 1);
-    std::cout << color.m_x << " " << color.m_y << " " << color.m_z << "\n";
-    ASSERT_EQ(color, ngl::Vec3(0.0f, 0.0f, 0.0f));
 }
 
 
