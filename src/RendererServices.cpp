@@ -148,13 +148,18 @@ std::pair<bool, ngl::Vec3> RendererServices::computeTransmittance(const ngl::Vec
             
             // Retrieve the volume properties of the material at the intersection point.
             auto volume = shadowRay.getVolume(comp);
-            ngl::Vec4 P0 = start;
-            ngl::Vec4 P1 = comp.point;
+            ngl::Vec4 P0 = comp.point;
 
-            // If there's a volume, compute the transmittance 
+            // Find the next intersection point after the current one.
+            auto nextI = Intersection::nextHitAfter(i, xs);
+
+            // If there's a volume and another intersection point, compute the transmittance 
             // for the segment between these two points.
-            if (volume != nullptr) {
+            if (volume != nullptr && nextI != Intersection()) {
+                auto compI = nextI.prepareComputations(shadowRay);
+                auto P1 = compI.point;
                 ngl::Vec3 segmentTransmittance = volume->transmittance(P0, P1);
+                
                 transmittance = segmentTransmittance;
             }
             isOccluded = false;
