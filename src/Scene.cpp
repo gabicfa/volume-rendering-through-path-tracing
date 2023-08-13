@@ -408,8 +408,9 @@ ngl::Vec3 Scene::directLighting(const Computation& comp)
     ngl::Vec3 Lm;
     ngl::Vec4 sampledDirMaterial;
     float pdfMaterial;
-
-    bsdf = comp.matPtr->createBSDF(comp);
+    
+    auto m = comp.matPtr;
+    auto bsdf = m->createBSDF(comp);
     
     // Generate a sample direction based on the surface material.
     bsdf->generateSample(comp, sampledDirMaterial, Lm, pdfMaterial);
