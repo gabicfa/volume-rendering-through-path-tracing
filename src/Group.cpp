@@ -21,6 +21,9 @@ bool Group::operator!=(const Shape& _other) const
 }
 
 // Finds intersections between the ray and all children shapes within the group.
+/// @brief ray intersecting group
+/// Modified from :
+/// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 std::vector<Intersection> Group::localIntersect(Ray _r)
 {
     std::vector<Intersection> intersections;
@@ -37,6 +40,7 @@ std::vector<Intersection> Group::localIntersect(Ray _r)
     });
     return intersections;
 }
+// end of citation
 
 // Placeholder method since Groups do not have their own normals like primitive shapes.
 // Typically, this method would not be invoked on a Group, and it's present due to inheritance.
