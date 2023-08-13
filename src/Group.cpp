@@ -4,6 +4,7 @@ Group::Group()
 {
 }
 
+// Equality operator checks if two groups (or a group and another shape) are identical based on their IDs and transformations.
 bool Group::operator==(const Shape& _other) const
 {
     if (const Group* group = dynamic_cast<const Group*>(&_other))
@@ -13,11 +14,13 @@ bool Group::operator==(const Shape& _other) const
     return false;
 }
 
+// Inequality operator leverages the equality operator to determine if two groups are different.
 bool Group::operator!=(const Shape& _other) const
 {
     return !(*this == _other);
 }
 
+// Finds intersections between the ray and all children shapes within the group.
 std::vector<Intersection> Group::localIntersect(Ray _r)
 {
     std::vector<Intersection> intersections;
@@ -35,17 +38,21 @@ std::vector<Intersection> Group::localIntersect(Ray _r)
     return intersections;
 }
 
+// Placeholder method since Groups do not have their own normals like primitive shapes.
+// Typically, this method would not be invoked on a Group, and it's present due to inheritance.
 ngl::Vec4 Group::localNormalAt(ngl::Vec4 _localPoint)
 {
     return _localPoint;
 }
 
+// Adds a child shape to the group's list of children and sets the group as the shape's parent.
 void Group::addChild(std::shared_ptr<Shape> _shape)
 {
     _shape->setParent(shared_from_this());
     m_children.push_back(_shape);
 }
 
+// Getter method for retrieving all child shapes within the group.
 const std::vector<std::shared_ptr<Shape>>& Group::getChildren() const
 { 
     return m_children; 
