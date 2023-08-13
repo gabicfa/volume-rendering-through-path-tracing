@@ -18,7 +18,10 @@ class Scene
             Scene1,
             Scene2,
             Scene3,
-            Scene4
+            Scene4,
+            Scene5,
+            Scene6,
+            Scene7
         };
         Scene(bool _default = false);
         void chooseScene (SceneMode mode);
@@ -32,15 +35,9 @@ class Scene
         ngl::Vec3 directLighting(const Computation& comp);
         void addObject(std::shared_ptr<Shape> s);
         std::vector<Intersection> intersectScene(Ray _r);
-        // ngl::Vec3 shadeHit(Computation _c);
-        ngl::Vec3 colorAt(Ray _r, int depth);
         ngl::Vec3 pathTrace(const Ray& r, int maxDepth);
-        bool isOccluded(const ngl::Vec4 &start, const ngl::Vec4 &end);
         float softShadowFactor(const Computation &comp, int numSamples); 
-        std::pair<bool, float> computeTransmittance(const ngl::Vec4 &start, const ngl::Vec4 &end);
-
-
-
+        std::pair<bool, ngl::Vec3> computeTransmittance(const ngl::Vec4 &start, const ngl::Vec4 &end);
 
     private:
         std::vector<std::shared_ptr<Shape>> m_objects;

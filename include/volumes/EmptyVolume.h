@@ -13,7 +13,7 @@ public:
 
     virtual bool integrate(
         const Ray &wi, ngl::Vec3 &L, ngl::Vec3 &transmittance, ngl::Vec3 &weight, 
-        ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs
+        ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs, Scene &scene
     ) override;
     
     virtual ngl::Vec3 transmittance(const ngl::Vec4 &P0, const ngl::Vec4 &P1) override;

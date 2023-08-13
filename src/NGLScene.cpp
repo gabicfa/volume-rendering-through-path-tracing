@@ -17,13 +17,12 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Camera.h"
-#include "OldMaterial.h"
 #include "AreaLight.h"
 #include "RendererServices.h"
 #include "ObjFile.h"
 
-constexpr size_t TextureWidth = 100;
-constexpr size_t TextureHeight = 100;
+constexpr size_t TextureWidth = 300;
+constexpr size_t TextureHeight = 300;
 
 // const auto aspectRatio = 16.0 / 16.0;
 // int TextureWidth = 180;
@@ -57,16 +56,18 @@ void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::V
     lightCenter = ngl::Vec4(0.0f, 70.0f, 0.0f);
     lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
     lightV = ngl::Vec4(0.0f, 0.0f, -1.0f);
-    lightIntensity = ngl::Vec3(10.0f,10.0f,10.0f);
+    lightIntensity = ngl::Vec3(50.0f,50.0f,50.0f);
 
     scene.chooseScene(mode);
 
     if (mode == Scene::SceneMode::Scene1)
     {
-      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
+      lightV = ngl::Vec4(0.0f, 0.0f, 1.0f);
+      from = ngl::Vec4(0.0f, 0.0f, -2.9f);
       to = ngl::Vec4(0.0f, 0.0f, 0.0f);
-      lightCenter = ngl::Vec4(0.0f, 0.9f, 0.0f);
-      lightIntensity = ngl::Vec3(5.0f,5.0f,5.0f);
+      lightCenter = ngl::Vec4(0.0f, 0.95f, 0.0f);
+      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
       fov = 60;
     }
     if (mode == Scene::SceneMode::Scene2)
@@ -83,6 +84,38 @@ void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::V
       up = ngl::Vec4(0.0f, 1.0f, 0.0f);
       lightCenter = ngl::Vec4(0.0f, 10.0f, 0.0f);
       fov = 60;
+    }
+    if (mode == Scene::SceneMode::Scene4)
+    {
+      fov = 75;
+      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      to = ngl::Vec4(0.0f, 0.0f, 0.0f);
+      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
+      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
+    }
+    if (mode == Scene::SceneMode::Scene5)
+    {
+      fov = 90;
+      from = ngl::Vec4(0.0f, 8.0f, -30.0f);
+      to = ngl::Vec4(0.0f, 5.0f, 0.0f);
+      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
+      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
+    }
+    if (mode == Scene::SceneMode::Scene6)
+    {
+      lightU = ngl::Vec4(0.3f, 0.0f, 0.0f);
+      lightV = ngl::Vec4(0.0f, 0.0f, -0.3f);
+      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      to = ngl::Vec4(0.0f, 0.0f, 0.0f);
+      lightCenter = ngl::Vec4(0.0f, 0.95f, 0.0f);
+      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
+      fov = 60;
+    }
+    if (mode == Scene::SceneMode::Scene7)
+    {
+      fov = 75;
+      from = ngl::Vec4(0.0f, 2.5f, -9.0f);
+      to = ngl::Vec4(0.0f, 4.0f, 0.0f);
     }
     
               
@@ -112,13 +145,14 @@ void NGLScene::initializeGL()
 
       auto scene = Scene();
       auto camera = Camera(TextureWidth, TextureHeight, M_PI / 2);
+      
 
       int fov;
       ngl::Vec4 from, to, up, lightPosition, lightU, lightV;
       ngl::Vec3 lightIntensity;
 
       createScene(scene, camera, fov, from, to, up,
-                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Default);
+                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Scene7);
 
       m_canvas = std::make_unique<Canvas>(camera.render(scene));
       updateTextureBuffer();

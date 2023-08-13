@@ -68,7 +68,6 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/src/Sphere.cpp 
             ${PROJECT_SOURCE_DIR}/src/Intersection.cpp 
             ${PROJECT_SOURCE_DIR}/src/Light.cpp 
-            ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp
             ${PROJECT_SOURCE_DIR}/src/Scene.cpp
             ${PROJECT_SOURCE_DIR}/src/Transformations.cpp
             ${PROJECT_SOURCE_DIR}/src/Camera.cpp
@@ -86,7 +85,6 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp
             ${PROJECT_SOURCE_DIR}/include/Sphere.h 
             ${PROJECT_SOURCE_DIR}/include/Intersection.h
             ${PROJECT_SOURCE_DIR}/include/Light.h
-            ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
             ${PROJECT_SOURCE_DIR}/include/Scene.h
             ${PROJECT_SOURCE_DIR}/include/Computation.h
             ${PROJECT_SOURCE_DIR}/include/Transformations.h
@@ -162,9 +160,6 @@ target_sources(RayTracerTests PRIVATE tests/CanvasTests.cpp
     tests/LightTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Light.cpp 
     ${PROJECT_SOURCE_DIR}/include/Light.h
-    tests/OldMaterialTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/OldMaterial.cpp 
-    ${PROJECT_SOURCE_DIR}/include/OldMaterial.h
     tests/SceneTests.cpp
     ${PROJECT_SOURCE_DIR}/src/Scene.cpp 
     ${PROJECT_SOURCE_DIR}/include/Scene.h

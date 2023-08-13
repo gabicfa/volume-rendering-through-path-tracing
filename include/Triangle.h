@@ -32,4 +32,4 @@ private:
     ngl::Vec4 m_normal;
 };
 
-#endif // TRIANGLE_H
+#endif

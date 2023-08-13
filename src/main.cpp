@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   // we can now query the version to see if it worked
   std::cout<<"Profile is "<<format.majorVersion()<<" "<<format.minorVersion()<<"\n";
   // set the window size
-  window.resize(100, 100);
+  window.resize(300, 300);
   // and finally show
   window.show();
 

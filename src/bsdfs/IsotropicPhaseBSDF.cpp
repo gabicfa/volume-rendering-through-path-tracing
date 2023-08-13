@@ -30,7 +30,7 @@ void IsotropicPhaseBSDF::generateSample(const Computation& _comp, ngl::Vec4& sam
     {
         sampleDirection.m_x = sampleDirection.m_y = 0.0f;
     }
-    
+
     pdf = 0.25f / M_PI;
     L = ngl::Vec3(pdf, pdf, pdf);
 }
