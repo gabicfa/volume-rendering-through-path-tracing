@@ -3,6 +3,7 @@
 #include "Ray.h"
 #include "Material.h"
 #include "Intersection.h"
+
 Sphere::Sphere()
 {
 }
@@ -18,6 +19,7 @@ Sphere::Sphere(int _id, std::shared_ptr<Material> _matPtr)
     this->setMaterial(_matPtr);
 }
 
+// Equality operator checks if two spheres (or a sphere and another shape) are identical based on their IDs and transformations.
 bool Sphere::operator==(const Shape& other) const
 {
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
@@ -28,6 +30,7 @@ bool Sphere::operator==(const Shape& other) const
     return false;
 }
 
+// Inequality operator leverages the equality operator to determine if two spheres are different.
 bool Sphere::operator!=(const Shape& other) const
 {
     if (const Sphere* sphere = dynamic_cast<const Sphere*>(&other))
@@ -38,11 +41,13 @@ bool Sphere::operator!=(const Shape& other) const
     return false;
 }
 
+
 /// @brief ray intersecting sphere
 /// Modified from :
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 std::vector<Intersection> Sphere::localIntersect(Ray _r)
 {
+    // This method calculates the intersections of a ray with the sphere using a quadratic formula approach.
     std::vector<Intersection> intersection;
 
     auto sphereToArray = _r.origin() - ngl::Vec3(0.0f, 0.0f, 0.0f);
@@ -69,9 +74,8 @@ std::vector<Intersection> Sphere::localIntersect(Ray _r)
 /// Buck Jamis (2019). The Ray Tracer Challenge. Raleigh, North Carolina:The Pragmatic Bookshelf 
 ngl::Vec4 Sphere::localNormalAt(ngl::Vec4 _localPoint)
 {
+    // Calculates the normal vector at a given point on the sphere's surface.
+    // The normal is essentially the vector from the sphere's center to the point.
     return _localPoint - ngl::Vec4(0.0f,0.0f,0.0f);
 }
 /// end of Citation
-
-
-
