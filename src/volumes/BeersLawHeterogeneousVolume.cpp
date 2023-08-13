@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <cmath>
 
-BeersLawHeterogeneousVolume::BeersLawHeterogeneousVolume(float maxAbsorption, int absorptionProperty, Computation &comp)
-    : Volume(comp), m_maxAbsorption(maxAbsorption), m_absorptionProperty(absorptionProperty) {}
+BeersLawHeterogeneousVolume::BeersLawHeterogeneousVolume(float maxAbsorption, Computation &comp)
+    : Volume(comp), m_maxAbsorption(maxAbsorption) {}
 
 bool BeersLawHeterogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
         &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s,  RendererServices &rs, Scene &scene) {

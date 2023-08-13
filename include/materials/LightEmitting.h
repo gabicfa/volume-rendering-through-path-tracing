@@ -4,6 +4,8 @@
 #include "Material.h"
 #include "bsdfs/LightEmittingBSDF.h"
 
+// The LightEmitting class represents a light-emitting material.
+// This type of material is designed to represent emitting light objects
 class LightEmitting : public Material
 {
     public:
@@ -13,7 +15,7 @@ class LightEmitting : public Material
         ngl::Vec4 albedo() const override;
 
     private:
-        ngl::Vec4 m_emitColor;
+        ngl::Vec4 m_emitColor;  // The color the material emits.
 };
 
 #endif

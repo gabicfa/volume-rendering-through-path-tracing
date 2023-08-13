@@ -164,7 +164,7 @@ void Scene::chooseScene (SceneMode mode)
     auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.4, 0.4, 0.4));
     auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.5, 0.5, 0.5), ngl::Vec3(0.5, 0.5, 0.5));
 
-    auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.5, 1);
+    auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.5);
     auto materialDielectric = std::make_shared<Dielectric>(-0.4);
     auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
     auto difflight2 = std::make_shared<LightEmitting>(ngl::Vec3(5,5,5));
