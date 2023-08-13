@@ -15,11 +15,14 @@ void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& s
     // The Lambertian BRDF is 1/pi * cos(theta), where theta is the angle between
     // the sample direction and the normal.
     float cosTheta = _comp.normal.dot(sampleDirection);
-    if (cosTheta < 0) {
+    if (cosTheta < 0) 
+    {
         // Light is coming from behind the surface, so no light is reflected.
         L = ngl::Vec3(0, 0, 0);
         pdf = 0;
-    } else {
+    } 
+    else 
+    {
         L = _comp.matPtr->albedo().toVec3() / M_PI * cosTheta;
         pdf = cosTheta / M_PI;  // PDF for cosine distribution.
     }
