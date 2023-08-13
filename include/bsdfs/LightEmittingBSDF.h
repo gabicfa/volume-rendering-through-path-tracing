@@ -3,6 +3,9 @@
 
 #include "BSDF.h"
 
+// The LightEmittingBSDF class represents a Bidirectional Scattering Distribution Function (BSDF) 
+// for surfaces that emit light. Unlike other materials that interact with incoming light (by reflecting or refracting it),
+// light-emitting surfaces are representing sources of light, so their behavior is distinct.
 class LightEmittingBSDF : public BSDF
 {
     public:

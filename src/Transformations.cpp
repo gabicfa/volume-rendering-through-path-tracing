@@ -29,3 +29,5 @@ ngl::Mat4 Transformations::viewTransform(const ngl::Vec4& from, const ngl::Vec4&
 
     return orientation * translation;
 }
+
+// end citation

@@ -6,6 +6,8 @@
 #include<ngl/Vec3.h>
 #include<ngl/Vec4.h>
 
+// The EmptyVolume class represents a volume that does not affect light paths through it.
+// Typically, such a volume does not absorb, scatter or emit light.
 class EmptyVolume : public Volume {
 public:
     EmptyVolume(Computation &comp);
@@ -20,4 +22,3 @@ public:
 };
 
 #endif
-
