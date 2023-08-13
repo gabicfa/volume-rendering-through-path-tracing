@@ -7,9 +7,12 @@ LambertianBSDF::LambertianBSDF(const Computation& _comp)
 
 LambertianBSDF::~LambertianBSDF() {}
 
+// Computes the reflected light intensity (L) for a given sample direction using Lambertian BRDF.
+// If the light is coming from behind the surface, no light is reflected. Otherwise, it evaluates 
+// the BRDF and computes the probability density function (pdf).
 void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& sampleDirection, ngl::Vec3& L, float &pdf)
 {
-    // The Lambertian BRDF is simply 1/pi * cos(theta), where theta is the angle between
+    // The Lambertian BRDF is 1/pi * cos(theta), where theta is the angle between
     // the sample direction and the normal.
     float cosTheta = _comp.normal.dot(sampleDirection);
     if (cosTheta < 0) {
@@ -22,9 +25,12 @@ void LambertianBSDF::evaluateSample(const Computation& _comp, const ngl::Vec4& s
     }
 }
 
+// Randomly generates a direction in the hemisphere around the normal based on Lambertian reflection.
+// After obtaining the sample direction, it computes the reflected light intensity (L) and its 
+// associated probability density function (pdf) using the Lambertian BRDF.
 void LambertianBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
-    // For Lambertian reflection, we can just pick a random direction in the hemisphere
+    // For Lambertian reflection, just pick a random direction in the hemisphere
     // around the normal. The direction is given by spherical coordinates (phi, theta) where
     // phi is a random angle around the normal and theta is an angle from the normal given by
     // cos(theta) = sqrt(1 - u) for a random u in [0, 1].
@@ -47,6 +53,6 @@ void LambertianBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleD
     ngl::Vec3 bitangent = _comp.normal.toVec3().cross(tangent);
     sampleDirection = (tangent * sampleDirection.m_x) + _comp.normal.toVec3() * sampleDirection.m_y + bitangent * sampleDirection.m_z;
 
-    // The Lambertian BRDF and the PDF are the same as in EvaluateSample.
+    // The Lambertian BRDF and the PDF are the same as in evaluateSample.
     evaluateSample(_comp, sampleDirection, L, pdf);
 }
