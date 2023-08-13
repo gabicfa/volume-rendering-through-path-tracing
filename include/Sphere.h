@@ -15,7 +15,7 @@ class Sphere : public Shape
 {
     public:
         Sphere();
-        Sphere(int _id)
+        Sphere(int _id);
         Sphere(int _id, std::shared_ptr<Material> _matPtr);
 
         bool operator==(const Shape& other) const override;
