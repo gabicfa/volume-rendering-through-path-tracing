@@ -1,4 +1,4 @@
-# Ray Tracer - ASE Assigment
+# Volume Rendering through Path Tracing - Msc Project
 
 ## Overall Idea
 
