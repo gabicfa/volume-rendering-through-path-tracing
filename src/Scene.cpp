@@ -258,47 +258,55 @@ void Scene::chooseScene (SceneMode mode)
     }
 }
 
+// Retrieve all objects present in the scene.
 std::vector<std::shared_ptr<Shape>>& Scene::objects()
 {
     return m_objects;
 }
 
+// Retrieve the current area light of the scene.
 AreaLight Scene::areaLight() const
 {
     return m_areaLight;
 }
 
+// Set the area light of the scene.
 void Scene::areaLight(AreaLight _l)
 {
     m_areaLight = _l;
 }
 
+// Retrieve the renderer services.
 RendererServices Scene::rs() const
 {
     return m_rs;
 }
 
+// Set the renderer services.
 void Scene::rs(RendererServices _rs)
 {
     m_rs = _rs;
 }
 
-
+// Retrieve the light of the scene.
 Light Scene::light() const
 {
     return m_light;
 }
 
+// Set the light of the scene.
 void Scene::light(Light _l)
 {
     m_light = _l;
 }
 
+// Add a shape to the scene.
 void Scene::addObject(std::shared_ptr<Shape> s)
 {
     m_objects.push_back(s);
 }
 
+// Find intersections of a ray with all objects in the scene.
 std::vector<Intersection> Scene::intersectScene(Ray _r)
 {
     std::vector<Intersection> intersections;
@@ -308,25 +316,35 @@ std::vector<Intersection> Scene::intersectScene(Ray _r)
         for(auto &i: inter)
             intersections.push_back(i);
     }
+
+    // Sort intersections based on distance from ray origin.
     std::sort(intersections.begin(), intersections.end(), [](const Intersection &a, const Intersection &b) 
     {
         return a.t() < b.t();
     });
+
     return intersections;
 }
 
+// Compute factor for soft shadow based on the number of unoccluded rays.
 float Scene::softShadowFactor(const Computation &comp, int numSamples) 
 {
     int unoccludedRays = 0;
     float totalTransmittance = 0.0f;
-
     for (int i = 0; i < numSamples; ++i) 
     {
+        // Variables to store the sample point on the light and the intensity of the light at that sample point.
         ngl::Vec4 samplePoint;
         ngl::Vec3 intensity; 
+        
+        // Sample a point on the area light.
         m_areaLight.sample(samplePoint, intensity);
 
+        // Compute the transmittance of light between the computation point and the sampled point on the light.
+        // If occluded is true, the light path between comp.point and samplePoint is blocked by some object.
         auto [occluded, transmittance] = m_rs.computeTransmittance(comp.point, samplePoint, *this);
+        
+        // If the light ray isn't blocked, update our counters.
         if (!occluded) 
         {
             unoccludedRays++;
@@ -334,146 +352,206 @@ float Scene::softShadowFactor(const Computation &comp, int numSamples)
         }
     }
 
+    // The final soft shadow factor is a combination of:
+    // - The percentage of unoccluded rays.
+    // - The average transmittance of all the unoccluded rays.
     return (static_cast<float>(unoccludedRays) / numSamples) * (totalTransmittance / numSamples);
 }
 
-
+// Compute the direct lighting at a computation point in the scene.
+// This is achieved by sampling light sources and the surface material.
+// The method takes into account the influence of shadows and multiple importance sampling (MIS) for better integration.
 ngl::Vec3 Scene::directLighting(const Computation& comp) 
 {
     RendererServices rs = m_rs; 
     ngl::Vec3 directLight(0.0, 0.0, 0.0);
 
-    // generate a sample based on the light
     ngl::Vec3 Ll;
     ngl::Vec4 sampledDirLight;
     float pdfLight;
     ngl::Vec3 beamTransmittance;
+
+    // Generate a sample direction based on the light source.
     rs.generateLightSample(comp, sampledDirLight, Ll, pdfLight, beamTransmittance, *this);
+    
+    // Calculate how much of the light is shadowed.
     float shadowFactor = softShadowFactor(comp, NUM_LIGHT_SAMPLES);
+    
+    // If the computation point is fully shadowed, return early.
     if (shadowFactor <= 0.0f) 
     {
         return directLight;
     }
+
+    // If there's a valid probability of sampling the light, compute its contribution.
     if (pdfLight > 0.0f) 
     {
-        // compute contribution to directLight from the light sample
         ngl::Vec3 fr;
         float pdfMaterial;
         auto m = comp.matPtr;
         auto bsdf = m->createBSDF(comp);
+        
+        // Evaluate the surface material based on the light sample.
         bsdf->evaluateSample(comp, sampledDirLight, fr, pdfMaterial);
 
+        // If there's a valid probability of sampling the material, calculate its contribution.
         if (pdfMaterial > 0.0f) 
         {
             float weight = rs.MISWeight(1, pdfLight, SAMPLES_PER_PIXEL, pdfMaterial);
 
+            // Calculate the direct lighting contribution based on the surface material, light, and MIS weight.
             directLight += shadowFactor * fr * Ll * beamTransmittance * std::abs(comp.normal.dot(sampledDirLight.toVec3())) * weight / pdfLight;
         }
     }
 
+    // Variables for sampled direction based on the material, emitted light, and pdf value.
     ngl::Vec3 Lm;
     ngl::Vec4 sampledDirMaterial;
     float pdfMaterial;
-    auto m = comp.matPtr;
-    auto bsdf = m->createBSDF(comp);
+
+    bsdf = comp.matPtr->createBSDF(comp);
+    
+    // Generate a sample direction based on the surface material.
     bsdf->generateSample(comp, sampledDirMaterial, Lm, pdfMaterial);
+    
     if (pdfMaterial > 0.0f) 
     {
         ngl::Vec3 fr;
         float pdfLight;
         ngl::Vec3 beamTransmittance;
+
+        // Evaluate the light based on the material sample.
         rs.evaluateLightSample(comp, sampledDirMaterial, fr, pdfLight, beamTransmittance, *this);
+        
         auto [occluded, transmittance] = m_rs.computeTransmittance(comp.point, comp.point + sampledDirMaterial, *this);
         beamTransmittance = beamTransmittance * transmittance;
+        
         if (pdfLight > 0.0f && !comp.matPtr->hasVolume()) 
         {
             float weight = rs.MISWeight(SAMPLES_PER_PIXEL, pdfMaterial, 1, pdfLight);
-            directLight += fr * Lm * beamTransmittance * weight / (pdfLight + 1e-6f);;
+            
+            // Update the direct lighting contribution based on the material's sample.
+            directLight += fr * Lm * beamTransmittance * weight / (pdfLight + 1e-6f);
         }
     }
 
     return directLight;
 }
 
+// Path-tracing algorithm: This function recursively traces a ray through the scene, bouncing off surfaces and accumulating light.
+// The method considers direct lighting, emitted light from surfaces, and media (volumes) to simulate global illumination.
 ngl::Vec3 Scene::pathTrace(const Ray& r, int maxDepth) 
 {
-    ngl::Vec3 L(0,0,0);
+    // Accumulator for the computed color/lighting along the ray.
+    ngl::Vec3 L(0, 0, 0);
+    
+    // Represents the amount of light transmitted along the ray's path (starts fully unoccluded).
     ngl::Vec3 throughput(1.0, 1.0, 1.0);
+    
+    // Initialize with the camera ray.
     Ray ray = r;
+    
     for (int j = 0; j < maxDepth; ++j) 
     {
+        // Check if ray intersects any object in the scene.
         auto intersections = this->intersectScene(ray);
         auto xs = Intersection::intersections(intersections);
         auto i = Intersection::hit(xs);
 
+        // If no intersection is found, the ray doesn't hit anything.
         Intersection empty = Intersection();
         if (i == empty)
         {
             break;
         }
 
+        // Calculate additional information about the intersection.
         auto ctx = i.prepareComputations(ray);
 
+        // Create a BSDF for the intersected material, which describes how it scatters light.
         auto m = ctx.matPtr;
         auto bsdf = m->createBSDF(ctx);
 
-
-
+        // Accumulate the direct lighting at the intersection point.
         L += throughput * directLighting(ctx);
+        
+        // If the material is light-emitting, accumulate its emitted light.
         LightEmitting* leMaterial = dynamic_cast<LightEmitting*>(m.get()); 
-        if (leMaterial) {
+        if (leMaterial) 
+        {
             L += throughput * leMaterial->albedo().toVec3();
         }
 
+        /// @brief Volume integration
+        /// Modified from :
+        /// Fong et al (2017). Production Volume Rendering. In: SIGGRAPH 2017 Course. Los Angeles, California.
+        // Calculates the interaction of a ray with the homogeneous volume, including its scattering and extinction effects.
 
-        // Sample direction for next ray from BSDF
+        // Sample a new direction for the next ray bounce using the material's BSDF.
         float pdf;
         ngl::Vec3 Ls;
         ngl::Vec4 sampleDirection;
         bsdf->generateSample(ctx, sampleDirection, Ls, pdf);
 
+        // Update the throughput based on the sampled direction.
         throughput = throughput * (Ls / pdf);
 
+        // Create the next ray starting from the intersection point and moving in the sampled direction.
         Ray nextRay(ctx.point, sampleDirection);
 
+        // Check if the material has volume properties (like smoke, fog).
         std::shared_ptr<Volume> volume = nullptr;
-        if (m->hasVolume()) {
-
+        if (m->hasVolume()) 
+        {
+            // Check if we're entering or exiting the volume.
             auto EyedotN = ctx.eye.dot(ctx.normal);
             auto dirDotN = sampleDirection.dot(ctx.normal.toVec3());
             auto transmit = (EyedotN < 0.0) != (dirDotN < 0.0);
-            if (transmit) {
-                // We transmitted through the surface. Check dot product between the sample direction and the
-                // surface normal N to see whether we entered or exited the volume media
+            if (transmit) 
+            {
                 bool entered = dirDotN < 0.0f;
-                if (entered) {
+                if (entered) 
+                {
                     nextRay.enterMaterial(m);
-                } else {
+                } 
+                else 
+                {
                     nextRay.exitMaterial(m);
                 }
             }
+            
             volume = nextRay.getVolume(ctx);
         }
-        if (volume) {
+        
+        // If we're inside a volume, integrate its effect.
+        if (volume) 
+        {
             ngl::Vec3 Lv;
             ngl::Vec3 transmittance;
             ngl::Vec3 weight;
             if (!volume->integrate(nextRay, Lv, transmittance, weight, ctx.point, nextRay, *ctx.object, m_rs, *this)) break;
+            
             L += weight * throughput * Lv;
             throughput = throughput * transmittance;
-        } else {
+        } 
+        else 
+        {
+            // If not in a volume, check the next intersection.
             auto intersections = this->intersectScene(nextRay);
             auto xs = Intersection::intersections(intersections);
             auto i = Intersection::hit(xs);
 
-            Intersection empty = Intersection();
             if (i == empty)
             {
                 break;
             }
         }
+        
         ray = nextRay;
+
+        // end of citation
     }
 
+    // Return the accumulated light/color.
     return L;
 }
