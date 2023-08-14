@@ -6,7 +6,7 @@ I developed a renderer with the ability to path trace a scene. This renderer has
 
 ## Class Design
 
-![diagram](/images/diagram.png)
+![diagram](/images/d.png)
 
 ## Running the program
 
