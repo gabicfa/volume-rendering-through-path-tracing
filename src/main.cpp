@@ -4,8 +4,7 @@ basic OpenGL demo modified from http://qt-project.org/doc/qt-5.0/qtgui/openglwin
 #include <QtGui/QGuiApplication>
 #include <iostream>
 #include "NGLScene.h"
-
-
+#include "Config.h"
 
 int main(int argc, char **argv)
 {
@@ -33,10 +32,11 @@ int main(int argc, char **argv)
   QSurfaceFormat::setDefaultFormat(format);
   // now we are going to create our scene window
   NGLScene window;
+  readConfig("../sceneFile.txt");
   // we can now query the version to see if it worked
   std::cout<<"Profile is "<<format.majorVersion()<<" "<<format.minorVersion()<<"\n";
   // set the window size
-  window.resize(300, 300);
+  window.resize(NUM_WIDTH, NUM_HEIGHT);
   // and finally show
   window.show();
 

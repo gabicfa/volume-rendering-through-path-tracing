@@ -10,7 +10,7 @@ class Perlin {
 
     private:
         static const int m_pointCount = 256;
-        double* m_ranfloat;
+        double* channelAvg;
         int* m_permX;
         int* m_permY;
         int* m_permZ;

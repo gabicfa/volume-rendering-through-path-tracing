@@ -35,7 +35,7 @@ ngl::Vec3 BeersLawHeterogeneousVolume::transmittance(const ngl::Vec4 &P0, const 
     float t = 0;
 
     do {
-        float zeta = randomDouble(0.0,1.0);
+        float zeta = randomFloat(0.0,1.0);
         t = t - log(1 - zeta) / m_maxAbsorption;
         if (t > distance) {
             break; // Did not terminate in the volume
@@ -44,7 +44,7 @@ ngl::Vec3 BeersLawHeterogeneousVolume::transmittance(const ngl::Vec4 &P0, const 
         ngl::Vec4 P = P0 + t * dir;
         // Recompute the local absorption after updating the shading context
         float absorption = m_perlin.noise(P);
-        float xi = randomDouble(0.0,1.0);
+        float xi = randomFloat(0.0,1.0);
         if (xi < (absorption / m_maxAbsorption))
             terminated = true;
     } while (!terminated);

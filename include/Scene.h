@@ -19,10 +19,22 @@ class Scene
             Scene2,
             Scene3,
             Scene4,
-            Scene5,
-            Scene6,
-            Scene7
+            Scene5
         };
+
+        static SceneMode intToSceneMode(int index) {
+            switch (index) {
+                case 0: return SceneMode::Default;
+                case 1: return SceneMode::Scene1;
+                case 2: return SceneMode::Scene2;
+                case 3: return SceneMode::Scene3;
+                case 4: return SceneMode::Scene4;
+                case 5: return SceneMode::Scene5;
+                default:
+                    std::cerr << "Invalid scene index: " << index << std::endl;
+                    return SceneMode::Default; // default case if index is out of bounds
+            }
+        }
         Scene(bool _default = false);
         void chooseScene (SceneMode mode);
         std::vector<std::shared_ptr<Shape>>& objects();

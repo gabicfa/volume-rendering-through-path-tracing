@@ -20,13 +20,10 @@
 #include "AreaLight.h"
 #include "RendererServices.h"
 #include "ObjFile.h"
+#include "Config.h"
 
-constexpr size_t TextureWidth = 300;
-constexpr size_t TextureHeight = 300;
-
-// const auto aspectRatio = 16.0 / 16.0;
-// int TextureWidth = 180;
-// int TextureHeight = static_cast<int>(TextureWidth / aspectRatio);
+int TextureWidth;
+int TextureHeight;
 
 NGLScene::NGLScene()
 {
@@ -49,8 +46,8 @@ constexpr auto TextureShader="TextureShader";
 void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::Vec4 to, ngl::Vec4 up,
                 ngl::Vec4 &lightCenter, ngl::Vec4 &lightU,ngl::Vec4 &lightV, ngl::Vec3 &lightIntensity, Scene::SceneMode mode)
 {
-    fov = 90;
-    from = ngl::Vec4(0.0f, 2.5f, -8.0f);
+    fov = 75;
+    from = ngl::Vec4(0.0f, 2.5f, -9.0f);
     to = ngl::Vec4(0.0f, 4.0f, 0.0f);
     up = ngl::Vec4(0.0f, 1.0f, 0.0f);
     lightCenter = ngl::Vec4(0.0f, 70.0f, 0.0f);
@@ -64,54 +61,35 @@ void createScene(Scene &scene, Camera &camera, int &fov, ngl::Vec4 &from, ngl::V
     {
       lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
       lightV = ngl::Vec4(0.0f, 0.0f, 1.0f);
-      from = ngl::Vec4(0.0f, 0.0f, -2.9f);
+      from = ngl::Vec4(0.0f, 0.0f, -8.5f);
       to = ngl::Vec4(0.0f, 0.0f, 0.0f);
-      lightCenter = ngl::Vec4(0.0f, 0.95f, 0.0f);
-      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
-      fov = 60;
+      lightCenter = ngl::Vec4(0.0f, 4.9f, 0.0f);
     }
     if (mode == Scene::SceneMode::Scene2)
     {
       from = ngl::Vec4(0.0f, 2.0f, -5.0f);
       to = ngl::Vec4(0.0f, 5.0f, 0.0f);
       up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-      fov = 90;
+      lightCenter = ngl::Vec4(0.0f, 10.0f, 0.0f);
+      fov = 45;
     }
     if (mode == Scene::SceneMode::Scene3)
     {
-      from = ngl::Vec4(0.0f, 2.0f, -5.0f);
-      to = ngl::Vec4(0.0f, 5.0f, 0.0f);
+      fov = 65;
+      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      to = ngl::Vec4(0.0f, 0.0f, 0.0f);
       up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-      lightCenter = ngl::Vec4(0.0f, 10.0f, 0.0f);
-      fov = 60;
+      lightIntensity = ngl::Vec3(150.0f, 150.0f, 150.0f);
     }
     if (mode == Scene::SceneMode::Scene4)
     {
-      fov = 75;
-      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
+      lightU = ngl::Vec4(1.0f, 0.0f, 0.0f);
+      lightV = ngl::Vec4(0.0f, 0.0f, 1.0f);
+      from = ngl::Vec4(0.0f, 0.0f, -8.5f);
       to = ngl::Vec4(0.0f, 0.0f, 0.0f);
-      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
+      lightCenter = ngl::Vec4(0.0f, 4.9f, 0.0f);
     }
     if (mode == Scene::SceneMode::Scene5)
-    {
-      fov = 90;
-      from = ngl::Vec4(0.0f, 8.0f, -30.0f);
-      to = ngl::Vec4(0.0f, 5.0f, 0.0f);
-      up = ngl::Vec4(0.0f, 1.0f, 0.0f);
-      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
-    }
-    if (mode == Scene::SceneMode::Scene6)
-    {
-      lightU = ngl::Vec4(0.3f, 0.0f, 0.0f);
-      lightV = ngl::Vec4(0.0f, 0.0f, -0.3f);
-      from = ngl::Vec4(0.0f, 0.0f, -3.0f);
-      to = ngl::Vec4(0.0f, 0.0f, 0.0f);
-      lightCenter = ngl::Vec4(0.0f, 0.95f, 0.0f);
-      lightIntensity = ngl::Vec3(100.0f,100.0f,100.0f);
-      fov = 60;
-    }
-    if (mode == Scene::SceneMode::Scene7)
     {
       fov = 75;
       from = ngl::Vec4(0.0f, 2.5f, -9.0f);
@@ -143,6 +121,8 @@ void NGLScene::initializeGL()
     
     // Generate our buffer for the texture data
 
+      TextureWidth = NUM_WIDTH;
+      TextureHeight = NUM_HEIGHT;
       auto scene = Scene();
       auto camera = Camera(TextureWidth, TextureHeight, M_PI / 2);
       
@@ -151,8 +131,9 @@ void NGLScene::initializeGL()
       ngl::Vec4 from, to, up, lightPosition, lightU, lightV;
       ngl::Vec3 lightIntensity;
 
+      Scene::SceneMode currentSceneMode = Scene::intToSceneMode(SCENE);
       createScene(scene, camera, fov, from, to, up,
-                  lightPosition, lightU, lightV, lightIntensity, Scene::SceneMode::Scene7);
+                  lightPosition, lightU, lightV, lightIntensity, currentSceneMode);
 
       m_canvas = std::make_unique<Canvas>(camera.render(scene));
       updateTextureBuffer();

@@ -24,7 +24,7 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     transmittance = this->transmittance(m_comp.point, hitPoint);
     
     // Compute sample location for scattering, based on the PDF
-    float xi = randomDouble();
+    float xi = randomFloat();
     float scatterDistance = -logf(1.0f - xi * (1.0f - channelAvg(transmittance))) /
             channelAvg(m_extinction);
 

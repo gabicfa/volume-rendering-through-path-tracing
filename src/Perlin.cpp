@@ -2,9 +2,9 @@
 #include "Utility.h"
 
 Perlin::Perlin() {
-    m_ranfloat = new double[m_pointCount];
+    m_randouble = new double[m_pointCount];
     for (int i = 0; i < m_pointCount; ++i) {
-        m_ranfloat[i] = randomDouble(0.0, 1.0);
+        m_randouble[i] = randomFloat(0.0, 1.0);
     }
 
     m_permX = perlinGeneratePerm();
@@ -13,7 +13,7 @@ Perlin::Perlin() {
 }
 
 Perlin::~Perlin() {
-    delete[] m_ranfloat;
+    delete[] m_randouble;
     delete[] m_permX;
     delete[] m_permY;
     delete[] m_permZ;
@@ -37,7 +37,7 @@ double Perlin::noise(const ngl::Vec4& p) const {
     for (int di=0; di < 2; di++)
         for (int dj=0; dj < 2; dj++)
             for (int dk=0; dk < 2; dk++)
-                c[di][dj][dk] = m_ranfloat[
+                c[di][dj][dk] = m_randouble[
                     m_permX[(i+di) & 255] ^
                     m_permY[(j+dj) & 255] ^
                     m_permZ[(k+dk) & 255]

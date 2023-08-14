@@ -14,14 +14,14 @@ void IsotropicPhaseBSDF::evaluateSample(const Computation& _comp, const ngl::Vec
 
 void IsotropicPhaseBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleDirection, ngl::Vec3& L, float& pdf)
 {
-    auto xi = randomDouble(); 
+    auto xi = randomFloat(); 
     sampleDirection.m_z = xi * 2.0f - 1.0f;
     float sinTheta = 1.0f - sampleDirection.m_z * sampleDirection.m_z;
 
     if (sinTheta > 0.0f)
     {
         sinTheta = std::sqrt(sinTheta);
-        xi = randomDouble();
+        xi = randomFloat();
         float phi = xi * 2.0f * M_PI;
         sampleDirection.m_x = sinTheta * std::cos(phi);
         sampleDirection.m_y = sinTheta * std::sin(phi);

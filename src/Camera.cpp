@@ -118,8 +118,8 @@ Canvas Camera::render(Scene &s)
                 for (int x = rangeX.begin(); x != rangeX.end(); ++x) {
                     ngl::Vec3 color(0, 0, 0);
                     for (int sp = 0; sp < samplesPerPixel; ++sp) {
-                        auto u = x + randomDouble();
-                        auto v = y + randomDouble();
+                        auto u = x + randomFloat();
+                        auto v = y + randomFloat();
                         auto r = this->rayForPixel(u, v);
                         color += s.pathTrace(r, maxDepth);
                     }

@@ -2,6 +2,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Intersection.h"
+#include "Config.h"
 
 Canvas::Canvas(size_t _w, size_t _h) : m_width{_w}, m_height{_h}
 {
