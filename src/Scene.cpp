@@ -4,6 +4,7 @@
 #include "Triangle.h"
 #include "ObjFile.h"
 #include "Sphere.h"
+#include "Config.h"
 #include "Utility.h"
 #include <memory>
 #include <iostream>
@@ -53,6 +54,7 @@ void openCornelBox (Scene &scene)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(cornellBoxGroup->getChildren()[t]);
         triangle->setMaterial(cornelBoxMaterial[mIdx]);
+        triangle->setTransform(ngl::Mat4::scale(5, 5, 5));
         scene.addObject(triangle);
         if (mIdx < 2 && t % 2 == 1) 
         {
@@ -96,7 +98,6 @@ void openPyramid (Scene &scene, std::shared_ptr<Material> material)
         auto triangle = std::dynamic_pointer_cast<Triangle>(pyramidGroup->getChildren()[t]);
         triangle->setMaterial(material);
         triangle->setTransform(ngl::Mat4::translate(-1.0, -1.0, -1.0));
-        // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
         scene.addObject(triangle);
     }
 }
@@ -108,8 +109,7 @@ void openTeapot(Scene &scene, std::shared_ptr<Material> material)
     for (auto t=0; t < teaPotGroup->getChildren().size(); t ++)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(teaPotGroup->getChildren()[t]);
-        triangle->setTransform(ngl::Mat4::translate(0.0, -0.5, -0.5));
-        // triangle->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        triangle->setTransform(ngl::Mat4::translate(0.0, -1.0, -0.5));
         triangle->setMaterial(material);
     }
     scene.addObject(teaPotGroup);
@@ -123,8 +123,8 @@ void openBox1(Scene &scene, std::shared_ptr<Material> material)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(gBox1->getChildren()[t]);
         triangle->setMaterial(material);
-        triangle->setTransform(ngl::Mat4::translate(0.3f, -0.4f, 0.3f));
-        triangle->setTransform(ngl::Mat4::scale(0.3f, 0.6f, 0.3f));
+        triangle->setTransform(ngl::Mat4::translate(1.5f, -2.0f, 1.5f));
+        triangle->setTransform(ngl::Mat4::scale(2.0f, 3.5f, 2.0f));
         scene.addObject(triangle);
     }
 }
@@ -137,8 +137,8 @@ void openBox2(Scene &scene, std::shared_ptr<Material> material)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(gBox2->getChildren()[t]);
         triangle->setMaterial(material);
-        triangle->setTransform(ngl::Mat4::translate(-0.4f, -0.7f, -0.3f));
-        triangle->setTransform(ngl::Mat4::scale(0.3f, 0.3f, 0.3f));
+        triangle->setTransform(ngl::Mat4::translate(-2.0f, -3.5f, -1.5f));
+        triangle->setTransform(ngl::Mat4::scale(1.5f, 1.5f, 1.5f));
         scene.addObject(triangle);
     }
 }
@@ -151,23 +151,20 @@ void openLight(Scene &scene, std::shared_ptr<Material> material)
     {
         auto triangle = std::dynamic_pointer_cast<Triangle>(gBox2->getChildren()[t]);
         triangle->setMaterial(material);
-        triangle->setTransform(ngl::Mat4::translate(0.0f, 0.99f, 0.0f));
-        triangle->setTransform(ngl::Mat4::scale(0.3f, 0.001f, 0.3f));
+        triangle->setTransform(ngl::Mat4::translate(0.0f, 4.99f, 0.0f));
+        triangle->setTransform(ngl::Mat4::scale(1.5f, 0.001f, 1.5f));
         scene.addObject(triangle);
     }
 }
 
 void Scene::chooseScene (SceneMode mode)
 {
-    auto materialGround = std::make_shared<Lambertian>(ngl::Vec4(0.8, 0.8, 0.0));
-    auto materialBack = std::make_shared<Lambertian>(ngl::Vec4(0.5, 0.7, 1.0));
     auto materialBeers = std::make_shared<BeersLawMaterial>(ngl::Vec3(0.4, 0.4, 0.4));
     auto materialSingleScatterHomo = std::make_shared<SingleScatterHomogeneousMaterial>(ngl::Vec3(0.5, 0.5, 0.5), ngl::Vec3(0.5, 0.5, 0.5));
 
     auto materialHete = std::make_shared<BeersLawHeterogeneousMaterial>(0.5);
     auto materialDielectric = std::make_shared<Dielectric>(-0.4);
     auto difflight = std::make_shared<LightEmitting>(ngl::Vec3(4,4,4));
-    auto difflight2 = std::make_shared<LightEmitting>(ngl::Vec3(5,5,5));
 
     auto materialGreen = std::make_shared<Lambertian>(ngl::Vec4(0.0, 1.0, 0.0));
     auto materialRed = std::make_shared<Lambertian>(ngl::Vec4(1.0, 0.0, 0.0));
@@ -181,66 +178,48 @@ void Scene::chooseScene (SceneMode mode)
     if (mode == SceneMode::Scene1)
     {
         openCornelBox(*this);
-        // openFloor(*this);
         openBox1(*this, materialGray);
         openBox2(*this, materialGray);
         openLight(*this, difflight);
     }
     else if (mode == SceneMode::Scene2)
     {
-        openPyramid(*this, materialBeers);
-        openFloor(*this);
+        openTeapot(*this, materialCenter);
+        auto s1 = std::make_shared<Sphere>(1, materialGray);
+        s1->setTransform(ngl::Mat4::translate(0.0, -10, -1.0));
+        s1->setTransform(ngl::Mat4::scale(100.0f, 1.0f, 100.0f));
+        this->addObject(s1);
     }
     else if (mode == SceneMode::Scene3)
     {
-        openTeapot(*this, materialCenter);
-    }
-    else if (mode == SceneMode::Scene4)
-    {
-        auto s1 = std::make_shared<Sphere>(1, materialGround);
+        auto s1 = std::make_shared<Sphere>(1, materialGray);
         s1->setTransform(ngl::Mat4::translate(0.0, -100.5, -1.0));
         s1->setTransform(ngl::Mat4::scale(100.0f, 100.0f, 100.0f));
         this->addObject(s1);
 
-        auto s3 = std::make_shared<Sphere>(3, materialBeers);
-        s3->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
-        s3->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
-        this->addObject(s3);
+        auto s2 = std::make_shared<Sphere>(2, materialBeers);
+        s2->setTransform(ngl::Mat4::translate(0.0, 0.0, -1.0));
+        s2->setTransform(ngl::Mat4::scale(0.5f, 0.5f, 0.5f));
+        this->addObject(s2);
         
-        auto s4 = std::make_shared<Sphere>(4, materialRight);
-        s4->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
-        s4->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
-        m_objects.push_back(s4);
+        auto s3 = std::make_shared<Sphere>(3, materialRight);
+        s3->setTransform(ngl::Mat4::translate(1.0f, 0.0f, -1.0f));
+        s3->setTransform(ngl::Mat4::scale(0.5, 0.5, 0.5));
+        m_objects.push_back(s3);
 
         openPyramid(*this, materialCenter);
     }
-    else if (mode == SceneMode::Scene5)
-    {
-        auto sphere = std::make_shared<Sphere>(1, materialBeers);
-        sphere->setTransform(ngl::Mat4::translate(0.0f, 5.0f, -3.0f));
-        sphere->setTransform(ngl::Mat4::scale(8.0f, 8.0f, 8.0f));
-        this->addObject(sphere);
-        openFloor(*this);
-    }
-    else if (mode == SceneMode::Scene6)
+    else if (mode == SceneMode::Scene4)
     {
         openCornelBox(*this);
-        // openFloor(*this);
-        // openTeapot(*this, materialCenter);
-        // openBox1(*this, difflight);
-        // openBox2(*this, materialGray);
         openLight(*this, difflight);
-        auto s4 = std::make_shared<Sphere>(4, materialLeft);
-        s4->setTransform(ngl::Mat4::translate(0.5f, -0.65f, 0.5f));
-        s4->setTransform(ngl::Mat4::scale(0.3, 0.3, 0.3));
-        m_objects.push_back(s4);
 
-        auto s5 = std::make_shared<Sphere>(5, materialLeft);
-        s5->setTransform(ngl::Mat4::translate(-0.5f, -0.65f, -0.5f));
-        s5->setTransform(ngl::Mat4::scale(0.3, 0.3, 0.3));
-        m_objects.push_back(s5);
+        auto sphere = std::make_shared<Sphere>(1, materialLeft);
+        sphere->setTransform(ngl::Mat4::translate(0.0f, -2.25f, 0.0f));
+        sphere->setTransform(ngl::Mat4::scale(1.5, 1.5, 1.5));
+        m_objects.push_back(sphere);
     }
-    else if (mode == SceneMode::Scene7)
+    else if (mode == SceneMode::Scene5)
     {
         auto sphere = std::make_shared<Sphere>(1, materialHete);
         sphere->setTransform(ngl::Mat4::translate(0.0f, 1.0f, -2.5f));

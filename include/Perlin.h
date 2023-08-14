@@ -13,7 +13,7 @@ public:
 
 private:
     static const int m_pointCount = 256;
-    double* m_ranfloat;       // Pointer to an array of random float values
+    double* m_randouble;       // Pointer to an array of random float values
     int* m_permX;             // Permutation array for the x-coordinates
     int* m_permY;             // Permutation array for the y-coordinates
     int* m_permZ;             // Permutation array for the z-coordinates

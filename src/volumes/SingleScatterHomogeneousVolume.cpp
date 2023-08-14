@@ -27,7 +27,7 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     transmittance = this->transmittance(m_comp.point, hitPoint);
     
     // Calculate the distance at which a scattering event occurs.
-    float xi = randomDouble();
+    float xi = randomFloat();
     float scatterDistance = -logf(1.0f - xi * (1.0f - channelAvg(transmittance))) / channelAvg(m_extinction);
 
     // Update the computation to the scattering location.

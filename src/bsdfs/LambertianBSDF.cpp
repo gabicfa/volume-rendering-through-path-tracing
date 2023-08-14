@@ -37,8 +37,8 @@ void LambertianBSDF::generateSample(const Computation& _comp, ngl::Vec4& sampleD
     // around the normal. The direction is given by spherical coordinates (phi, theta) where
     // phi is a random angle around the normal and theta is an angle from the normal given by
     // cos(theta) = sqrt(1 - u) for a random u in [0, 1].
-    float u = randomDouble();
-    float v = randomDouble();
+    float u = randomFloat();
+    float v = randomFloat();
     float phi = 2 * M_PI * u;
     float theta = acos(sqrt(1 - v));
 

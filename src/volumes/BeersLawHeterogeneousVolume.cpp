@@ -59,7 +59,7 @@ ngl::Vec3 BeersLawHeterogeneousVolume::transmittance(const ngl::Vec4 &P0, const 
     // Monte Carlo delta tracking loop to sample absorption along the ray's path in the heterogeneous medium.
     do {
         // Sample a random point along the ray.
-        float zeta = randomDouble(0.0,1.0);
+        float zeta = randomFloat(0.0,1.0);
         t = t - log(1 - zeta) / m_maxAbsorption;
         
         // If the sampled point is outside the medium, break the loop.
@@ -72,7 +72,7 @@ ngl::Vec3 BeersLawHeterogeneousVolume::transmittance(const ngl::Vec4 &P0, const 
         float absorption = m_perlin.noise(P);
 
         // Sample another random number to determine if the ray terminates at the sampled point.
-        float xi = randomDouble(0.0,1.0);
+        float xi = randomFloat(0.0,1.0);
         if (xi < (absorption / m_maxAbsorption))
             terminated = true;
 

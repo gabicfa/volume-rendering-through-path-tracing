@@ -2,6 +2,7 @@
 #include "Sphere.h"
 #include "Utility.h"
 #include "Intersection.h"
+#include "Config.h"
 
 // Constructor that initializes canvas dimensions and allocates memory for pixel data.
 Canvas::Canvas(size_t _w, size_t _h) : m_width{_w}, m_height{_h}
