@@ -6,6 +6,10 @@
 #include "volumes/SingleScatterHomogeneousVolume.h"
 #include "ngl/Vec3.h"
 
+// The SingleScatterHomogeneousMaterial class represents a material in a homogeneous medium 
+// that exhibits single scattering. Homogeneous means the properties of the medium are consistent 
+// throughout. This material uses isotropic phase functions for light interactions and takes into 
+// account scattering albedo and extinction.
 class SingleScatterHomogeneousMaterial : public Material
 {
 public:
@@ -17,8 +21,8 @@ public:
     std::shared_ptr<Volume> createVolume(Computation& _comp) override;
 
 private:
-    const ngl::Vec3 m_scatteringAlbedo;
-    const ngl::Vec3 m_extinction;
+    const ngl::Vec3 m_scatteringAlbedo;    // The ratio of scattering to absorption for the material.
+    const ngl::Vec3 m_extinction;          // Measures the attenuation of light as it passes through the material.
 };
 
 #endif

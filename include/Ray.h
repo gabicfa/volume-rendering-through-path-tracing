@@ -10,6 +10,7 @@ class Material;
 class Computation;
 class Volume;
 
+// The Ray class represents a ray in 3D space with an origin and a direction.
 class Ray
 {
 public:
@@ -27,6 +28,7 @@ public:
 private:
     ngl::Vec4 m_origin;
     ngl::Vec4 m_direction;
+    // Stack of volumes the ray has encountered.
     std::vector<std::shared_ptr<Material>> m_volumes;
 };
 

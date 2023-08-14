@@ -7,10 +7,13 @@
 
 SingleScatterHomogeneousVolume::SingleScatterHomogeneousVolume(ngl::Vec3 scatteringAlbedo, ngl::Vec3 extinction, Computation &comp)
     : Volume(comp), m_scatteringAlbedo(scatteringAlbedo), m_extinction(extinction) {}
-
-bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3
-        &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs, Scene &scene) {
+/// @brief The SingleScatterHomogeneousVolume class
+/// Modified from :
+/// Fong et al (2017). Production Volume Rendering. In: SIGGRAPH 2017 Course. Los Angeles, California.
+// Calculates the interaction of a ray with the homogeneous volume, including its scattering and extinction effects.
+bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl::Vec3 &transmittance, ngl::Vec3 &weight, ngl::Vec4 &P, Ray &wo, Shape &s, RendererServices &rs, Scene &scene) {
     
+    // Find the intersections of the ray with the volume's boundary.
     auto intersections = s.intersect(Ray(m_comp.point, wi.direction()));
     auto xs = Intersection::intersections(intersections);
     auto i = Intersection::hit(xs);
@@ -19,22 +22,21 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
         return false;
     }
 
-    // Transmittance over the entire interval
+    // Compute the transmittance over the entire distance between ray's origin and hit point.
     ngl::Vec4 hitPoint = m_comp.point + wi.direction() * i.t();
     transmittance = this->transmittance(m_comp.point, hitPoint);
     
-    // Compute sample location for scattering, based on the PDF
+    // Calculate the distance at which a scattering event occurs.
     float xi = randomFloat();
-    float scatterDistance = -logf(1.0f - xi * (1.0f - channelAvg(transmittance))) /
-            channelAvg(m_extinction);
+    float scatterDistance = -logf(1.0f - xi * (1.0f - channelAvg(transmittance))) / channelAvg(m_extinction);
 
-    // Set up computation to be at the scatter location
+    // Update the computation to the scattering location.
     ngl::Vec4 Pscatter = m_comp.point + scatterDistance * wi.direction();
     m_comp.point = Pscatter;
     m_comp.recompute();
     
-    // Compute direct lighting with light sampling and phase function sampling
-    IsotropicPhaseBSDF phaseBSDF(m_comp);
+    // Compute the contribution from light sources considering the phase function.
+     IsotropicPhaseBSDF phaseBSDF(m_comp);
     L = ngl::Vec3(0.0f, 0.0f, 0.0f);
     ngl::Vec3 lightL, bsdfL, beamTransmittance;
     float lightPdf, bsdfPdf;
@@ -59,10 +61,11 @@ bool SingleScatterHomogeneousVolume::integrate(const Ray &wi, ngl::Vec3 &L, ngl:
     return true;
 }
 
-
+// Computes the transmittance of light between two points in the volume, accounting for extinction.
 ngl::Vec3 SingleScatterHomogeneousVolume::transmittance(const ngl::Vec4 &P0, const ngl::Vec4 &P1) {
     float distance = (P0 - P1).length();
     auto transmittance = ngl::Vec3(exp(m_extinction.m_x * -distance), exp(m_extinction.m_y * -distance),
                      exp(m_extinction.m_z * -distance));
     return transmittance;
 }
+//end citation

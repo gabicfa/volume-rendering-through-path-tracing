@@ -3,6 +3,9 @@
 
 #include "BSDF.h"
 
+// LambertianBSDF represents a Lambertian Bidirectional Scatter Distribution Function (BSDF).
+// Lambertian reflection is perfectly diffused reflection, meaning when light hits the surface,
+// it has an equal chance of reflecting in any direction in the hemisphere around the normal.
 class LambertianBSDF : public BSDF
 {
     public:

@@ -5,6 +5,9 @@
 #include "Computation.h"
 #include "ngl/Vec3.h"
 
+// The IsotropicPhaseBSDF class represents an isotropic phase function. 
+// It models the scattering properties of media where 
+// the scattering is uniform in all directions, regardless of the incident direction.
 class IsotropicPhaseBSDF : public BSDF {
 public:
     IsotropicPhaseBSDF(const Computation& comp);

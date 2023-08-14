@@ -1,12 +1,16 @@
 #include "Perlin.h"
 #include "Utility.h"
 
+/// @brief The BSDF abstract base class
+/// Modified from :
+/// Shirley et al. (2023). Ray Tracing: The Next Week [online]. Available from https://raytracing.github.io/books/RayTracingTheNextWeek.html [Accessed 12 August 2023].
 Perlin::Perlin() {
     m_randouble = new double[m_pointCount];
     for (int i = 0; i < m_pointCount; ++i) {
         m_randouble[i] = randomFloat(0.0, 1.0);
     }
 
+    // Generating permutation arrays for each coordinate axis
     m_permX = perlinGeneratePerm();
     m_permY = perlinGeneratePerm();
     m_permZ = perlinGeneratePerm();
@@ -19,6 +23,7 @@ Perlin::~Perlin() {
     delete[] m_permZ;
 }
 
+// Calculates and returns the Perlin noise value for a given point
 double Perlin::noise(const ngl::Vec4& p) const {
     auto u = p.m_x - std::floor(p.m_x);
     auto v = p.m_y - std::floor(p.m_y);
@@ -46,6 +51,7 @@ double Perlin::noise(const ngl::Vec4& p) const {
     return trilinearInterp(c, u, v, w);
 }
 
+// Generates a permutation array and returns its pointer
 int* Perlin::perlinGeneratePerm() {
     auto p = new int[m_pointCount];
 
@@ -57,6 +63,7 @@ int* Perlin::perlinGeneratePerm() {
     return p;
 }
 
+// Shuffles the provided array in-place using the Fisher-Yates shuffle algorithm
 void Perlin::permute(int* p, int n) {
     for (int i = n-1; i > 0; i--) {
         int target = randomInt(0, i);
@@ -66,6 +73,8 @@ void Perlin::permute(int* p, int n) {
     }
 }
 
+// Trilinear interpolation function which smoothly interpolates the noise values 
+// within a unit cube based on their distances from the 8 corners of the cube.
 double Perlin::trilinearInterp(double c[2][2][2], double u, double v, double w) const {
     auto accum = 0.0;
     for (int i=0; i < 2; i++)
@@ -77,4 +86,4 @@ double Perlin::trilinearInterp(double c[2][2][2], double u, double v, double w) 
 
     return accum;
 }
-
+// end of citation

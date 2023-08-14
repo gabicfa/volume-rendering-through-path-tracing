@@ -3,6 +3,9 @@
 
 #include "BSDF.h"
 
+// MetalBSDF represents a Bidirectional Scatter Distribution Function (BSDF) for metallic surfaces.
+// Metallic surfaces tend to reflect rays in a predictable direction determined by the angle of incidence
+// and the surface normal, without scattering them in multiple directions like diffuse materials.
 class MetalBSDF : public BSDF
 {
     public:
@@ -14,7 +17,6 @@ class MetalBSDF : public BSDF
 
     private:
         Computation m_comp;
-
 };
 
 #endif

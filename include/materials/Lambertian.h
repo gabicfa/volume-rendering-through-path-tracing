@@ -4,6 +4,8 @@
 #include "Material.h"
 #include "bsdfs/LambertianBSDF.h"
 
+// The Lambertian class represents a Lambertian (diffuse) material.
+// This type of material scatters light uniformly in all directions, regardless of the incoming light direction.
 class Lambertian : public Material
 {
     public:
@@ -13,7 +15,7 @@ class Lambertian : public Material
         ngl::Vec4 albedo() const override;
 
     private:
-        ngl::Vec4 m_albedo;
+        ngl::Vec4 m_albedo;  // The albedo (color) of the Lambertian material.
 };
 
 #endif

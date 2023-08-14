@@ -2,17 +2,21 @@
 #include <ngl/Obj.h>
 #include "Triangle.h"
 
+
+// Default constructor initializes default group.
 ObjFile::ObjFile()
     : m_defaultGroup(std::make_shared<Group>())
 {
 }
 
+// Constructor that initializes with default group and then parses the given .obj file.
 ObjFile::ObjFile(std::string_view _fname)
     : ObjFile()
 {
     parseObjFile(_fname);
 }
 
+// Parse the given .obj file and extract its geometric information.
 void ObjFile::parseObjFile(std::string_view _fname)
 {
     ngl::Obj obj;
@@ -20,6 +24,8 @@ void ObjFile::parseObjFile(std::string_view _fname)
     m_vertices = obj.getVertexList();
     const auto& faceList = obj.getFaceList();
 
+    // Iterate through faces and process them.
+    // Triangulate if the face has more than 3 vertices.
     std::for_each(faceList.begin(), faceList.end(), [this](const ngl::Face& face) {
         if (face.m_vert.size() > 3)
         {
@@ -41,6 +47,7 @@ void ObjFile::parseObjFile(std::string_view _fname)
     });
 }
 
+// Convert a polygon with more than 3 vertices into triangles.
 std::vector<Triangle> ObjFile::fanTriangulation(std::vector<ngl::Vec3> _vertices)
 {
     std::vector<Triangle> triangles;
@@ -65,18 +72,4 @@ void ObjFile::setDefaultGroup(std::shared_ptr<Group> _defaultGroup)
 std::vector<ngl::Vec3> ObjFile::vertices() const
 {
     return m_vertices;
-}
-
-std::vector<std::shared_ptr<Triangle>> ObjFile::sceneObjects()
-{
-    auto children = m_defaultGroup->getChildren();
-    std::cout << "NUMBER OF TRIANGLES: " << children.size() << "\n";
-    for (auto child : children)
-    {
-        auto t = std::dynamic_pointer_cast<Triangle>(child);
-        m_objects.push_back(t);
-    }
-    std::cout << "ADDED ALL TRIANGLES" << "\n";
-    std::cout << "NUMBER OF TRIANGLES IN m_objects: " << m_objects.size() << "\n";
-    return m_objects;
 }

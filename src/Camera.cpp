@@ -93,6 +93,12 @@ void Camera::transform(ngl::Mat4 _t)
     m_transformation = _t;
 }
 
+// The `writeColor` function processes a pixel's color after it has been accumulated
+// over several samples, using gamma correction for more perceptually linear color changes.
+
+/// @brief The BSDF abstract base class
+/// Modified from :
+/// Shirley et al. (2023). Ray Tracing: The Next Week [online]. Available from https://raytracing.github.io/books/RayTracingTheNextWeek.html [Accessed 12 August 2023].
 ngl::Vec3 Camera::writeColor(ngl::Vec3 pixelColor, int samples_per_pixel) {
     auto r = pixelColor.m_x;
     auto g = pixelColor.m_y;
@@ -105,13 +111,21 @@ ngl::Vec3 Camera::writeColor(ngl::Vec3 pixelColor, int samples_per_pixel) {
 
     return ngl::Vec3(clamp(r, 0.0, 0.999), clamp(g, 0.0, 0.999), clamp(b, 0.0, 0.999));
 }
+// end of citation
 
+// The `render` function ray-traces the entire scene from the camera's perspective,
+// producing an image on a canvas. This process is computationally intensive, 
+// so it is parallelized using TBB (Threading Building Blocks) for better performance. 
+// TBB's parallel_for divides the rendering task among multiple threads, allowing for faster processing.
 Canvas Camera::render(Scene &s)
 {
     auto img = Canvas(m_hsize, m_vsize);
     auto samplesPerPixel = img.samplesPerPixel();
     auto maxDepth = img.maxDepth();
-    
+
+    // TBB's parallel_for is used to distribute the pixel rendering task across multiple threads. 
+    // The outer loop iterates over rows (y-axis) of pixels, while the inner loop iterates over 
+    // columns (x-axis). This ensures that the task of rendering each pixel can be performed in parallel.
     tbb::parallel_for(tbb::blocked_range<int>(0, m_vsize - 1), [&](const tbb::blocked_range<int>& rangeY) {
         for (int y = rangeY.begin(); y != rangeY.end(); ++y) {
             tbb::parallel_for(tbb::blocked_range<int>(0, m_hsize - 1), [&](const tbb::blocked_range<int>& rangeX) {
